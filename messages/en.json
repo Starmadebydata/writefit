@@ -152,6 +152,17 @@
     "noIdeas": "No saved ideas yet. Complete a practice session to start collecting.",
     "noDrafts": "No drafts yet. Start writing in the Draft Lab."
   },
+  "progress": {
+    "title": "Progress",
+    "streakDays": "Day Streak",
+    "totalSessions": "Total Sessions",
+    "totalWords": "Total Words",
+    "avgWords": "Avg Words/Session",
+    "history": "Practice History",
+    "noSessions": "No practice sessions yet. Start your first practice!",
+    "startFirst": "Start your first practice",
+    "words": "words"
+  },
   "practice": {
     "todaysPractice": "Today's Practice",
     "types": {

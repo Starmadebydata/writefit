@@ -14,6 +14,10 @@ import { Button } from "@/components/ui/button";
 import { PenLine, Lightbulb, TrendingUp, Flame } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { setRequestLocale, getLocale, getTranslations } from "next-intl/server";
+import { drizzle } from "drizzle-orm/d1";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { practiceSessions, ideas } from "@/lib/db/schema";
+import { eq, sql } from "drizzle-orm";
 
 // Dashboard 页面 SEO（根据语言切换）
 export async function generateMetadata(): Promise<Metadata> {
@@ -71,12 +75,59 @@ export default async function DashboardPage({
   const t = await getTranslations("dashboard");
   const tPractice = await getTranslations("practice");
 
+  // 从数据库读取真实统计数据
+  const { env } = getCloudflareContext();
+  const db = drizzle(env.DB);
+
+  // 本周训练数和总字数
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - 7);
+
+  const [weekStats] = await db
+    .select({
+      weekSessions: sql<number>`count(*)::int`,
+      weekWords: sql<number>`coalesce(sum(${practiceSessions.wordCount}), 0)::int`,
+    })
+    .from(practiceSessions)
+    .where(sql`${practiceSessions.userId} = ${session.user.id} AND ${practiceSessions.createdAt} >= ${weekStart}`);
+
+  // 连续训练天数
+  const practiceDates = await db
+    .select({ date: sql<string>`date(${practiceSessions.createdAt})` })
+    .from(practiceSessions)
+    .where(eq(practiceSessions.userId, session.user.id))
+    .groupBy(sql`date(${practiceSessions.createdAt})`)
+    .limit(30);
+
+  let streak = 0;
+  const nowDate = new Date();
+  const today = nowDate.toISOString().split("T")[0];
+  const yesterdayDate = new Date(nowDate.getTime() - 86400000);
+  const yesterday = yesterdayDate.toISOString().split("T")[0];
+  const dateList = practiceDates.map((s) => s.date);
+
+  if (dateList.includes(today) || dateList.includes(yesterday)) {
+    let checkDate = dateList.includes(today) ? today : yesterday;
+    while (dateList.includes(checkDate)) {
+      streak++;
+      const d = new Date(checkDate);
+      d.setDate(d.getDate() - 1);
+      checkDate = d.toISOString().split("T")[0];
+    }
+  }
+
+  // 保存的素材数
+  const [ideaCount] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(ideas)
+    .where(eq(ideas.userId, session.user.id));
+
   // 统计数据
   const stats = [
-    { icon: Flame, label: t("stats.streak"), value: `0 ${t("stats.days")}`, color: "text-orange-500" },
-    { icon: PenLine, label: t("stats.thisWeek"), value: `0 ${t("stats.sessions")}`, color: "text-primary" },
-    { icon: TrendingUp, label: t("stats.wordsThisWeek"), value: `0 ${t("stats.words")}`, color: "text-primary" },
-    { icon: Lightbulb, label: t("stats.savedIdeas"), value: `0 ${t("stats.items")}`, color: "text-amber-500" },
+    { icon: Flame, label: t("stats.streak"), value: `${streak} ${t("stats.days")}`, color: "text-orange-500" },
+    { icon: PenLine, label: t("stats.thisWeek"), value: `${weekStats?.weekSessions || 0} ${t("stats.sessions")}`, color: "text-primary" },
+    { icon: TrendingUp, label: t("stats.wordsThisWeek"), value: `${weekStats?.weekWords || 0} ${t("stats.words")}`, color: "text-primary" },
+    { icon: Lightbulb, label: t("stats.savedIdeas"), value: `${ideaCount?.count || 0} ${t("stats.items")}`, color: "text-amber-500" },
   ];
 
   return (

@@ -72,12 +72,17 @@ export function PracticeFlow({
   const [isMockFeedback, setIsMockFeedback] = useState(false);
   const [comparison, setComparison] = useState<CompareRevisionFeedback | null>(null);
   const [loading, setLoading] = useState(false);
+  const [savedSession, setSavedSession] = useState(false); // 是否已保存训练记录
+  const [startTime, setStartTime] = useState<number | null>(null); // 开始写作时间
 
   // 最低字数要求
   const minWords = 50;
 
   // ---- 阶段 1 → 阶段 2：开始写作 ----
-  const startWriting = () => setStage("writing");
+  const startWriting = () => {
+    setStartTime(Date.now());
+    setStage("writing");
+  };
 
   // ---- 获取用户的 AI 配置 ----
   function getAIConfig(): AISettings | null {
@@ -135,6 +140,11 @@ export function PracticeFlow({
     setLoading(true);
     setStage("complete");
 
+    // 计算写作时长（秒）
+    const durationSeconds = startTime
+      ? Math.round((Date.now() - startTime) / 1000)
+      : null;
+
     try {
       const aiConfig = getAIConfig();
       const res = await fetch("/api/ai/compare-revision", {
@@ -147,13 +157,63 @@ export function PracticeFlow({
 
       const data = await res.json();
       setComparison(data);
+
+      // ---- 自动保存训练记录到数据库 ----
+      // 开发模式（isDev）不保存，因为没有登录用户
+      if (!isDev && !savedSession) {
+        try {
+          const saveRes = await fetch("/api/practice/sessions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              practiceType,
+              prompt,
+              rawText,
+              revisedText,
+              wordCount: countWords(revisedText),
+              durationSeconds,
+              feedback,
+              comparison: data,  // 直接用刚拿到的 data
+            }),
+          });
+          if (saveRes.ok) {
+            setSavedSession(true);
+          }
+        } catch {
+          console.error("Failed to save practice session");
+        }
+      }
     } catch {
       // 即使对比失败，也展示 diff
       toast.error(t("errorCompareFailed"));
+
+      // 对比失败也保存训练记录（不包含 comparison）
+      if (!isDev && !savedSession) {
+        try {
+          const saveRes = await fetch("/api/practice/sessions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              practiceType,
+              prompt,
+              rawText,
+              revisedText,
+              wordCount: countWords(revisedText),
+              durationSeconds,
+              feedback,
+            }),
+          });
+          if (saveRes.ok) {
+            setSavedSession(true);
+          }
+        } catch {
+          console.error("Failed to save practice session");
+        }
+      }
     } finally {
       setLoading(false);
     }
-  }, [rawText, revisedText, locale, t]);
+  }, [rawText, revisedText, locale, t, isDev, savedSession, practiceType, prompt, feedback, startTime]);
 
   // ---- 重新开始 ----
   const restart = () => {
@@ -162,6 +222,8 @@ export function PracticeFlow({
     setRevisedText("");
     setFeedback(null);
     setComparison(null);
+    setSavedSession(false);
+    setStartTime(null);
   };
 
   // ---- 渲染各阶段 ----

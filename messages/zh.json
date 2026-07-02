@@ -152,6 +152,17 @@
     "noIdeas": "还没有保存的素材。完成一次训练后开始收集。",
     "noDrafts": "还没有草稿。去草稿实验室开始写作。"
   },
+  "progress": {
+    "title": "写作进度",
+    "streakDays": "连续天数",
+    "totalSessions": "总训练次数",
+    "totalWords": "总字数",
+    "avgWords": "平均每次字数",
+    "history": "训练历史",
+    "noSessions": "还没有训练记录。开始你的第一次训练吧！",
+    "startFirst": "开始第一次训练",
+    "words": "字"
+  },
   "practice": {
     "todaysPractice": "今日训练",
     "types": {
