@@ -11,6 +11,8 @@ import { auth } from "@/lib/auth/auth";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { AISettingsForm } from "@/components/settings/AISettingsForm";
+import { ProfileSettings } from "@/components/settings/ProfileSettings";
+import { DataManagement } from "@/components/settings/DataManagement";
 import { setRequestLocale, getLocale, getTranslations } from "next-intl/server";
 
 // 设置页面 SEO（根据语言切换）
@@ -68,10 +70,11 @@ export default async function SettingsPage({
         {/* AI 设置 */}
         <AISettingsForm />
 
-        {/* 后续功能占位 */}
-        <div className="rounded-lg border border-dashed border-border p-6 text-center">
-          <p className="text-sm text-muted-foreground">{t("comingSoon")}</p>
-        </div>
+        {/* 写作画像设置 */}
+        <ProfileSettings />
+
+        {/* 数据管理（导出/删除账号） */}
+        <DataManagement />
       </div>
     </AppShell>
   );
