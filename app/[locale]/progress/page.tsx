@@ -82,9 +82,9 @@ export default async function ProgressPage({
   // 获取统计数据
   const [stats] = await db
     .select({
-      totalSessions: sql<number>`count(*)::int`,
-      totalWords: sql<number>`coalesce(sum(${practiceSessions.wordCount}), 0)::int`,
-      avgWords: sql<number>`coalesce(avg(${practiceSessions.wordCount}), 0)::int`,
+      totalSessions: sql<number>`cast(count(*) as integer)`,
+      totalWords: sql<number>`coalesce(cast(sum(${practiceSessions.wordCount}) as integer), 0)`,
+      avgWords: sql<number>`coalesce(cast(avg(${practiceSessions.wordCount}) as integer), 0)`,
     })
     .from(practiceSessions)
     .where(eq(practiceSessions.userId, session.user.id));
@@ -92,12 +92,12 @@ export default async function ProgressPage({
   // 获取最近 7 天的连续训练天数
   const recentSessions = await db
     .select({
-      date: sql<string>`date(${practiceSessions.createdAt})`,
+      date: sql<string>`date(${practiceSessions.createdAt} / 1000, 'unixepoch')`,
     })
     .from(practiceSessions)
     .where(eq(practiceSessions.userId, session.user.id))
-    .groupBy(sql`date(${practiceSessions.createdAt})`)
-    .orderBy(desc(sql`date(${practiceSessions.createdAt})`))
+    .groupBy(sql`date(${practiceSessions.createdAt} / 1000, 'unixepoch')`)
+    .orderBy(desc(sql`date(${practiceSessions.createdAt} / 1000, 'unixepoch')`))
     .limit(30);
 
   // 计算连续训练天数

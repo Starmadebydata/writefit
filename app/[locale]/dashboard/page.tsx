@@ -85,18 +85,18 @@ export default async function DashboardPage({
 
   const [weekStats] = await db
     .select({
-      weekSessions: sql<number>`count(*)::int`,
-      weekWords: sql<number>`coalesce(sum(${practiceSessions.wordCount}), 0)::int`,
+      weekSessions: sql<number>`cast(count(*) as integer)`,
+      weekWords: sql<number>`coalesce(cast(sum(${practiceSessions.wordCount}) as integer), 0)`,
     })
     .from(practiceSessions)
-    .where(sql`${practiceSessions.userId} = ${session.user.id} AND ${practiceSessions.createdAt} >= ${weekStart}`);
+    .where(sql`${practiceSessions.userId} = ${session.user.id} AND ${practiceSessions.createdAt} >= ${weekStart.getTime()}`);
 
   // 连续训练天数
   const practiceDates = await db
-    .select({ date: sql<string>`date(${practiceSessions.createdAt})` })
+    .select({ date: sql<string>`date(${practiceSessions.createdAt} / 1000, 'unixepoch')` })
     .from(practiceSessions)
     .where(eq(practiceSessions.userId, session.user.id))
-    .groupBy(sql`date(${practiceSessions.createdAt})`)
+    .groupBy(sql`date(${practiceSessions.createdAt} / 1000, 'unixepoch')`)
     .limit(30);
 
   let streak = 0;
@@ -118,7 +118,7 @@ export default async function DashboardPage({
 
   // 保存的素材数
   const [ideaCount] = await db
-    .select({ count: sql<number>`count(*)::int` })
+    .select({ count: sql<number>`cast(count(*) as integer)` })
     .from(ideas)
     .where(eq(ideas.userId, session.user.id));
 
