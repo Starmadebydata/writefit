@@ -3,18 +3,14 @@
 // ====================================================================
 // 合并两个功能：
 // 1. next-intl 的语言路由（检测 locale，重写 URL）
-// 2. Auth.js 的认证保护（未登录用户不能访问私有页面）
+// 2. 认证保护（未登录用户不能访问私有页面）
 //
-// 工作流程：
-// 1. 请求进来 → next-intl 中间件处理语言路由
-// 2. 然后检查是否是需要保护的页面
-// 3. 未登录 → 跳转到登录页
-// 4. 已登录但访问登录页 → 跳转到 Dashboard
+// 重要：不使用 NextAuth 的 auth() 包装器，因为它和 next-intl 中间件
+// 会有冲突。改为用 getToken 直接检查 JWT token。
 // ====================================================================
 
 import createMiddleware from "next-intl/middleware";
-import { auth } from "@/lib/auth/auth";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { routing } from "@/i18n/routing";
 
 // next-intl 的语言路由中间件
@@ -31,12 +27,17 @@ const protectedPaths = [
   "/settings",
 ];
 
-export default auth((req) => {
+export async function middleware(req: NextRequest) {
   // 先让 next-intl 处理语言路由
   const intlResponse = intlMiddleware(req);
 
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+
+  // 检查 JWT token（直接读 cookie，不用 auth() 包装器）
+  const sessionToken =
+    req.cookies.get("authjs.session-token")?.value ||
+    req.cookies.get("__Secure-authjs.session-token")?.value;
+  const isLoggedIn = !!sessionToken;
 
   // 获取不含 locale 前缀的路径
   // 例如 /zh/dashboard → /dashboard，/dashboard → /dashboard
@@ -81,7 +82,7 @@ export default auth((req) => {
 
   // 返回 next-intl 的响应（处理语言路由）
   return intlResponse;
-});
+}
 
 // 中间件匹配的路径
 export const config = {

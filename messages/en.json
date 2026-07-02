@@ -162,6 +162,7 @@
       "title_drill": "Title Drill",
       "opening_drill": "Opening Drill"
     },
+    "promptPreview": "Was there a moment today when your thinking was clear but your writing came out vague?",
     "flow": {
       "stages": {
         "prompt": "Prompt",

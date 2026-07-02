@@ -97,7 +97,7 @@ export default async function DashboardPage({
               <p className="text-sm text-muted-foreground mb-1">{t("todaysPractice")}</p>
               <CardTitle className="text-xl">{tPractice("types.free_writing")}</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
-                今天有没有一个时刻，你脑子里很清楚，但写出来很模糊？
+                {tPractice("promptPreview")}
               </p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">

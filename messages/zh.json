@@ -162,6 +162,7 @@
       "title_drill": "标题训练",
       "opening_drill": "开头训练"
     },
+    "promptPreview": "今天有没有一个时刻，你脑子里很清楚，但写出来很模糊？",
     "flow": {
       "stages": {
         "prompt": "题目",
