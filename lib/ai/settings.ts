@@ -24,6 +24,11 @@ export interface AIProvider {
   apiBaseUrl: string; // 默认 API 地址
   models: string[]; // 可选模型列表
   website: string; // 获取 API Key 的网址
+  defaultModel: string; // 默认选中的模型
+  defaultTemperature: number; // 推荐温度
+  defaultMaxTokens: number; // 推荐最大 token 数
+  description: string; // 供应商英文简介
+  descriptionZh: string; // 供应商中文简介
 }
 
 // 用户的 AI 设置
@@ -37,28 +42,121 @@ export interface AISettings {
 }
 
 // ---- 预设服务商列表 ----
+// 所有供应商都兼容 OpenAI API 格式，用户只需填 API Key 即可使用
 
 export const AI_PROVIDERS: AIProvider[] = [
   {
     id: "deepseek",
     name: "DeepSeek",
     apiBaseUrl: "https://api.deepseek.com/v1",
-    models: ["deepseek-chat", "deepseek-reasoner"],
+    models: ["deepseek-chat", "deepseek-reasoner", "deepseek-v4-flash", "deepseek-v4-pro"],
     website: "https://platform.deepseek.com/api_keys",
+    defaultModel: "deepseek-chat",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Great value, strong Chinese understanding, ideal for writing practice",
+    descriptionZh: "性价比高，中文理解能力强，适合写作训练",
+  },
+  {
+    id: "zai",
+    name: "Z.ai (GLM)",
+    apiBaseUrl: "https://api.z.ai/api/paas/v4",
+    models: ["glm-5.2", "glm-4.7", "glm-4.6", "glm-4-plus", "glm-4-flash", "glm-4-air"],
+    website: "https://z.ai/manage-apikey/apikey-list",
+    defaultModel: "glm-4.6",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Balanced Chinese and English, fast response",
+    descriptionZh: "智谱 AI，中英文能力均衡，响应速度快",
+  },
+  {
+    id: "kimi-code",
+    name: "Kimi Code",
+    apiBaseUrl: "https://api.kimi.com/coding/v1",
+    models: ["kimi-for-coding"],
+    website: "https://code.kimi.com/console",
+    defaultModel: "kimi-for-coding",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Kimi coding-focused, great for code-related tasks",
+    descriptionZh: "Kimi 编程专用，适合代码相关任务",
+  },
+  {
+    id: "moonshot",
+    name: "Moonshot (Kimi)",
+    apiBaseUrl: "https://api.moonshot.cn/v1",
+    models: ["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k", "kimi-k2-0905"],
+    website: "https://platform.moonshot.cn/console/api-keys",
+    defaultModel: "moonshot-v1-32k",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Moonshot Kimi platform, strong long-text processing",
+    descriptionZh: "月之暗面 Kimi 开放平台，长文本处理能力强",
   },
   {
     id: "openai",
     name: "OpenAI",
     apiBaseUrl: "https://api.openai.com/v1",
-    models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"],
+    models: ["gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "o3-mini", "o4-mini"],
     website: "https://platform.openai.com/api-keys",
+    defaultModel: "gpt-4o-mini",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Industry benchmark, strong English writing, higher cost",
+    descriptionZh: "业界标杆，英文写作能力强，价格较高",
   },
   {
-    id: "moonshot",
-    name: "Moonshot",
-    apiBaseUrl: "https://api.moonshot.cn/v1",
-    models: ["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"],
-    website: "https://platform.moonshot.cn/console/api-keys",
+    id: "groq",
+    name: "Groq",
+    apiBaseUrl: "https://api.groq.com/openai/v1",
+    models: ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "openai/gpt-oss-120b", "openai/gpt-oss-20b"],
+    website: "https://console.groq.com/keys",
+    defaultModel: "llama-3.3-70b-versatile",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Ultra-fast inference, generous free tier, great for iteration",
+    descriptionZh: "极速推理，免费额度充足，适合快速迭代",
+  },
+  {
+    id: "siliconflow",
+    name: "SiliconFlow",
+    apiBaseUrl: "https://api.siliconflow.cn/v1",
+    models: [
+      "deepseek-ai/DeepSeek-V3",
+      "deepseek-ai/DeepSeek-R1",
+      "Qwen/Qwen3-32B",
+      "zai-org/GLM-4.6",
+    ],
+    website: "https://cloud.siliconflow.cn/account/ak",
+    defaultModel: "deepseek-ai/DeepSeek-V3",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Aggregator platform, one key for many models, some free",
+    descriptionZh: "聚合平台，一个 Key 调用多个模型，部分免费",
+  },
+  {
+    id: "qwen",
+    name: "Qwen (Alibaba)",
+    apiBaseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    models: ["qwen-plus", "qwen-turbo", "qwen-max", "qwen3-235b-a22b", "qwen3-32b", "qwq-32b"],
+    website: "https://dashscope.console.aliyun.com/apiKey",
+    defaultModel: "qwen-plus",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Alibaba Qwen, excellent Chinese, stable in China",
+    descriptionZh: "阿里通义千问，中文能力优秀，国内访问稳定",
+  },
+  {
+    id: "ollama",
+    name: "Ollama (Local)",
+    apiBaseUrl: "http://localhost:11434/v1",
+    models: ["llama3.2", "qwen2.5", "deepseek-r1"],
+    website: "https://ollama.com/download",
+    defaultModel: "llama3.2",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Run models locally, completely free, no internet needed",
+    descriptionZh: "本地运行模型，完全免费，无需联网，需要先安装 Ollama",
   },
   {
     id: "custom",
@@ -66,6 +164,11 @@ export const AI_PROVIDERS: AIProvider[] = [
     apiBaseUrl: "",
     models: [],
     website: "",
+    defaultModel: "",
+    defaultTemperature: 0.3,
+    defaultMaxTokens: 2000,
+    description: "Any OpenAI-compatible API service",
+    descriptionZh: "自定义任何兼容 OpenAI 格式的 API 服务",
   },
 ];
 

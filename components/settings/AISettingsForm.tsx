@@ -14,7 +14,7 @@
 // ====================================================================
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -69,9 +69,9 @@ function initSettings() {
     provider: defaultProvider.id,
     apiBaseUrl: defaultProvider.apiBaseUrl,
     apiKey: "",
-    model: defaultProvider.models[0],
-    temperature: 0.3,
-    maxTokens: 2000,
+    model: defaultProvider.defaultModel || defaultProvider.models[0],
+    temperature: defaultProvider.defaultTemperature,
+    maxTokens: defaultProvider.defaultMaxTokens,
     isConfigured: false,
   };
 }
@@ -79,6 +79,7 @@ function initSettings() {
 export function AISettingsForm() {
   // ---- 状态管理（用 lazy initializer 从 localStorage 初始化） ----
   const t = useTranslations("settings.ai");
+  const locale = useLocale();
   const initial = initSettings();
   const [provider, setProvider] = useState(initial.provider);
   const [apiBaseUrl, setApiBaseUrl] = useState(initial.apiBaseUrl);
@@ -91,15 +92,24 @@ export function AISettingsForm() {
   const [isConfigured, setIsConfigured] = useState(initial.isConfigured);
   const [showApiKey, setShowApiKey] = useState(false);
 
-  // ---- 选择服务商时自动填充默认值 ----
+  // ---- 选择服务商时自动填充所有默认值（除 API Key 外） ----
   function handleProviderChange(providerId: string) {
     setProvider(providerId);
     const found = AI_PROVIDERS.find((p) => p.id === providerId);
     if (found) {
+      // 自动补全 API 地址
       setApiBaseUrl(found.apiBaseUrl);
-      if (found.models.length > 0) {
+      // 自动补全模型（用默认模型）
+      if (found.defaultModel) {
+        setModel(found.defaultModel);
+      } else if (found.models.length > 0) {
         setModel(found.models[0]);
+      } else {
+        setModel("");
       }
+      // 自动补全温度和最大 token 数
+      setTemperature(found.defaultTemperature);
+      setMaxTokens(found.defaultMaxTokens);
     }
   }
 
@@ -184,7 +194,9 @@ export function AISettingsForm() {
     const defaultProvider = AI_PROVIDERS[0];
     setProvider(defaultProvider.id);
     setApiBaseUrl(defaultProvider.apiBaseUrl);
-    setModel(defaultProvider.models[0]);
+    setModel(defaultProvider.defaultModel || defaultProvider.models[0]);
+    setTemperature(defaultProvider.defaultTemperature);
+    setMaxTokens(defaultProvider.defaultMaxTokens);
     toast.success(t("cleared"));
   }
 
@@ -242,9 +254,11 @@ export function AISettingsForm() {
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground">
-              {t("providerDesc")}
-            </p>
+            {currentProvider && (currentProvider.description || currentProvider.descriptionZh) && (
+              <p className="text-xs text-muted-foreground">
+                {locale === "zh" ? currentProvider.descriptionZh : currentProvider.description}
+              </p>
+            )}
           </div>
 
           {/* 2. API 地址 */}
