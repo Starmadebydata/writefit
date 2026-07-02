@@ -1,9 +1,15 @@
+// ====================================================================
+// 草稿实验室页面
+// ====================================================================
+// 用户管理长文草稿，支持版本保存、AI 诊断、反 AI 腔检测、Markdown 导出
+// 实际功能在 DraftLab 客户端组件中实现
+// ====================================================================
+
 import type { Metadata } from "next";
 import { auth } from "@/lib/auth/auth";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Construction } from "lucide-react";
+import { DraftLab } from "@/components/drafts/DraftLab";
 import { setRequestLocale, getLocale, getTranslations } from "next-intl/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Page({
+export default async function DraftsPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
@@ -40,21 +46,11 @@ export default async function Page({
     redirect("/auth/login");
   }
 
-  const t = await getTranslations("common");
+  const t = await getTranslations("drafts");
 
   return (
-    <AppShell title={t("comingSoon")} user={session.user}>
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <Construction className="h-6 w-6 text-primary" />
-            <CardTitle>{t("comingSoon")}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">{t("comingSoonDesc")}</p>
-        </CardContent>
-      </Card>
+    <AppShell title={t("title")} user={session.user}>
+      <DraftLab />
     </AppShell>
   );
 }
