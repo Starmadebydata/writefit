@@ -161,7 +161,27 @@
     "history": "训练历史",
     "noSessions": "还没有训练记录。开始你的第一次训练吧！",
     "startFirst": "开始第一次训练",
-    "words": "字"
+    "words": "字",
+    "calendar": {
+      "title": "训练日历",
+      "subtitle": "最近 12 周",
+      "today": "今天",
+      "less": "少",
+      "more": "多",
+      "noPractice": "未训练",
+      "practiced": "{count} 次训练"
+    },
+    "trend": {
+      "title": "字数趋势",
+      "subtitle": "最近 30 天每日字数",
+      "words": "字",
+      "noData": "暂无数据"
+    },
+    "distribution": {
+      "title": "训练类型分布",
+      "subtitle": "你的训练类型占比",
+      "noData": "暂无训练数据"
+    }
   },
   "practice": {
     "todaysPractice": "今日训练",
@@ -290,6 +310,112 @@
       "savingBtn": "保存中...",
       "testingBtn": "测试中...",
       "currentUsing": "当前使用 {provider} / {model}"
+    },
+    "profile": {
+      "title": "写作画像",
+      "subtitle": "更新你的写作目标和偏好。",
+      "goalsLabel": "写作目标",
+      "topicsLabel": "偏好主题",
+      "problemsLabel": "写作问题",
+      "durationLabel": "每日训练时长",
+      "duration10": "10 分钟",
+      "duration15": "15 分钟",
+      "duration30": "30 分钟",
+      "bannedLabel": "禁用词",
+      "bannedPlaceholder": "输入一个词或短语，按回车添加...",
+      "bannedDesc": "你想在写作中避免使用的词或短语。AI 会在检测时标记它们。",
+      "save": "保存画像",
+      "saving": "保存中...",
+      "saved": "画像已保存",
+      "saveError": "保存画像失败",
+      "loadError": "加载画像失败"
+    },
+    "data": {
+      "title": "数据管理",
+      "subtitle": "导出你的数据或删除账号。",
+      "exportTitle": "导出数据",
+      "exportDesc": "下载你所有的写作数据为 JSON 文件。",
+      "exportBtn": "导出我的数据",
+      "exporting": "导出中...",
+      "exportError": "导出失败，请重试",
+      "deleteTitle": "删除账号",
+      "deleteDesc": "永久删除你的账号和所有相关数据。此操作不可撤销。",
+      "deleteBtn": "删除我的账号",
+      "deleting": "删除中...",
+      "deleteError": "删除账号失败",
+      "confirmDelete": "你确定要删除吗？",
+      "confirmDeleteDesc": "这将永久删除你的账号、所有草稿、训练记录、素材和设置。此操作不可撤销。输入 DELETE 确认。",
+      "confirmPlaceholder": "输入 DELETE 确认",
+      "confirmBtn": "永久删除",
+      "cancel": "取消"
+    }
+  },
+  "onboarding": {
+    "title": "设置你的写作训练",
+    "subtitle": "回答几个问题，定制你的每日训练。大约 1 分钟。",
+    "step": "第 {current} / {total} 步",
+    "next": "下一步",
+    "back": "上一步",
+    "finish": "开始训练",
+    "saving": "保存中...",
+    "selectAtLeastOne": "至少选择一个",
+    "selectOne": "请选择一个",
+    "saveError": "保存失败，请重试",
+    "steps": {
+      "goals": {
+        "title": "你的写作目标是什么？",
+        "desc": "可以多选。我们会根据目标定制你的每日题目。"
+      },
+      "topics": {
+        "title": "你主要写什么主题？",
+        "desc": "选择你的主要主题。之后可以随时修改。"
+      },
+      "problems": {
+        "title": "什么在阻碍你的写作？",
+        "desc": "诚实一点。你的 AI 教练会针对这些问题。"
+      },
+      "duration": {
+        "title": "每天训练多久？",
+        "desc": "选择适合你节奏的时长。之后可以调整。"
+      }
+    },
+    "goals": {
+      "restore_writing": "恢复写作能力",
+      "reduce_ai_voice": "减少 AI 腔",
+      "write_blog": "写博客",
+      "write_newsletter": "写 Newsletter",
+      "write_tech": "写技术文章",
+      "write_product": "写产品日志",
+      "improve_english": "提升英文写作",
+      "build_brand": "建立个人品牌"
+    },
+    "topics": {
+      "ai": "AI",
+      "product": "产品",
+      "indie_hacking": "独立开发",
+      "operations": "运营",
+      "tech": "技术",
+      "business": "商业",
+      "personal_growth": "个人成长",
+      "reviews": "影视书评",
+      "other": "其他"
+    },
+    "problems": {
+      "hard_to_start": "下笔困难",
+      "vague_content": "内容空泛",
+      "messy_structure": "结构混乱",
+      "stiff_sentences": "句子僵硬",
+      "no_voice": "缺少个人声音",
+      "ai_dependent": "过度依赖 AI",
+      "inconsistent": "无法持续"
+    },
+    "duration": {
+      "10": "10 分钟",
+      "15": "15 分钟",
+      "30": "30 分钟",
+      "lightDesc": "轻松",
+      "balancedDesc": "平衡",
+      "deepDesc": "深入"
     }
   },
   "aiSetup": {
@@ -297,11 +423,183 @@
     "title": "配置你的 AI 写作教练",
     "desc": "WriteFit 使用你自己的 AI API Key 来提供写作反馈。你的 Key 安全存储，仅用于你自己的请求。"
   },
+  "ideas": {
+    "title": "素材库",
+    "subtitle": "你保存的句子、观察、标题和更多素材。",
+    "search": "搜索素材...",
+    "newIdea": "新建素材",
+    "filterAll": "全部",
+    "filterFavorite": "收藏",
+    "empty": "还没有素材。从训练中保存好句子，或在这里新建。",
+    "emptyFiltered": "没有匹配的素材。",
+    "totalCount": "{count} 条素材",
+    "types": {
+      "observation": "观察",
+      "sentence": "句子",
+      "title": "标题",
+      "claim": "判断",
+      "example": "例子",
+      "quote": "引用",
+      "structure": "结构"
+    },
+    "form": {
+      "newTitle": "新建素材",
+      "editTitle": "编辑素材",
+      "type": "类型",
+      "content": "内容",
+      "contentPlaceholder": "写下你想保存的句子、观察或想法...",
+      "tags": "标签（可选，逗号分隔）",
+      "tagsPlaceholder": "如：开头、比喻",
+      "save": "保存",
+      "cancel": "取消",
+      "errorContent": "内容不能为空",
+      "errorType": "请选择类型"
+    },
+    "actions": {
+      "edit": "编辑",
+      "delete": "删除",
+      "favorite": "收藏",
+      "unfavorite": "取消收藏",
+      "confirmDelete": "确定删除这条素材吗？",
+      "confirmDeleteDesc": "删除后无法恢复。"
+    },
+    "toast": {
+      "saved": "素材已保存",
+      "updated": "素材已更新",
+      "deleted": "素材已删除",
+      "favorited": "已加入收藏",
+      "unfavorited": "已取消收藏",
+      "errorSave": "保存失败，请重试",
+      "errorUpdate": "更新失败，请重试",
+      "errorDelete": "删除失败，请重试",
+      "errorLoad": "加载素材失败"
+    }
+  },
   "dev": {
     "title": "开发测试",
     "aiSettings": "AI 设置",
     "backHome": "返回首页",
     "devMode": "这是开发测试模式",
     "desc": "这个模式允许你在不登录的情况下测试训练流程。训练数据不会保存到数据库。"
+  },
+  "sentenceGym": {
+    "title": "句子训练",
+    "subtitle": "针对单个句子或段落的专项训练。AI 找出问题——你来修改。",
+    "inputLabel": "你的句子",
+    "inputPlaceholder": "粘贴一个你想改进的句子或短段落...",
+    "analyze": "分析",
+    "analyzing": "分析中...",
+    "reset": "重置",
+    "tryAnother": "换一句试试",
+    "revisionLabel": "你的修改",
+    "revisionPlaceholder": "根据下面的反馈重写这个句子...",
+    "saveIdea": "保存到素材库",
+    "empty": "在上方粘贴一个句子，点击分析即可开始。",
+    "mockNotice": "这是模拟反馈。在设置中配置 AI API Key 后可获得真实分析。",
+    "feedback": {
+      "title": "AI 分析",
+      "emptyWords": "空泛词",
+      "deleteCandidates": "可删除部分",
+      "abstractWords": "抽象词",
+      "missingSpecifics": "缺少的具体细节",
+      "rhythmProblem": "句子节奏问题",
+      "revisionTask": "你的修改任务",
+      "exampleDirection": "修改方向示例",
+      "noIssues": "没有发现明显问题。试试更长或更复杂的句子。"
+    },
+    "toast": {
+      "errorAnalyze": "分析失败，请重试",
+      "errorSave": "保存失败，请重试",
+      "saved": "已保存到素材库"
+    }
+  },
+  "drafts": {
+    "title": "草稿实验室",
+    "subtitle": "写长文。跟踪版本。发布前获得 AI 反馈。",
+    "newDraft": "新建草稿",
+    "search": "搜索草稿...",
+    "empty": "还没有草稿。新建一个开始写作吧。",
+    "emptyFiltered": "没有匹配的草稿。",
+    "totalCount": "{count} 篇草稿",
+    "backToList": "返回草稿列表",
+    "statuses": {
+      "idea": "想法",
+      "outline": "大纲",
+      "drafting": "写作中",
+      "revising": "修改中",
+      "ready": "已完成",
+      "published": "已发布"
+    },
+    "form": {
+      "newTitle": "新建草稿",
+      "editTitle": "编辑草稿",
+      "titleLabel": "标题",
+      "titlePlaceholder": "给你的草稿起个标题...",
+      "topicLabel": "主题（可选）",
+      "topicPlaceholder": "这篇文章写什么？",
+      "contentLabel": "内容",
+      "contentPlaceholder": "在这里开始写你的草稿...",
+      "statusLabel": "状态",
+      "save": "保存",
+      "cancel": "取消",
+      "create": "创建草稿",
+      "errorTitle": "标题不能为空"
+    },
+    "editor": {
+      "title": "编辑器",
+      "saveVersion": "保存版本",
+      "saving": "保存中...",
+      "saved": "版本已保存",
+      "wordCount": "{count} 字",
+      "lastSaved": "上次保存：{time}",
+      "unsaved": "有未保存的修改",
+      "aiDiagnose": "AI 诊断",
+      "antiAiVoice": "反 AI 腔",
+      "diagnosing": "分析中...",
+      "exportMarkdown": "导出 Markdown",
+      "versions": "版本历史",
+      "versionLabel": "版本 {number}",
+      "restore": "恢复",
+      "currentVersion": "当前",
+      "noVersions": "还没有版本。"
+    },
+    "feedback": {
+      "aiDiagnoseTitle": "AI 诊断",
+      "antiAiVoiceTitle": "反 AI 腔检测",
+      "mockNotice": "这是模拟反馈。在设置中配置 AI API Key 后可获得真实分析。",
+      "scores": {
+        "clarity": "清晰度",
+        "specificity": "具体性",
+        "voice": "个人声音",
+        "aiLike": "AI 腔"
+      },
+      "topIssues": "主要问题",
+      "bestSentence": "最好的句子",
+      "mostAiLike": "最像 AI 的句子",
+      "nextGoal": "下一步目标",
+      "aiVoiceScore": "AI 腔分数",
+      "aiVoiceIssues": "AI 腔问题",
+      "revisionTask": "修改任务"
+    },
+    "actions": {
+      "edit": "编辑",
+      "delete": "删除",
+      "confirmDelete": "确定删除这篇草稿吗？",
+      "confirmDeleteDesc": "所有版本都会被删除，无法恢复。"
+    },
+    "toast": {
+      "created": "草稿已创建",
+      "updated": "草稿已更新",
+      "deleted": "草稿已删除",
+      "versionSaved": "版本已保存",
+      "exported": "Markdown 已导出",
+      "errorCreate": "创建草稿失败",
+      "errorUpdate": "更新草稿失败",
+      "errorDelete": "删除草稿失败",
+      "errorSave": "保存版本失败",
+      "errorLoad": "加载草稿失败",
+      "errorDiagnose": "AI 诊断失败，请重试",
+      "errorExport": "导出失败，请重试"
+    }
   }
 }

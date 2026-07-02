@@ -161,7 +161,27 @@
     "history": "Practice History",
     "noSessions": "No practice sessions yet. Start your first practice!",
     "startFirst": "Start your first practice",
-    "words": "words"
+    "words": "words",
+    "calendar": {
+      "title": "Practice Calendar",
+      "subtitle": "Last 12 weeks",
+      "today": "Today",
+      "less": "Less",
+      "more": "More",
+      "noPractice": "No practice",
+      "practiced": "{count} sessions"
+    },
+    "trend": {
+      "title": "Word Count Trend",
+      "subtitle": "Daily word count over last 30 days",
+      "words": "words",
+      "noData": "No data yet"
+    },
+    "distribution": {
+      "title": "Practice Type Distribution",
+      "subtitle": "How your practice types break down",
+      "noData": "No practice data yet"
+    }
   },
   "practice": {
     "todaysPractice": "Today's Practice",
@@ -290,6 +310,112 @@
       "savingBtn": "Saving...",
       "testingBtn": "Testing...",
       "currentUsing": "Currently using {provider} / {model}"
+    },
+    "profile": {
+      "title": "Writing Profile",
+      "subtitle": "Update your writing goals and preferences.",
+      "goalsLabel": "Writing Goals",
+      "topicsLabel": "Preferred Topics",
+      "problemsLabel": "Writing Problems",
+      "durationLabel": "Daily Practice Duration",
+      "duration10": "10 minutes",
+      "duration15": "15 minutes",
+      "duration30": "30 minutes",
+      "bannedLabel": "Banned Phrases",
+      "bannedPlaceholder": "Add a phrase and press Enter...",
+      "bannedDesc": "Words or phrases you want to avoid in your writing. AI will flag them.",
+      "save": "Save Profile",
+      "saving": "Saving...",
+      "saved": "Profile saved",
+      "saveError": "Failed to save profile",
+      "loadError": "Failed to load profile"
+    },
+    "data": {
+      "title": "Data Management",
+      "subtitle": "Export your data or delete your account.",
+      "exportTitle": "Export Data",
+      "exportDesc": "Download all your writing data as a JSON file.",
+      "exportBtn": "Export My Data",
+      "exporting": "Exporting...",
+      "exportError": "Export failed, please try again",
+      "deleteTitle": "Delete Account",
+      "deleteDesc": "Permanently delete your account and all associated data. This cannot be undone.",
+      "deleteBtn": "Delete My Account",
+      "deleting": "Deleting...",
+      "deleteError": "Failed to delete account",
+      "confirmDelete": "Are you absolutely sure?",
+      "confirmDeleteDesc": "This will permanently delete your account, all drafts, practice sessions, ideas, and settings. This action cannot be undone. Type DELETE to confirm.",
+      "confirmPlaceholder": "Type DELETE to confirm",
+      "confirmBtn": "Permanently Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "onboarding": {
+    "title": "Set Up Your Writing Practice",
+    "subtitle": "A few questions to tailor your daily training. Takes about 1 minute.",
+    "step": "Step {current} of {total}",
+    "next": "Next",
+    "back": "Back",
+    "finish": "Start Training",
+    "saving": "Saving...",
+    "selectAtLeastOne": "Please select at least one",
+    "selectOne": "Please select one",
+    "saveError": "Failed to save, please try again",
+    "steps": {
+      "goals": {
+        "title": "What are your writing goals?",
+        "desc": "Pick all that apply. We'll tailor your daily prompts to these."
+      },
+      "topics": {
+        "title": "What do you mainly write about?",
+        "desc": "Choose your main topics. You can change these later."
+      },
+      "problems": {
+        "title": "What's holding your writing back?",
+        "desc": "Be honest. Your AI coach will focus on these."
+      },
+      "duration": {
+        "title": "How long is your daily practice?",
+        "desc": "Pick the pace that fits your day. You can adjust it later."
+      }
+    },
+    "goals": {
+      "restore_writing": "Restore my writing ability",
+      "reduce_ai_voice": "Reduce AI-sounding text",
+      "write_blog": "Write a blog",
+      "write_newsletter": "Write a newsletter",
+      "write_tech": "Write technical articles",
+      "write_product": "Write product updates",
+      "improve_english": "Improve my English writing",
+      "build_brand": "Build a personal brand"
+    },
+    "topics": {
+      "ai": "AI",
+      "product": "Product",
+      "indie_hacking": "Indie hacking",
+      "operations": "Operations",
+      "tech": "Tech",
+      "business": "Business",
+      "personal_growth": "Personal growth",
+      "reviews": "Reviews (film / book / TV)",
+      "other": "Other"
+    },
+    "problems": {
+      "hard_to_start": "Hard to get started",
+      "vague_content": "Content feels empty",
+      "messy_structure": "Messy structure",
+      "stiff_sentences": "Stiff sentences",
+      "no_voice": "Lack of personal voice",
+      "ai_dependent": "Over-reliant on AI",
+      "inconsistent": "Can't stay consistent"
+    },
+    "duration": {
+      "10": "10 minutes",
+      "15": "15 minutes",
+      "30": "30 minutes",
+      "lightDesc": "Light",
+      "balancedDesc": "Balanced",
+      "deepDesc": "Deep"
     }
   },
   "aiSetup": {
@@ -297,11 +423,183 @@
     "title": "Configure your AI writing coach",
     "desc": "WriteFit uses your own AI API key to provide writing feedback. Your key is stored securely and only used for your own requests."
   },
+  "ideas": {
+    "title": "Idea Bank",
+    "subtitle": "Your saved sentences, observations, titles, and more.",
+    "search": "Search ideas...",
+    "newIdea": "New Idea",
+    "filterAll": "All",
+    "filterFavorite": "Favorites",
+    "empty": "No ideas yet. Save good sentences from your practice, or add one here.",
+    "emptyFiltered": "No ideas match your filters.",
+    "totalCount": "{count} ideas",
+    "types": {
+      "observation": "Observation",
+      "sentence": "Sentence",
+      "title": "Title",
+      "claim": "Claim",
+      "example": "Example",
+      "quote": "Quote",
+      "structure": "Structure"
+    },
+    "form": {
+      "newTitle": "Add a New Idea",
+      "editTitle": "Edit Idea",
+      "type": "Type",
+      "content": "Content",
+      "contentPlaceholder": "Write the sentence, observation, or idea you want to save...",
+      "tags": "Tags (optional, comma separated)",
+      "tagsPlaceholder": "e.g. opening, metaphor",
+      "save": "Save",
+      "cancel": "Cancel",
+      "errorContent": "Content cannot be empty",
+      "errorType": "Please select a type"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "favorite": "Favorite",
+      "unfavorite": "Unfavorite",
+      "confirmDelete": "Delete this idea?",
+      "confirmDeleteDesc": "This cannot be undone."
+    },
+    "toast": {
+      "saved": "Idea saved",
+      "updated": "Idea updated",
+      "deleted": "Idea deleted",
+      "favorited": "Added to favorites",
+      "unfavorited": "Removed from favorites",
+      "errorSave": "Failed to save, please try again",
+      "errorUpdate": "Failed to update, please try again",
+      "errorDelete": "Failed to delete, please try again",
+      "errorLoad": "Failed to load ideas"
+    }
+  },
   "dev": {
     "title": "Dev Test",
     "aiSettings": "AI Settings",
     "backHome": "Back to Home",
     "devMode": "This is dev test mode",
     "desc": "This mode allows you to test the practice flow without logging in. Practice data will not be saved to the database."
+  },
+  "sentenceGym": {
+    "title": "Sentence Gym",
+    "subtitle": "Targeted training for a single sentence or paragraph. AI finds the problems — you fix them.",
+    "inputLabel": "Your sentence",
+    "inputPlaceholder": "Paste a sentence or short paragraph you want to improve...",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing...",
+    "reset": "Reset",
+    "tryAnother": "Try another sentence",
+    "revisionLabel": "Your revision",
+    "revisionPlaceholder": "Rewrite the sentence based on the feedback below...",
+    "saveIdea": "Save to Idea Bank",
+    "empty": "Paste a sentence above and click Analyze to get started.",
+    "mockNotice": "This is mock feedback. Configure your AI API key in Settings for real analysis.",
+    "feedback": {
+      "title": "AI Analysis",
+      "emptyWords": "Empty / vague words",
+      "deleteCandidates": "Can be deleted",
+      "abstractWords": "Abstract words",
+      "missingSpecifics": "Missing specifics",
+      "rhythmProblem": "Rhythm problem",
+      "revisionTask": "Your revision task",
+      "exampleDirection": "Example direction",
+      "noIssues": "No obvious issues found. Try a longer or more complex sentence."
+    },
+    "toast": {
+      "errorAnalyze": "Analysis failed, please try again",
+      "errorSave": "Failed to save, please try again",
+      "saved": "Saved to Idea Bank"
+    }
+  },
+  "drafts": {
+    "title": "Draft Lab",
+    "subtitle": "Write longer pieces. Track versions. Get AI feedback before you publish.",
+    "newDraft": "New Draft",
+    "search": "Search drafts...",
+    "empty": "No drafts yet. Start a new one to begin writing.",
+    "emptyFiltered": "No drafts match your filters.",
+    "totalCount": "{count} drafts",
+    "backToList": "Back to drafts",
+    "statuses": {
+      "idea": "Idea",
+      "outline": "Outline",
+      "drafting": "Drafting",
+      "revising": "Revising",
+      "ready": "Ready",
+      "published": "Published"
+    },
+    "form": {
+      "newTitle": "New Draft",
+      "editTitle": "Edit Draft",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Give your draft a title...",
+      "topicLabel": "Topic (optional)",
+      "topicPlaceholder": "What is this about?",
+      "contentLabel": "Content",
+      "contentPlaceholder": "Start writing your draft here...",
+      "statusLabel": "Status",
+      "save": "Save",
+      "cancel": "Cancel",
+      "create": "Create Draft",
+      "errorTitle": "Title cannot be empty"
+    },
+    "editor": {
+      "title": "Editor",
+      "saveVersion": "Save Version",
+      "saving": "Saving...",
+      "saved": "Version saved",
+      "wordCount": "{count} characters",
+      "lastSaved": "Last saved: {time}",
+      "unsaved": "Unsaved changes",
+      "aiDiagnose": "AI Diagnose",
+      "antiAiVoice": "Anti AI Voice",
+      "diagnosing": "Analyzing...",
+      "exportMarkdown": "Export Markdown",
+      "versions": "Versions",
+      "versionLabel": "Version {number}",
+      "restore": "Restore",
+      "currentVersion": "Current",
+      "noVersions": "No versions yet."
+    },
+    "feedback": {
+      "aiDiagnoseTitle": "AI Diagnosis",
+      "antiAiVoiceTitle": "Anti AI Voice Detection",
+      "mockNotice": "This is mock feedback. Configure your AI API key in Settings for real analysis.",
+      "scores": {
+        "clarity": "Clarity",
+        "specificity": "Specificity",
+        "voice": "Voice",
+        "aiLike": "AI-like"
+      },
+      "topIssues": "Top issues",
+      "bestSentence": "Best sentence",
+      "mostAiLike": "Most AI-like sentence",
+      "nextGoal": "Next goal",
+      "aiVoiceScore": "AI voice score",
+      "aiVoiceIssues": "AI voice issues",
+      "revisionTask": "Revision task"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Delete this draft?",
+      "confirmDeleteDesc": "All versions will be deleted. This cannot be undone."
+    },
+    "toast": {
+      "created": "Draft created",
+      "updated": "Draft updated",
+      "deleted": "Draft deleted",
+      "versionSaved": "Version saved",
+      "exported": "Markdown exported",
+      "errorCreate": "Failed to create draft",
+      "errorUpdate": "Failed to update draft",
+      "errorDelete": "Failed to delete draft",
+      "errorSave": "Failed to save version",
+      "errorLoad": "Failed to load drafts",
+      "errorDiagnose": "AI diagnosis failed, please try again",
+      "errorExport": "Export failed, please try again"
+    }
   }
 }

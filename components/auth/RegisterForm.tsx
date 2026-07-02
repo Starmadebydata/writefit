@@ -54,18 +54,19 @@ export function RegisterForm() {
       toast.success(t("success"));
 
       // 注册成功后，自动用邮箱密码登录
+      // 新用户跳转到 onboarding 完成写作画像设置（onboarding 页会自动跳过已有画像的用户）
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
-        callbackUrl: "/dashboard",
+        callbackUrl: "/onboarding",
       });
 
       if (result?.error) {
         toast.error(t("errorAutoLogin"));
         router.push("/auth/login");
       } else {
-        router.push("/dashboard");
+        router.push("/onboarding");
         router.refresh();
       }
     } catch {
@@ -79,7 +80,8 @@ export function RegisterForm() {
   async function handleGoogleLogin() {
     setGoogleLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/dashboard" });
+      // 新用户跳转到 onboarding；onboarding 页会自动把已有画像的老用户转到 dashboard
+      await signIn("google", { callbackUrl: "/onboarding" });
     } catch {
       toast.error(t("errorGoogle"));
       setGoogleLoading(false);
