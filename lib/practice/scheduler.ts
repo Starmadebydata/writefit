@@ -21,7 +21,7 @@ export interface TodayPractice {
 // 生成今日训练任务
 export function generateTodayPractice(
   dailyMinutes: number = 10,
-  language: "zh" | "en" = "zh"
+  language: "zh" | "en" = "en"
 ): TodayPractice {
   const today = new Date();
   const practiceType = getPracticeTypeByDate(today);

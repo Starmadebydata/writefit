@@ -11,6 +11,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { countWords } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface PracticeEditorProps {
   // 编辑器内容
@@ -30,10 +31,12 @@ export function PracticeEditor({
   onChange,
   minWords,
   disabled = false,
-  placeholder = "开始写吧。不要修改，不要追求完美，先把脑子里的东西倒出来。",
+  placeholder,
 }: PracticeEditorProps) {
+  const t = useTranslations("practice.editor");
   const wordCount = countWords(value);
   const meetsMinimum = wordCount >= minWords;
+  const effectivePlaceholder = placeholder ?? t("placeholder");
 
   return (
     <div className="flex flex-col gap-2 h-full">
@@ -41,7 +44,7 @@ export function PracticeEditor({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        placeholder={placeholder}
+        placeholder={effectivePlaceholder}
         className={cn(
           "flex-1 min-h-[300px] resize-none text-base leading-relaxed p-4",
           disabled && "bg-muted/50"
@@ -56,14 +59,14 @@ export function PracticeEditor({
             meetsMinimum ? "text-primary" : "text-muted-foreground"
           )}
         >
-          {wordCount} 字
-          {!meetsMinimum && ` （至少 ${minWords} 字）`}
+          {t("wordCount", { count: wordCount })}
+          {!meetsMinimum && t("minWords", { min: minWords })}
         </span>
         {meetsMinimum ? (
-          <span className="text-primary">✓ 已达到最低字数</span>
+          <span className="text-primary">{t("reachedMin")}</span>
         ) : (
           <span className="text-muted-foreground">
-            还差 {minWords - wordCount} 字
+            {t("needMore", { remaining: minWords - wordCount })}
           </span>
         )}
       </div>

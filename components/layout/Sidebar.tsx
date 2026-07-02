@@ -16,8 +16,8 @@
 // - Settings 设置
 // ====================================================================
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import {
   LayoutDashboard,
   PenLine,
@@ -32,50 +32,44 @@ import { cn } from "@/lib/utils";
 // 导航项配置
 const navItems = [
   {
-    label: "Dashboard",
-    labelZh: "仪表盘",
+    labelKey: "dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    label: "Practice",
-    labelZh: "今日训练",
+    labelKey: "practice",
     href: "/practice/today",
     icon: PenLine,
   },
   {
-    label: "Sentence Gym",
-    labelZh: "句子训练",
+    labelKey: "sentenceGym",
     href: "/sentence-gym",
     icon: Scissors,
   },
   {
-    label: "Drafts",
-    labelZh: "草稿实验室",
+    labelKey: "drafts",
     href: "/drafts",
     icon: FileText,
   },
   {
-    label: "Ideas",
-    labelZh: "素材库",
+    labelKey: "ideas",
     href: "/ideas",
     icon: Lightbulb,
   },
   {
-    label: "Progress",
-    labelZh: "进度",
+    labelKey: "progress",
     href: "/progress",
     icon: TrendingUp,
   },
   {
-    label: "Settings",
-    labelZh: "设置",
+    labelKey: "settings",
     href: "/settings",
     icon: Settings,
   },
 ];
 
 export function Sidebar() {
+  const t = useTranslations("nav");
   const pathname = usePathname();
 
   return (
@@ -109,7 +103,7 @@ export function Sidebar() {
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
-              <span>{item.label}</span>
+              <span>{t(item.labelKey)}</span>
             </Link>
           );
         })}
@@ -117,10 +111,8 @@ export function Sidebar() {
 
       {/* 底部：训练提示 */}
       <div className="px-4 py-4 border-t border-border">
-        <p className="text-xs text-muted-foreground">
-          每天 15 分钟
-          <br />
-          训练你自己的写作能力
+        <p className="text-xs text-muted-foreground whitespace-pre-line">
+          {t("footerTagline")}
         </p>
       </div>
     </aside>

@@ -11,6 +11,8 @@
 // ====================================================================
 
 import { signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { LogOut, User } from "lucide-react";
 
 interface TopNavProps {
@@ -35,6 +38,7 @@ interface TopNavProps {
 }
 
 export function TopNav({ user, title }: TopNavProps) {
+  const t = useTranslations("nav");
   // 获取用户名字首字母作为头像占位符
   const initials = user?.name
     ? user.name.charAt(0).toUpperCase()
@@ -45,15 +49,19 @@ export function TopNav({ user, title }: TopNavProps) {
       {/* 页面标题 */}
       <h1 className="text-lg font-semibold">{title}</h1>
 
-      {/* 用户菜单 */}
-      <DropdownMenu>
+      <div className="flex items-center gap-2">
+        {/* 语言切换器 */}
+        <LanguageSwitcher />
+
+        {/* 用户菜单 */}
+        <DropdownMenu>
         <DropdownMenuTrigger
           render={
             <Button variant="ghost" size="icon" className="rounded-full" />
           }
         >
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? "用户"} />
+            <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? t("user")} />
             <AvatarFallback className="bg-primary text-primary-foreground text-sm">
               {initials}
             </AvatarFallback>
@@ -62,16 +70,16 @@ export function TopNav({ user, title }: TopNavProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>
             <div className="flex flex-col">
-              <span>{user?.name ?? "用户"}</span>
+              <span>{user?.name ?? t("user")}</span>
               <span className="text-xs text-muted-foreground font-normal">
                 {user?.email}
               </span>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem render={<a href="/settings" />}>
+          <DropdownMenuItem render={<Link href="/settings" />}>
             <User className="h-4 w-4" />
-            设置
+            {t("settings")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -79,10 +87,11 @@ export function TopNav({ user, title }: TopNavProps) {
             className="flex items-center gap-2 text-destructive"
           >
             <LogOut className="h-4 w-4" />
-            退出登录
+            {t("logout")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </header>
   );
 }

@@ -26,14 +26,14 @@ export async function POST(req: NextRequest) {
     // 验证
     if (!content || typeof content !== "string" || content.trim().length < 2) {
       return NextResponse.json(
-        { error: "素材内容不能为空" },
+        { error: "Content cannot be empty" },
         { status: 400 }
       );
     }
 
     if (!VALID_TYPES.includes(type)) {
       return NextResponse.json(
-        { error: `素材类型必须是: ${VALID_TYPES.join(", ")}` },
+        { error: `Type must be one of: ${VALID_TYPES.join(", ")}` },
         { status: 400 }
       );
     }
@@ -49,9 +49,9 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("保存素材失败:", error);
+    console.error("Save idea failed:", error);
     return NextResponse.json(
-      { error: "保存失败，请稍后重试" },
+      { error: "Save failed, please try again" },
       { status: 500 }
     );
   }

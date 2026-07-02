@@ -15,6 +15,7 @@
 // ====================================================================
 
 import { useState, useCallback } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +38,7 @@ import {
   Trophy,
 } from "lucide-react";
 import type { DiagnoseFeedback, CompareRevisionFeedback } from "@/lib/ai/schemas";
-import { PRACTICE_TYPE_LABELS, type PracticeType } from "@/lib/practice/prompts";
+import { type PracticeType } from "@/lib/practice/prompts";
 import { countWords } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -61,6 +62,9 @@ export function PracticeFlow({
   isDev = false,
 }: PracticeFlowProps) {
   // ---- 状态管理 ----
+  const t = useTranslations("practice.flow");
+  const tPractice = useTranslations("practice");
+  const locale = useLocale();
   const [stage, setStage] = useState<Stage>("intro");
   const [rawText, setRawText] = useState(""); // 原始稿
   const [revisedText, setRevisedText] = useState(""); // 修改稿
@@ -83,7 +87,7 @@ export function PracticeFlow({
   // ---- 阶段 2 → 阶段 3：提交原始稿，请求 AI 诊断 ----
   const submitDraft = useCallback(async () => {
     if (countWords(rawText) < minWords) {
-      toast.error(`至少需要 ${minWords} 字才能提交`);
+      toast.error(t("errorMinWords", { minWords }));
       return;
     }
 
@@ -97,7 +101,7 @@ export function PracticeFlow({
       const res = await fetch("/api/ai/diagnose", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: rawText, language: "zh", aiConfig }),
+        body: JSON.stringify({ text: rawText, language: locale, aiConfig }),
       });
 
       if (!res.ok) throw new Error("诊断失败");
@@ -107,12 +111,12 @@ export function PracticeFlow({
       setIsMockFeedback(!!data._mock);
       setStage("feedback");
     } catch {
-      toast.error("AI 诊断失败，请重试");
+      toast.error(t("errorAiDiagnosis"));
       setStage("writing");
     } finally {
       setLoading(false);
     }
-  }, [rawText]);
+  }, [rawText, locale, t]);
 
   // ---- 阶段 3 → 阶段 4：进入修改阶段 ----
   const startRevising = () => {
@@ -124,7 +128,7 @@ export function PracticeFlow({
   // ---- 阶段 4 → 阶段 5：提交修改稿，查看对比 ----
   const submitRevision = useCallback(async () => {
     if (revisedText.trim() === rawText.trim()) {
-      toast.error("你还没有修改任何内容");
+      toast.error(t("errorNoRevision"));
       return;
     }
 
@@ -136,7 +140,7 @@ export function PracticeFlow({
       const res = await fetch("/api/ai/compare-revision", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ original: rawText, revised: revisedText, aiConfig }),
+        body: JSON.stringify({ original: rawText, revised: revisedText, language: locale, aiConfig }),
       });
 
       if (!res.ok) throw new Error("对比失败");
@@ -145,11 +149,11 @@ export function PracticeFlow({
       setComparison(data);
     } catch {
       // 即使对比失败，也展示 diff
-      toast.error("版本对比失败，但你可以查看差异");
+      toast.error(t("errorCompareFailed"));
     } finally {
       setLoading(false);
     }
-  }, [rawText, revisedText]);
+  }, [rawText, revisedText, locale, t]);
 
   // ---- 重新开始 ----
   const restart = () => {
@@ -164,11 +168,11 @@ export function PracticeFlow({
 
   // 阶段进度指示器
   const stages: { key: Stage; label: string; icon: typeof PenLine }[] = [
-    { key: "intro", label: "题目", icon: PenLine },
-    { key: "writing", label: "写作", icon: PenLine },
-    { key: "feedback", label: "诊断", icon: Brain },
-    { key: "revising", label: "修改", icon: Scissors },
-    { key: "complete", label: "完成", icon: CheckCircle2 },
+    { key: "intro", label: t("stages.prompt"), icon: PenLine },
+    { key: "writing", label: t("stages.writing"), icon: PenLine },
+    { key: "feedback", label: t("stages.diagnosis"), icon: Brain },
+    { key: "revising", label: t("stages.revision"), icon: Scissors },
+    { key: "complete", label: t("stages.complete"), icon: CheckCircle2 },
   ];
   const currentStageIndex = stages.findIndex(
     (s) => s.key === stage || (stage === "diagnosing" && s.key === "feedback")
@@ -179,7 +183,7 @@ export function PracticeFlow({
       {/* 开发模式提示 */}
       {isDev && (
         <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2 text-sm text-amber-800">
-          🔧 开发测试模式 —— 不需要登录，训练数据不会保存到数据库
+          {t("devMode")}
         </div>
       )}
 
@@ -218,9 +222,9 @@ export function PracticeFlow({
         <Card>
           <CardHeader>
             <Badge variant="secondary" className="w-fit mb-2">
-              {PRACTICE_TYPE_LABELS[practiceType]}
+              {tPractice(`types.${practiceType}`)}
             </Badge>
-            <CardTitle className="text-2xl">今日题目</CardTitle>
+            <CardTitle className="text-2xl">{t("todaysPrompt")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="rounded-lg bg-muted/50 p-6">
@@ -243,7 +247,7 @@ export function PracticeFlow({
             </div>
 
             <Button size="lg" className="w-full" onClick={startWriting}>
-              开始写作
+              {t("startWriting")}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardContent>
@@ -284,7 +288,7 @@ export function PracticeFlow({
                 onClick={submitDraft}
                 disabled={countWords(rawText) < minWords}
               >
-                提交并获取 AI 反馈
+                {t("submitDraft")}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
@@ -297,7 +301,7 @@ export function PracticeFlow({
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-20">
             <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-            <p className="text-lg font-semibold">AI 正在分析你的写作...</p>
+            <p className="text-lg font-semibold">{t("aiAnalyzing")}</p>
             <p className="text-sm text-muted-foreground mt-2">
               AI 会引用你的原文，找出 3 个具体问题
             </p>
@@ -311,7 +315,7 @@ export function PracticeFlow({
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold">AI 诊断反馈</h2>
             <Button onClick={startRevising}>
-              根据反馈修改
+              {t("startRevision")}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -323,16 +327,16 @@ export function PracticeFlow({
       {stage === "revising" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">根据反馈修改</h2>
+            <h2 className="text-xl font-bold">{t("revisionInstructions")}</h2>
             <Button onClick={submitRevision} disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  对比中...
+                  {t("comparing")}
                 </>
               ) : (
                 <>
-                  提交修改稿
+                  {t("submitRevision")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </>
               )}
@@ -400,9 +404,9 @@ export function PracticeFlow({
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-3">
               <Trophy className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-2xl font-bold">训练完成！</h2>
+            <h2 className="text-2xl font-bold">{t("practiceComplete")}</h2>
             <p className="text-muted-foreground mt-1">
-              你完成了今天的 {PRACTICE_TYPE_LABELS[practiceType]} 训练
+              {t("completeMessage")}
             </p>
           </div>
 
@@ -520,7 +524,7 @@ export function PracticeFlow({
           {/* 重新开始 */}
           <div className="flex justify-center">
             <Button variant="outline" onClick={restart}>
-              再练一次
+              {t("tryAgain")}
             </Button>
           </div>
         </div>

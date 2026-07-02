@@ -17,15 +17,26 @@ export const PRACTICE_TYPES = [
 
 export type PracticeType = (typeof PRACTICE_TYPES)[number];
 
-// 训练类型的中文名称
-export const PRACTICE_TYPE_LABELS: Record<PracticeType, string> = {
-  free_writing: "自由写作",
-  sentence_surgery: "句子手术",
-  specificity_drill: "具体化训练",
-  anti_ai_voice: "反 AI 腔训练",
-  title_drill: "标题训练",
-  opening_drill: "开头训练",
-};
+// 训练类型的中英文名称（根据语言返回对应标签）
+export function getPracticeTypeLabel(type: PracticeType, locale: "en" | "zh"): string {
+  const labelsEn: Record<PracticeType, string> = {
+    free_writing: "Free Writing",
+    sentence_surgery: "Sentence Surgery",
+    specificity_drill: "Specificity Drill",
+    anti_ai_voice: "Anti-AI Voice",
+    title_drill: "Title Drill",
+    opening_drill: "Opening Drill",
+  };
+  const labelsZh: Record<PracticeType, string> = {
+    free_writing: "自由写作",
+    sentence_surgery: "句子手术",
+    specificity_drill: "具体化训练",
+    anti_ai_voice: "反 AI 腔训练",
+    title_drill: "标题训练",
+    opening_drill: "开头训练",
+  };
+  return locale === "zh" ? labelsZh[type] : labelsEn[type];
+}
 
 // 中文自由写作题库
 export const FREE_WRITING_PROMPTS_ZH = [
@@ -62,6 +73,13 @@ export const SENTENCE_SURGERY_PROMPTS_ZH = [
   "选一句你用 AI 生成后觉得不太像自己的句子。",
 ];
 
+// 句子手术题目（英文）
+export const SENTENCE_SURGERY_PROMPTS_EN = [
+  "Pick a sentence you wrote recently that feels off. Analyze it.",
+  "Pick a sentence from your work document that sounds too corporate.",
+  "Pick a sentence you generated with AI that doesn't sound like you.",
+];
+
 // 具体化训练题目
 export const SPECIFICITY_DRILL_PROMPTS_ZH = [
   "写一段关于你最近做的一个项目的描述，但不要用任何抽象词。",
@@ -69,11 +87,53 @@ export const SPECIFICITY_DRILL_PROMPTS_ZH = [
   "写一段关于一个产品的评价，每个判断都要附带一个具体例子。",
 ];
 
+// 具体化训练题目（英文）
+export const SPECIFICITY_DRILL_PROMPTS_EN = [
+  "Describe a project you worked on recently, without using any abstract words.",
+  "Describe the first thing you did this morning, using only concrete actions.",
+  "Review a product you use. Every claim must come with a specific example.",
+];
+
 // 反 AI 腔训练题目
 export const ANTI_AI_VOICE_PROMPTS_ZH = [
   "写一段关于 AI 对你工作影响的文字，但不要用任何 AI 常用词。",
   "写一段产品介绍，但不用'赋能'、'闭环'、'重塑'这些词。",
   "写一段关于你行业的看法，但每句话都必须有'我'。",
+];
+
+// 反 AI 腔训练题目（英文）
+export const ANTI_AI_VOICE_PROMPTS_EN = [
+  "Write about AI's impact on your work, without using any common AI buzzwords.",
+  "Write a product description without using 'empower', 'seamless', 'robust', or 'comprehensive'.",
+  "Write about your industry. Every sentence must contain 'I' or 'we'.",
+];
+
+// 标题训练题目（中文）
+export const TITLE_DRILL_PROMPTS_ZH = [
+  "为同一篇文章写 5 个不同的标题。哪个让你自己想点进去？",
+  "把一个无聊的标题改得具体，但不能变成标题党。",
+  "写一个标题，提出一个读者真的想过的问题。",
+];
+
+// 标题训练题目（英文）
+export const TITLE_DRILL_PROMPTS_EN = [
+  "Write 5 different titles for the same blog post. Which one makes you want to click?",
+  "Take a boring title and make it specific without being clickbait.",
+  "Write a title that asks a question your reader has actually wondered about.",
+];
+
+// 开头训练题目（中文）
+export const OPENING_DRILL_PROMPTS_ZH = [
+  "写一个让人停下滚动的开头段落。",
+  "为同一篇文章写三个不同的开头：一个问题、一个场景、一个大胆的判断。",
+  "用一个具体的个人故事重写一个无聊的开头。",
+];
+
+// 开头训练题目（英文）
+export const OPENING_DRILL_PROMPTS_EN = [
+  "Write an opening paragraph that makes a reader stop scrolling.",
+  "Write three different openings for the same article: a question, a scene, and a bold claim.",
+  "Rewrite a boring opening using a specific personal anecdote.",
 ];
 
 // 根据星期几选择训练类型（MVP 简单轮换）
@@ -94,24 +154,30 @@ export function getPracticeTypeByDate(date: Date): PracticeType {
 // 根据训练类型随机选一个题目
 export function getRandomPrompt(
   type: PracticeType,
-  language: "zh" | "en" = "zh"
+  locale: "en" | "zh" = "en"
 ): string {
   let prompts: string[];
   switch (type) {
     case "free_writing":
-      prompts = language === "zh" ? FREE_WRITING_PROMPTS_ZH : FREE_WRITING_PROMPTS_EN;
+      prompts = locale === "zh" ? FREE_WRITING_PROMPTS_ZH : FREE_WRITING_PROMPTS_EN;
       break;
     case "sentence_surgery":
-      prompts = SENTENCE_SURGERY_PROMPTS_ZH;
+      prompts = locale === "zh" ? SENTENCE_SURGERY_PROMPTS_ZH : SENTENCE_SURGERY_PROMPTS_EN;
       break;
     case "specificity_drill":
-      prompts = SPECIFICITY_DRILL_PROMPTS_ZH;
+      prompts = locale === "zh" ? SPECIFICITY_DRILL_PROMPTS_ZH : SPECIFICITY_DRILL_PROMPTS_EN;
       break;
     case "anti_ai_voice":
-      prompts = ANTI_AI_VOICE_PROMPTS_ZH;
+      prompts = locale === "zh" ? ANTI_AI_VOICE_PROMPTS_ZH : ANTI_AI_VOICE_PROMPTS_EN;
+      break;
+    case "title_drill":
+      prompts = locale === "zh" ? TITLE_DRILL_PROMPTS_ZH : TITLE_DRILL_PROMPTS_EN;
+      break;
+    case "opening_drill":
+      prompts = locale === "zh" ? OPENING_DRILL_PROMPTS_ZH : OPENING_DRILL_PROMPTS_EN;
       break;
     default:
-      prompts = FREE_WRITING_PROMPTS_ZH;
+      prompts = locale === "zh" ? FREE_WRITING_PROMPTS_ZH : FREE_WRITING_PROMPTS_EN;
   }
   return prompts[Math.floor(Math.random() * prompts.length)];
 }

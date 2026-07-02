@@ -12,45 +12,81 @@ import { AppShell } from "@/components/layout/AppShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PenLine, Lightbulb, TrendingUp, Flame } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { setRequestLocale, getLocale, getTranslations } from "next-intl/server";
 
-// Dashboard 页面 SEO
-export const metadata: Metadata = {
-  title: "My Writing Practice Dashboard | WriteFit",
-  description:
-    "Track your write practice streak, weekly progress, saved ideas, and drafts in your WriteFit dashboard.",
-  keywords: [
-    "writing practice dashboard",
-    "track writing progress",
-    "my write practice",
-    "writing streak",
-  ],
-  alternates: {
-    canonical: "https://writefit.app/dashboard",
-  },
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+// Dashboard 页面 SEO（根据语言切换）
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
 
-export default async function DashboardPage() {
+  const titles = {
+    en: "Dashboard | WriteFit",
+    zh: "仪表盘 | WriteFit",
+  };
+
+  const descriptions = {
+    en: "Track your write practice streak, weekly progress, saved ideas, and drafts in your WriteFit dashboard.",
+    zh: "在 WriteFit 仪表盘中跟踪你的写作训练连续天数、本周进度、保存的素材和草稿。",
+  };
+
+  const keywords = {
+    en: [
+      "writing practice dashboard",
+      "track writing progress",
+      "my write practice",
+      "writing streak",
+    ],
+    zh: ["写作训练仪表盘", "跟踪写作进度", "我的写作训练", "写作连续天数"],
+  };
+
+  return {
+    title: titles[locale as "en" | "zh"],
+    description: descriptions[locale as "en" | "zh"],
+    keywords: keywords[locale as "en" | "zh"],
+    alternates: {
+      canonical: "https://writefit.app/dashboard",
+    },
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
+
+export default async function DashboardPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   // 获取当前登录用户
   const session = await auth();
   if (!session?.user) {
     redirect("/auth/login");
   }
 
+  // 获取翻译
+  const t = await getTranslations("dashboard");
+  const tPractice = await getTranslations("practice");
+
+  // 统计数据
+  const stats = [
+    { icon: Flame, label: t("stats.streak"), value: `0 ${t("stats.days")}`, color: "text-orange-500" },
+    { icon: PenLine, label: t("stats.thisWeek"), value: `0 ${t("stats.sessions")}`, color: "text-primary" },
+    { icon: TrendingUp, label: t("stats.wordsThisWeek"), value: `0 ${t("stats.words")}`, color: "text-primary" },
+    { icon: Lightbulb, label: t("stats.savedIdeas"), value: `0 ${t("stats.items")}`, color: "text-amber-500" },
+  ];
+
   return (
     <AppShell title="Dashboard" user={session.user}>
       {/* 欢迎语 */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold">
-          欢迎回来，{session.user.name ?? "写作者"}
+          {t("welcome", { name: session.user.name ?? t("defaultName") })}
         </h2>
-        <p className="text-muted-foreground mt-1">
-          今天是你写作训练的第 1 天。开始今天的练习吧。
-        </p>
+        <p className="text-muted-foreground mt-1">{t("dayOne")}</p>
       </div>
 
       {/* 今日训练卡片 —— 最显眼的位置 */}
@@ -58,8 +94,8 @@ export default async function DashboardPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">今日训练</p>
-              <CardTitle className="text-xl">自由写作 · Free Writing</CardTitle>
+              <p className="text-sm text-muted-foreground mb-1">{t("todaysPractice")}</p>
+              <CardTitle className="text-xl">{tPractice("types.free_writing")}</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 今天有没有一个时刻，你脑子里很清楚，但写出来很模糊？
               </p>
@@ -71,20 +107,15 @@ export default async function DashboardPage() {
         </CardHeader>
         <CardContent>
           <Button render={<Link href="/practice/today" />}>
-              开始训练
-              <PenLine className="ml-2 h-4 w-4" />
+            {t("startPractice")}
+            <PenLine className="ml-2 h-4 w-4" />
           </Button>
         </CardContent>
       </Card>
 
       {/* 本周进度统计 */}
       <div className="grid gap-4 md:grid-cols-4 mb-6">
-        {[
-          { icon: Flame, label: "连续训练", value: "0 天", color: "text-orange-500" },
-          { icon: PenLine, label: "本周训练", value: "0 次", color: "text-primary" },
-          { icon: TrendingUp, label: "本周字数", value: "0 字", color: "text-primary" },
-          { icon: Lightbulb, label: "保存素材", value: "0 条", color: "text-amber-500" },
-        ].map((stat) => {
+        {stats.map((stat) => {
           const Icon = stat.icon;
           return (
             <Card key={stat.label}>
@@ -105,17 +136,15 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">最近素材</CardTitle>
+              <CardTitle className="text-lg">{t("recentIdeas")}</CardTitle>
               <Link href="/ideas" className="text-sm text-primary hover:underline">
-                查看全部
+                {t("viewAll")}
               </Link>
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground py-8 text-center">
-              还没有保存素材。
-              <br />
-              完成训练后可以保存好句和观点到这里。
+              {t("noIdeas")}
             </p>
           </CardContent>
         </Card>
@@ -123,19 +152,15 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">最近草稿</CardTitle>
+              <CardTitle className="text-lg">{t("recentDrafts")}</CardTitle>
               <Link href="/drafts" className="text-sm text-primary hover:underline">
-                查看全部
+                {t("viewAll")}
               </Link>
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground py-8 text-center">
-              还没有草稿。
-              <br />
-              <Link href="/drafts" className="text-primary hover:underline">
-                创建第一个草稿
-              </Link>
+              {t("noDrafts")}
             </p>
           </CardContent>
         </Card>

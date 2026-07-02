@@ -12,9 +12,10 @@
 // ====================================================================
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
 export function LoginForm() {
+  const t = useTranslations("auth.login");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +36,7 @@ export function LoginForm() {
     try {
       await signIn("google", { callbackUrl: "/dashboard" });
     } catch {
-      toast.error("Google 登录失败");
+      toast.error(t("errorGoogle"));
       setGoogleLoading(false);
     }
   }
@@ -53,14 +55,14 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        toast.error("邮箱或密码错误");
+        toast.error(t("errorCredentials"));
       } else {
-        toast.success("登录成功！");
+        toast.success(t("success"));
         router.push("/dashboard");
         router.refresh();
       }
     } catch {
-      toast.error("登录失败，请稍后重试");
+      toast.error(t("errorGeneric"));
     } finally {
       setLoading(false);
     }
@@ -72,10 +74,8 @@ export function LoginForm() {
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-lg">
           W
         </div>
-        <CardTitle className="text-2xl">登录 WriteFit</CardTitle>
-        <p className="text-sm text-muted-foreground mt-2">
-          每天 15 分钟，训练你自己的写作能力
-        </p>
+        <CardTitle className="text-2xl">{t("title")}</CardTitle>
+        <p className="text-sm text-muted-foreground mt-2">{t("subtitle")}</p>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Google 登录 —— 放在最上方，重点推荐 */}
@@ -104,7 +104,7 @@ export function LoginForm() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          {googleLoading ? "正在跳转..." : "用 Google 登录"}
+          {googleLoading ? t("googleRedirecting") : t("googleLogin")}
         </Button>
 
         {/* 分隔线 */}
@@ -113,54 +113,52 @@ export function LoginForm() {
             <span className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">或者用邮箱登录</span>
+            <span className="bg-card px-2 text-muted-foreground">{t("orEmail")}</span>
           </div>
         </div>
 
         {/* 邮箱密码登录表单 */}
         <form onSubmit={handleLogin} className="space-y-3">
           <div className="space-y-1.5">
-            <Label htmlFor="email">邮箱</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t("emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password">密码</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <Input
               id="password"
               type="password"
-              placeholder="你的密码"
+              placeholder={t("passwordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "正在登录..." : "登录"}
+            {loading ? t("loggingIn") : t("loginButton")}
           </Button>
         </form>
 
         {/* 注册链接 */}
         <div className="pt-2 text-center">
           <p className="text-sm text-muted-foreground">
-            还没有账户？{" "}
+            {t("noAccount")}{" "}
             <Link href="/auth/register" className="text-primary hover:underline font-medium">
-              免费注册
+              {t("signUp")}
             </Link>
           </p>
         </div>
 
         <div className="pt-2 text-center">
-          <p className="text-xs text-muted-foreground">
-            登录即表示你同意 WriteFit 帮助你训练写作能力，
-            <br />
-            而不是替你写文章。
+          <p className="text-xs text-muted-foreground whitespace-pre-line">
+            {t("termsNotice")}
           </p>
         </div>
       </CardContent>

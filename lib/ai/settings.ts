@@ -55,14 +55,14 @@ export const AI_PROVIDERS: AIProvider[] = [
   },
   {
     id: "moonshot",
-    name: "Moonshot (月之暗面)",
+    name: "Moonshot",
     apiBaseUrl: "https://api.moonshot.cn/v1",
     models: ["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"],
     website: "https://platform.moonshot.cn/console/api-keys",
   },
   {
     id: "custom",
-    name: "自定义 (OpenAI 兼容)",
+    name: "Custom (OpenAI compatible)",
     apiBaseUrl: "",
     models: [],
     website: "",
@@ -191,7 +191,7 @@ export async function testAIConnection(
       body: JSON.stringify({
         model: settings.model,
         messages: [
-          { role: "user", content: "请回复'连接成功'四个字" },
+          { role: "user", content: "Reply with exactly: connection successful" },
         ],
         max_tokens: 20,
         temperature: 0,
@@ -202,7 +202,7 @@ export async function testAIConnection(
       const errorText = await response.text();
       return {
         success: false,
-        message: `连接失败 (${response.status}): ${errorText.slice(0, 200)}`,
+        message: `Connection failed (${response.status}): ${errorText.slice(0, 200)}`,
       };
     }
 
@@ -210,12 +210,12 @@ export async function testAIConnection(
     const reply = data.choices?.[0]?.message?.content ?? "";
     return {
       success: true,
-      message: `连接成功！AI 回复：${reply}`,
+      message: `Connection successful! AI replied: ${reply}`,
     };
   } catch (error) {
     return {
       success: false,
-      message: `连接失败：${error instanceof Error ? error.message : "未知错误"}`,
+      message: `Connection failed: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }

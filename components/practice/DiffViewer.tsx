@@ -11,6 +11,7 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, FileEdit } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface DiffViewerProps {
   original: string;
@@ -47,6 +48,7 @@ function diffSentences(original: string, revised: string) {
 }
 
 export function DiffViewer({ original, revised }: DiffViewerProps) {
+  const t = useTranslations("practice.diff");
   const diff = useMemo(() => diffSentences(original, revised), [original, revised]);
 
   return (
@@ -54,13 +56,13 @@ export function DiffViewer({ original, revised }: DiffViewerProps) {
       {/* 统计概览 */}
       <div className="flex gap-4 text-sm">
         <span className="text-destructive">
-          删除 {diff.deleted.length} 句
+          {t("deleted", { count: diff.deleted.length })}
         </span>
         <span className="text-primary">
-          新增 {diff.added.length} 句
+          {t("added", { count: diff.added.length })}
         </span>
         <span className="text-muted-foreground">
-          保留 {diff.kept.length} 句
+          {t("kept", { count: diff.kept.length })}
         </span>
       </div>
 
@@ -71,7 +73,7 @@ export function DiffViewer({ original, revised }: DiffViewerProps) {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm">
               <FileText className="h-4 w-4 text-muted-foreground" />
-              原稿
+              {t("original")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -100,7 +102,7 @@ export function DiffViewer({ original, revised }: DiffViewerProps) {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm">
               <FileEdit className="h-4 w-4 text-primary" />
-              修改稿
+              {t("revised")}
             </CardTitle>
           </CardHeader>
           <CardContent>

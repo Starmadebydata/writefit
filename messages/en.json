@@ -1,0 +1,295 @@
+{
+  "common": {
+    "appName": "WriteFit",
+    "tagline": "An AI writing coach that trains your writing ability instead of replacing it.",
+    "dailyMinutes": "15 minutes a day",
+    "trainYourWriting": "Train your own writing ability",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "back": "Back",
+    "comingSoon": "Coming Soon",
+    "comingSoonDesc": "This feature is under development. Stay tuned.",
+    "saveSuccess": "Saved successfully",
+    "saveError": "Save failed, please try again",
+    "networkError": "Network error, please try again later"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "practice": "Practice",
+    "sentenceGym": "Sentence Gym",
+    "drafts": "Drafts",
+    "ideas": "Ideas",
+    "progress": "Progress",
+    "settings": "Settings",
+    "user": "User",
+    "logout": "Log out",
+    "footerTagline": "15 minutes a day\nTrain your own writing ability"
+  },
+  "landing": {
+    "heroBadge": "AI Native Writing Training",
+    "heroTitle": "15 minutes a day,\nretrain your writing muscles",
+    "heroDesc": "WriteFit is an AI writing coach. It doesn't write for you —\nit helps you practice, revise, and build your own voice over time.",
+    "startTraining": "Start Training",
+    "learnMore": "How It Works",
+    "tryDemo": "Try the practice flow (no login needed) →",
+    "problems": {
+      "title": "Does this sound familiar?",
+      "items": [
+        "You write fine sentences, but the whole piece feels hollow",
+        "You know what you want to say, but the words come out generic",
+        "AI can polish your text, but it sounds less like you",
+        "You've read a lot about writing, but your own writing hasn't improved",
+        "You start with strong ideas, but they get diluted by the third paragraph",
+        "You want a personal voice, but everything you write sounds like everyone else"
+      ]
+    },
+    "mechanism": {
+      "title": "How WriteFit works",
+      "steps": [
+        { "title": "You write first", "desc": "Write a short piece in 15 minutes. No AI help. Just you and the blank page." },
+        { "title": "AI diagnoses", "desc": "AI analyzes your writing and identifies 3 specific issues — not generic advice." },
+        { "title": "You revise", "desc": "Revise based on the feedback. The AI doesn't rewrite for you. You do the work." },
+        { "title": "Compare versions", "desc": "See exactly what changed between your original and revised versions." },
+        { "title": "Save what works", "desc": "Save good sentences and ideas to your personal library for future use." }
+      ]
+    },
+    "features": {
+      "title": "Core features",
+      "items": [
+        { "title": "Daily Practice", "desc": "A new writing prompt every day. 15 minutes. Different training types rotate through the week." },
+        { "title": "AI Diagnosis", "desc": "AI analyzes your writing for clarity, specificity, personal voice, and AI-like tone. Not a grammar checker — a writing coach." },
+        { "title": "Anti-AI Voice Training", "desc": "Detect and fix generic, template-like, over-smoothed writing. Build a voice that's unmistakably yours." },
+        { "title": "Sentence Surgery", "desc": "Take any sentence apart. Find empty words, abstract nouns, and rhythm problems. Fix them one by one." },
+        { "title": "Draft Lab", "desc": "Work on longer pieces. Track versions. Get feedback on revisions, not just first drafts." },
+        { "title": "Idea Library", "desc": "Save good sentences, observations, and insights from your practice. Build a personal writing resource." }
+      ]
+    },
+    "scenarios": {
+      "title": "Who is WriteFit for?",
+      "items": [
+        "Writers who feel their work has become too generic",
+        "Founders and makers who need to write clearly but struggle with words",
+        "People who write a lot but feel they're not improving",
+        "Anyone who wants to sound less like AI and more like themselves"
+      ]
+    },
+    "cta": {
+      "title": "Start training your writing today",
+      "desc": "15 minutes a day. No AI ghostwriting. Just you, getting better.",
+      "button": "Start Training"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Log in to WriteFit",
+      "subtitle": "15 minutes a day, train your own writing ability",
+      "googleLogin": "Continue with Google",
+      "googleRedirecting": "Redirecting...",
+      "orEmail": "Or log in with email",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "loginButton": "Log in",
+      "loggingIn": "Logging in...",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up free",
+      "termsNotice": "By logging in, you agree that WriteFit helps you train your writing ability,\nnot write for you.",
+      "errorGoogle": "Google login failed",
+      "errorCredentials": "Wrong email or password",
+      "success": "Logged in!",
+      "errorGeneric": "Login failed, please try again"
+    },
+    "register": {
+      "title": "Create your WriteFit account",
+      "subtitle": "15 minutes a day, train your own writing ability",
+      "googleRegister": "Sign up with Google",
+      "orEmail": "Or sign up with email",
+      "name": "Nickname (optional)",
+      "namePlaceholder": "Your nickname",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "At least 6 characters",
+      "registerButton": "Create account",
+      "registering": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "logIn": "Log in",
+      "termsNotice": "By signing up, you agree that WriteFit helps you train your writing ability,\nnot write for you.",
+      "errorGoogle": "Google sign up failed",
+      "errorRegister": "Registration failed",
+      "success": "Account created! Logging in...",
+      "errorAutoLogin": "Auto-login failed, please log in manually",
+      "errorNetwork": "Network error, please try again later",
+      "errorEmailExists": "This email is already registered, please log in",
+      "errorEmailFormat": "Invalid email format",
+      "errorPasswordShort": "Password must be at least 6 characters",
+      "errorFillAll": "Please fill in email and password",
+      "errorRegisterFailed": "Registration failed, please try again"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {name}",
+    "defaultName": "Writer",
+    "dayOne": "This is day 1 of your writing training. Start today's practice.",
+    "todaysPractice": "Today's Practice",
+    "startPractice": "Start Practice",
+    "stats": {
+      "streak": "Streak",
+      "thisWeek": "This Week",
+      "wordsThisWeek": "Words This Week",
+      "savedIdeas": "Saved Ideas",
+      "days": "days",
+      "sessions": "sessions",
+      "words": "words",
+      "items": "items"
+    },
+    "recentIdeas": "Recent Ideas",
+    "recentDrafts": "Recent Drafts",
+    "viewAll": "View all",
+    "noIdeas": "No saved ideas yet. Complete a practice session to start collecting.",
+    "noDrafts": "No drafts yet. Start writing in the Draft Lab."
+  },
+  "practice": {
+    "todaysPractice": "Today's Practice",
+    "types": {
+      "free_writing": "Free Writing",
+      "sentence_surgery": "Sentence Surgery",
+      "specificity_drill": "Specificity Drill",
+      "anti_ai_voice": "Anti-AI Voice",
+      "title_drill": "Title Drill",
+      "opening_drill": "Opening Drill"
+    },
+    "flow": {
+      "stages": {
+        "prompt": "Prompt",
+        "writing": "Writing",
+        "diagnosis": "Diagnosis",
+        "revision": "Revision",
+        "complete": "Complete"
+      },
+      "devMode": "Dev test mode — no login required, practice data won't be saved",
+      "todaysPrompt": "Today's Prompt",
+      "writingInstructions": "Write freely. Don't edit, don't chase perfection. Just get what's in your head onto the page.",
+      "minWordsWarning": "Minimum {minWords} words required",
+      "startWriting": "Start Writing",
+      "submitDraft": "Submit Draft",
+      "aiAnalyzing": "AI is analyzing your writing...",
+      "diagnosing": "Diagnosing...",
+      "viewFeedback": "View Feedback",
+      "startRevision": "Start Revising",
+      "revisionInstructions": "Revise your writing based on the feedback",
+      "submitRevision": "Submit Revision",
+      "comparing": "Comparing...",
+      "finishPractice": "Finish Practice",
+      "viewComparison": "View Version Comparison",
+      "practiceComplete": "Practice complete!",
+      "completeMessage": "Great work! You've completed today's practice.",
+      "tryAgain": "Try Again",
+      "backToDashboard": "Back to Dashboard",
+      "errorMinWords": "At least {minWords} words required to submit",
+      "errorAiDiagnosis": "AI diagnosis failed, please try again",
+      "errorNoRevision": "You haven't made any changes",
+      "errorCompareFailed": "Comparison failed, but you can still view the diff"
+    },
+    "editor": {
+      "placeholder": "Start writing. Don't edit, don't chase perfection. Just get what's in your head onto the page.",
+      "wordCount": "{count} words",
+      "minWords": " (at least {min} words)",
+      "reachedMin": "✓ Minimum word count reached",
+      "needMore": "{remaining} more words needed"
+    },
+    "feedback": {
+      "mockNotice": "⚠ This is mock feedback. Configure your AI API key to get real AI diagnosis.",
+      "scores": {
+        "clarity": "Clarity",
+        "specificity": "Specificity",
+        "voice": "Personal Voice",
+        "aiLike": "AI-like Tone"
+      },
+      "topIssues": "3 Issues to Fix",
+      "revisionTask": "Revision task:",
+      "bestSentence": "Best sentence",
+      "mostAiLike": "Most AI-like sentence",
+      "nextGoal": "Next revision goal"
+    },
+    "diff": {
+      "deleted": "Deleted {count} sentences",
+      "added": "Added {count} sentences",
+      "kept": "Kept {count} sentences",
+      "original": "Original",
+      "revised": "Revised"
+    },
+    "saveIdea": {
+      "saveError": "Save failed",
+      "savedSuccess": "Saved to idea library",
+      "saveErrorRetry": "Save failed, please try again",
+      "saved": "Saved",
+      "saving": "Saving...",
+      "save": "Save"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "comingSoon": "More settings (profile, notification preferences, etc.) coming soon",
+    "ai": {
+      "configured": "AI configured",
+      "notConfigured": "AI not configured",
+      "notConfiguredDesc": "Configure to use AI diagnosis, anti-AI voice detection, and other features. Without configuration, only mock feedback is available.",
+      "title": "AI Service Configuration",
+      "provider": "AI Provider",
+      "providerDesc": "Select your AI service. Any OpenAI-compatible API format is supported.",
+      "customProvider": "Custom (OpenAI compatible)",
+      "apiUrl": "API URL",
+      "apiUrlDesc": "The API URL for your AI service. Select 'Custom' to enter any OpenAI-compatible URL.",
+      "apiKey": "API Key",
+      "getKey": "Get API Key",
+      "getKeyDesc": "Click here to get {provider} API key",
+      "model": "Model",
+      "modelPlaceholder": "Select or enter model name",
+      "temperature": "Temperature",
+      "temperatureDesc": "0 = more deterministic, 2 = more creative",
+      "maxTokens": "Max Tokens",
+      "maxTokensDesc": "Limit the maximum length of AI responses",
+      "testConnection": "Test Connection",
+      "saveSettings": "Save Settings",
+      "clearSettings": "Clear Settings",
+      "confirmClear": "Are you sure you want to clear AI settings?",
+      "confirmClearDesc": "You'll need to reconfigure to use AI features.",
+      "savedSuccess": "AI settings saved",
+      "saveError": "Save failed, please try again",
+      "fillComplete": "Please fill in all required fields",
+      "testSuccess": "Connection successful! AI responded: {response}",
+      "testError": "Connection test failed",
+      "cleared": "AI settings cleared",
+      "errorApiUrl": "Please enter API URL",
+      "errorApiKey": "Please enter API Key",
+      "errorModel": "Please select or enter a model name",
+      "show": "Show",
+      "hide": "Hide",
+      "apiKeyStorageDesc": "Your API Key is stored only in your browser (dev) or encrypted in the database (production).",
+      "modelInputPlaceholder": "Model name, e.g. deepseek-chat",
+      "advancedSettings": "Advanced Settings",
+      "tempPrecise": "Precise",
+      "tempBalanced": "Balanced",
+      "tempCreative": "Creative",
+      "savingBtn": "Saving...",
+      "testingBtn": "Testing...",
+      "currentUsing": "Currently using {provider} / {model}"
+    }
+  },
+  "aiSetup": {
+    "backToPractice": "Back to Practice",
+    "title": "Configure your AI writing coach",
+    "desc": "WriteFit uses your own AI API key to provide writing feedback. Your key is stored securely and only used for your own requests."
+  },
+  "dev": {
+    "title": "Dev Test",
+    "aiSettings": "AI Settings",
+    "backHome": "Back to Home",
+    "devMode": "This is dev test mode",
+    "desc": "This mode allows you to test the practice flow without logging in. Practice data will not be saved to the database."
+  }
+}

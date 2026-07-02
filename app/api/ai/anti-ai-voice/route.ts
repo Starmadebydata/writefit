@@ -4,31 +4,39 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { callAIJson, type AIConfig } from "@/lib/ai/client";
-import { SYSTEM_RULES, ANTI_AI_VOICE_PROMPT } from "@/lib/ai/prompts";
+import { getSystemRules, getAntiAiVoicePrompt, type Locale } from "@/lib/ai/prompts";
 import { mockAntiAIVoice } from "@/lib/ai/mock";
 import type { AntiAIVoiceFeedback } from "@/lib/ai/schemas";
 
 export async function POST(req: NextRequest) {
   try {
-    const { text, aiConfig } = await req.json();
+    const { text, language = "en", aiConfig } = await req.json();
+
+    // 确定语言
+    const locale: Locale = language === "zh" ? "zh" : "en";
 
     if (!text || typeof text !== "string" || text.trim().length < 10) {
       return NextResponse.json(
-        { error: "文本太短，至少需要 10 个字符才能检测" },
+        { error: locale === "zh" ? "文本太短，至少需要 10 个字符才能检测" : "Text too short, at least 10 characters required for detection" },
         { status: 400 }
       );
     }
 
     if (!aiConfig || !aiConfig.apiKey) {
-      const mockResult = mockAntiAIVoice(text);
+      const mockResult = mockAntiAIVoice(text, locale);
       return NextResponse.json({ ...mockResult, _mock: true });
     }
 
     const result = await callAIJson<AntiAIVoiceFeedback>({
       config: aiConfig as AIConfig,
-      systemPrompt: `${SYSTEM_RULES}\n\n${ANTI_AI_VOICE_PROMPT}`,
+      systemPrompt: `${getSystemRules(locale)}\n\n${getAntiAiVoicePrompt(locale)}`,
       messages: [
-        { role: "user", content: `请检测以下文本的 AI 腔：\n\n${text}` },
+        {
+          role: "user",
+          content: locale === "zh"
+            ? `请检测以下文本的 AI 腔：\n\n${text}`
+            : `Please detect AI-like tone in the following text:\n\n${text}`,
+        },
       ],
       temperature: 0.3,
       maxTokens: 2000,
@@ -37,8 +45,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("反 AI 腔检测失败:", error);
-    const message = error instanceof Error ? error.message : "检测失败";
+    console.error("Anti-AI voice detection failed:", error);
+    const message = error instanceof Error ? error.message : "Detection failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

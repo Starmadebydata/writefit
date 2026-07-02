@@ -15,14 +15,6 @@ import { NextRequest, NextResponse } from "next/server";
 // GET：读取用户的 AI 设置
 // 开发阶段返回空（前端会回退到 localStorage）
 export async function GET() {
-  // TODO: 生产环境从数据库读取
-  // const session = await auth();
-  // if (!session?.user?.id) return NextResponse.json({ error: "未登录" }, { status: 401 });
-  // const db = getDb();
-  // const [setting] = await db.select().from(aiSettings).where(eq(aiSettings.userId, session.user.id));
-  // if (!setting) return NextResponse.json({ ... null settings ... });
-  // return NextResponse.json({ ...setting, apiKey: decrypt(setting.apiKey) });
-
   return NextResponse.json({ notConfigured: true });
 }
 
@@ -34,32 +26,14 @@ export async function POST(req: NextRequest) {
 
     // 验证必填字段
     if (!apiBaseUrl) {
-      return NextResponse.json({ error: "请填写 API 地址" }, { status: 400 });
+      return NextResponse.json({ error: "Please enter API URL" }, { status: 400 });
     }
     if (!apiKey) {
-      return NextResponse.json({ error: "请填写 API Key" }, { status: 400 });
+      return NextResponse.json({ error: "Please enter API Key" }, { status: 400 });
     }
     if (!model) {
-      return NextResponse.json({ error: "请选择模型" }, { status: 400 });
+      return NextResponse.json({ error: "Please select a model" }, { status: 400 });
     }
-
-    // TODO: 生产环境保存到数据库
-    // const session = await auth();
-    // if (!session?.user?.id) return NextResponse.json({ error: "未登录" }, { status: 401 });
-    // const db = getDb();
-    // await db.insert(aiSettings).values({
-    //   id: crypto.randomUUID(),
-    //   userId: session.user.id,
-    //   provider,
-    //   apiBaseUrl,
-    //   apiKey: encrypt(apiKey),
-    //   model,
-    //   temperature: Math.round(temperature * 10),
-    //   maxTokens,
-    // }).onConflictDoUpdate({
-    //   target: aiSettings.userId,
-    //   set: { provider, apiBaseUrl, apiKey: encrypt(apiKey), model, temperature: Math.round(temperature * 10), maxTokens, updatedAt: new Date() },
-    // });
 
     // 开发阶段：直接返回成功（前端会同时保存到 localStorage）
     return NextResponse.json({
@@ -69,21 +43,14 @@ export async function POST(req: NextRequest) {
       model,
       temperature,
       maxTokens,
-      // 不返回 apiKey，安全考虑
     });
   } catch (error) {
-    console.error("保存 AI 设置失败:", error);
-    return NextResponse.json({ error: "保存失败" }, { status: 500 });
+    console.error("Save AI settings failed:", error);
+    return NextResponse.json({ error: "Save failed" }, { status: 500 });
   }
 }
 
 // DELETE：删除用户的 AI 设置
 export async function DELETE() {
-  // TODO: 生产环境从数据库删除
-  // const session = await auth();
-  // if (!session?.user?.id) return NextResponse.json({ error: "未登录" }, { status: 401 });
-  // const db = getDb();
-  // await db.delete(aiSettings).where(eq(aiSettings.userId, session.user.id));
-
   return NextResponse.json({ success: true });
 }

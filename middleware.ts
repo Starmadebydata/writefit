@@ -1,22 +1,26 @@
 // ====================================================================
-// 路由保护中间件
+// 中间件：语言路由 + 认证保护
 // ====================================================================
-// 这个文件就像大厦入口的保安，检查每个请求：
-// - 未登录的用户不能进入 /dashboard、/practice 等私有页面
-// - 未登录的用户可以访问首页、登录页
-// - 未完成 Onboarding 的用户会被引导到 /onboarding
+// 合并两个功能：
+// 1. next-intl 的语言路由（检测 locale，重写 URL）
+// 2. Auth.js 的认证保护（未登录用户不能访问私有页面）
 //
 // 工作流程：
-// 1. 用户访问某个页面 → 中间件先检查是否有登录令牌
-// 2. 没有令牌 → 跳转到登录页
-// 3. 有令牌但没完成 Onboarding → 跳转到 /onboarding
-// 4. 有令牌且已完成 Onboarding → 放行
+// 1. 请求进来 → next-intl 中间件处理语言路由
+// 2. 然后检查是否是需要保护的页面
+// 3. 未登录 → 跳转到登录页
+// 4. 已登录但访问登录页 → 跳转到 Dashboard
 // ====================================================================
 
+import createMiddleware from "next-intl/middleware";
 import { auth } from "@/lib/auth/auth";
 import { NextResponse } from "next/server";
+import { routing } from "@/i18n/routing";
 
-// 需要登录才能访问的页面路径
+// next-intl 的语言路由中间件
+const intlMiddleware = createMiddleware(routing);
+
+// 需要登录才能访问的页面路径（不含 locale 前缀）
 const protectedPaths = [
   "/dashboard",
   "/practice",
@@ -28,37 +32,66 @@ const protectedPaths = [
 ];
 
 export default auth((req) => {
+  // 先让 next-intl 处理语言路由
+  const intlResponse = intlMiddleware(req);
+
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
-  // 检查当前路径是否是需要保护的页面
+  // 获取不含 locale 前缀的路径
+  // 例如 /zh/dashboard → /dashboard，/dashboard → /dashboard
+  let pathname = nextUrl.pathname;
+  for (const locale of routing.locales) {
+    if (pathname.startsWith(`/${locale}/`)) {
+      pathname = pathname.slice(`/${locale}`.length);
+      break;
+    }
+    if (pathname === `/${locale}`) {
+      pathname = "/";
+      break;
+    }
+  }
+
   // /practice/dev 和 /ai-setup 是开发测试页面，不需要登录
-  const isProtectedPath = protectedPaths.some((path) =>
-    nextUrl.pathname.startsWith(path)
-  ) && !nextUrl.pathname.startsWith("/practice/dev") && !nextUrl.pathname.startsWith("/ai-setup");
+  const isProtectedPath =
+    protectedPaths.some((path) => pathname.startsWith(path)) &&
+    !pathname.startsWith("/practice/dev") &&
+    !pathname.startsWith("/ai-setup");
 
   // 如果是需要保护的页面，但用户没登录 → 跳转到登录页
   if (isProtectedPath && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/auth/login", nextUrl));
+    // 构建登录页 URL（保留当前 locale）
+    const locale = nextUrl.pathname.split("/")[1];
+    const isLocalePrefix = routing.locales.includes(locale as "en" | "zh");
+    const loginPath = isLocalePrefix
+      ? `/${locale}/auth/login`
+      : "/auth/login";
+    return NextResponse.redirect(new URL(loginPath, nextUrl));
   }
 
   // 如果用户已登录但访问登录页 → 跳转到 Dashboard
-  if (isLoggedIn && nextUrl.pathname === "/auth/login") {
-    return NextResponse.redirect(new URL("/dashboard", nextUrl));
+  if (isLoggedIn && pathname === "/auth/login") {
+    const locale = nextUrl.pathname.split("/")[1];
+    const isLocalePrefix = routing.locales.includes(locale as "en" | "zh");
+    const dashboardPath = isLocalePrefix
+      ? `/${locale}/dashboard`
+      : "/dashboard";
+    return NextResponse.redirect(new URL(dashboardPath, nextUrl));
   }
 
-  // 其他情况放行
-  return NextResponse.next();
+  // 返回 next-intl 的响应（处理语言路由）
+  return intlResponse;
 });
 
-// 配置中间件匹配的路径
+// 中间件匹配的路径
 export const config = {
   matcher: [
-    // 匹配所有路径，但排除以下内容：
-    // - api/auth 开头的登录 API 路由
+    // 匹配所有路径，但排除：
+    // - api 开头的 API 路由
     // - _next/static 开头的静态资源
     // - _next/image 开头的图片优化
     // - favicon.ico
-    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
+    // - 包含点号的文件（如 .png, .css 等）
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)",
   ],
 };

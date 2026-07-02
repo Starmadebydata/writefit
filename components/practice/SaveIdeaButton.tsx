@@ -11,6 +11,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Bookmark, Check } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface SaveIdeaButtonProps {
   // 素材内容
@@ -22,6 +23,7 @@ interface SaveIdeaButtonProps {
 }
 
 export function SaveIdeaButton({ content, type, size = "sm" }: SaveIdeaButtonProps) {
+  const t = useTranslations("practice.saveIdea");
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -36,12 +38,12 @@ export function SaveIdeaButton({ content, type, size = "sm" }: SaveIdeaButtonPro
         body: JSON.stringify({ type, content, tags: [] }),
       });
 
-      if (!res.ok) throw new Error("保存失败");
+      if (!res.ok) throw new Error(t("saveError"));
 
       setSaved(true);
-      toast.success("已保存到素材库");
+      toast.success(t("savedSuccess"));
     } catch {
-      toast.error("保存失败，请重试");
+      toast.error(t("saveErrorRetry"));
     } finally {
       setLoading(false);
     }
@@ -51,7 +53,7 @@ export function SaveIdeaButton({ content, type, size = "sm" }: SaveIdeaButtonPro
     return (
       <Button size={size} variant="ghost" disabled className="text-primary">
         <Check className="h-3.5 w-3.5" />
-        已保存
+        {t("saved")}
       </Button>
     );
   }
@@ -65,7 +67,7 @@ export function SaveIdeaButton({ content, type, size = "sm" }: SaveIdeaButtonPro
       className="text-muted-foreground hover:text-primary"
     >
       <Bookmark className="h-3.5 w-3.5" />
-      {loading ? "保存中..." : "保存"}
+      {loading ? t("saving") : t("save")}
     </Button>
   );
 }

@@ -12,9 +12,10 @@
 // ====================================================================
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
 export function RegisterForm() {
+  const t = useTranslations("auth.register");
+  const locale = useLocale();
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,17 +41,17 @@ export function RegisterForm() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, locale }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || "注册失败");
+        toast.error(data.error || t("errorRegister"));
         return;
       }
 
-      toast.success("注册成功！正在登录...");
+      toast.success(t("success"));
 
       // 注册成功后，自动用邮箱密码登录
       const result = await signIn("credentials", {
@@ -59,14 +62,14 @@ export function RegisterForm() {
       });
 
       if (result?.error) {
-        toast.error("自动登录失败，请手动登录");
+        toast.error(t("errorAutoLogin"));
         router.push("/auth/login");
       } else {
         router.push("/dashboard");
         router.refresh();
       }
     } catch {
-      toast.error("网络错误，请稍后重试");
+      toast.error(t("errorNetwork"));
     } finally {
       setLoading(false);
     }
@@ -78,7 +81,7 @@ export function RegisterForm() {
     try {
       await signIn("google", { callbackUrl: "/dashboard" });
     } catch {
-      toast.error("Google 登录失败");
+      toast.error(t("errorGoogle"));
       setGoogleLoading(false);
     }
   }
@@ -89,10 +92,8 @@ export function RegisterForm() {
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-lg">
           W
         </div>
-        <CardTitle className="text-2xl">创建 WriteFit 账户</CardTitle>
-        <p className="text-sm text-muted-foreground mt-2">
-          每天 15 分钟，训练你自己的写作能力
-        </p>
+        <CardTitle className="text-2xl">{t("title")}</CardTitle>
+        <p className="text-sm text-muted-foreground mt-2">{t("subtitle")}</p>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Google 登录 —— 放在最上方，重点推荐 */}
@@ -121,7 +122,7 @@ export function RegisterForm() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          {googleLoading ? "正在跳转..." : "用 Google 账号注册"}
+          {googleLoading ? t("googleRedirecting") : t("googleRegister")}
         </Button>
 
         {/* 分隔线 */}
@@ -130,39 +131,39 @@ export function RegisterForm() {
             <span className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">或者用邮箱注册</span>
+            <span className="bg-card px-2 text-muted-foreground">{t("orEmail")}</span>
           </div>
         </div>
 
         {/* 邮箱密码注册表单 */}
         <form onSubmit={handleRegister} className="space-y-3">
           <div className="space-y-1.5">
-            <Label htmlFor="name">昵称（可选）</Label>
+            <Label htmlFor="name">{t("name")}</Label>
             <Input
               id="name"
               type="text"
-              placeholder="你的昵称"
+              placeholder={t("namePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="email">邮箱</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t("emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password">密码</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <Input
               id="password"
               type="password"
-              placeholder="至少 6 个字符"
+              placeholder={t("passwordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -170,25 +171,23 @@ export function RegisterForm() {
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "正在注册..." : "创建账户"}
+            {loading ? t("registering") : t("registerButton")}
           </Button>
         </form>
 
         {/* 登录链接 */}
         <div className="pt-2 text-center">
           <p className="text-sm text-muted-foreground">
-            已经有账户？{" "}
+            {t("hasAccount")}{" "}
             <Link href="/auth/login" className="text-primary hover:underline font-medium">
-              直接登录
+              {t("logIn")}
             </Link>
           </p>
         </div>
 
         <div className="pt-2 text-center">
-          <p className="text-xs text-muted-foreground">
-            注册即表示你同意 WriteFit 帮助你训练写作能力，
-            <br />
-            而不是替你写文章。
+          <p className="text-xs text-muted-foreground whitespace-pre-line">
+            {t("termsNotice")}
           </p>
         </div>
       </CardContent>

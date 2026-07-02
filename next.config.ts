@@ -1,4 +1,8 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+// next-intl 插件：让 Next.js 识别 i18n/request.ts 配置
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   // Cloudflare Workers 运行时需要这些配置
@@ -12,4 +16,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// 用 next-intl 插件包装 Next.js 配置
+export default withNextIntl(nextConfig);

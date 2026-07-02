@@ -1,0 +1,295 @@
+{
+  "common": {
+    "appName": "WriteFit",
+    "tagline": "一个训练你自己写作能力的 AI 写作教练。",
+    "dailyMinutes": "每天 15 分钟",
+    "trainYourWriting": "训练你自己的写作能力",
+    "loading": "加载中...",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "back": "返回",
+    "comingSoon": "功能开发中",
+    "comingSoonDesc": "这个功能正在开发中，敬请期待。",
+    "saveSuccess": "保存成功",
+    "saveError": "保存失败，请重试",
+    "networkError": "网络错误，请稍后重试"
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "practice": "今日训练",
+    "sentenceGym": "句子训练",
+    "drafts": "草稿",
+    "ideas": "素材库",
+    "progress": "进度",
+    "settings": "设置",
+    "user": "用户",
+    "logout": "退出登录",
+    "footerTagline": "每天 15 分钟\n训练你自己的写作能力"
+  },
+  "landing": {
+    "heroBadge": "AI Native 写作训练",
+    "heroTitle": "每天 15 分钟，\n重新训练你的写作肌肉",
+    "heroDesc": "WriteFit 是一个 AI 写作教练。它不会直接替你写文章，\n而是帮助你练习、修改、积累，慢慢找回自己的表达能力。",
+    "startTraining": "开始训练",
+    "learnMore": "了解原理",
+    "tryDemo": "体验训练流程（无需登录）→",
+    "problems": {
+      "title": "这些问题你熟悉吗？",
+      "items": [
+        "句子写得不错，但整篇文章读起来空洞",
+        "脑子里想得很清楚，写出来却很模糊",
+        "AI 能帮你润色，但文字越来越不像你写的",
+        "读了很多写作技巧，自己的写作却没有进步",
+        "开头想法很好，写到第三段就被稀释了",
+        "想要个人风格，但写出来和所有人一样"
+      ]
+    },
+    "mechanism": {
+      "title": "WriteFit 的工作方式",
+      "steps": [
+        { "title": "你先写", "desc": "15 分钟内写一篇短文。不用 AI，只有你和空白页面。" },
+        { "title": "AI 诊断", "desc": "AI 分析你的写作，找出 3 个具体问题——不是泛泛的建议。" },
+        { "title": "你修改", "desc": "根据反馈修改。AI 不替你重写，你自己动手。" },
+        { "title": "对比版本", "desc": "清楚看到原稿和修改稿之间到底改了什么。" },
+        { "title": "保存好句", "desc": "把好句子和灵感保存到个人素材库，以后可以复用。" }
+      ]
+    },
+    "features": {
+      "title": "核心功能",
+      "items": [
+        { "title": "每日训练", "desc": "每天一个写作题目，15 分钟。不同训练类型在一周内轮换。" },
+        { "title": "AI 诊断", "desc": "AI 分析你的清晰度、具体性、个人声音和 AI 腔程度。不是语法检查器，是写作教练。" },
+        { "title": "反 AI 腔训练", "desc": "检测和修复模板化、过度平滑、空泛的文字。建立属于你自己的声音。" },
+        { "title": "句子手术", "desc": "拆解任何句子。找出空泛词、抽象名词和节奏问题。逐一修复。" },
+        { "title": "草稿实验室", "desc": "写长文。跟踪版本。对修改稿而不只是初稿获得反馈。" },
+        { "title": "素材库", "desc": "从训练中保存好句子、观察和灵感。建立个人写作资源库。" }
+      ]
+    },
+    "scenarios": {
+      "title": "WriteFit 适合谁？",
+      "items": [
+        "觉得自己的文字越来越模板化的写作者",
+        "需要清晰表达但苦于用词的创始人和创作者",
+        "写了很多但感觉没有进步的人",
+        "任何想减少 AI 腔、找回自己声音的人"
+      ]
+    },
+    "cta": {
+      "title": "今天开始训练你的写作",
+      "desc": "每天 15 分钟。不用 AI 代写。只有你，变得更好。",
+      "button": "开始训练"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "登录 WriteFit",
+      "subtitle": "每天 15 分钟，训练你自己的写作能力",
+      "googleLogin": "用 Google 登录",
+      "googleRedirecting": "正在跳转...",
+      "orEmail": "或者用邮箱登录",
+      "email": "邮箱",
+      "emailPlaceholder": "you@example.com",
+      "password": "密码",
+      "passwordPlaceholder": "你的密码",
+      "loginButton": "登录",
+      "loggingIn": "正在登录...",
+      "noAccount": "还没有账户？",
+      "signUp": "免费注册",
+      "termsNotice": "登录即表示你同意 WriteFit 帮助你训练写作能力，\n而不是替你写文章。",
+      "errorGoogle": "Google 登录失败",
+      "errorCredentials": "邮箱或密码错误",
+      "success": "登录成功！",
+      "errorGeneric": "登录失败，请稍后重试"
+    },
+    "register": {
+      "title": "创建 WriteFit 账户",
+      "subtitle": "每天 15 分钟，训练你自己的写作能力",
+      "googleRegister": "用 Google 账号注册",
+      "orEmail": "或者用邮箱注册",
+      "name": "昵称（可选）",
+      "namePlaceholder": "你的昵称",
+      "email": "邮箱",
+      "emailPlaceholder": "you@example.com",
+      "password": "密码",
+      "passwordPlaceholder": "至少 6 个字符",
+      "registerButton": "创建账户",
+      "registering": "正在注册...",
+      "hasAccount": "已经有账户？",
+      "logIn": "直接登录",
+      "termsNotice": "注册即表示你同意 WriteFit 帮助你训练写作能力，\n而不是替你写文章。",
+      "errorGoogle": "Google 登录失败",
+      "errorRegister": "注册失败",
+      "success": "注册成功！正在登录...",
+      "errorAutoLogin": "自动登录失败，请手动登录",
+      "errorNetwork": "网络错误，请稍后重试",
+      "errorEmailExists": "该邮箱已注册，请直接登录",
+      "errorEmailFormat": "邮箱格式不正确",
+      "errorPasswordShort": "密码至少 6 个字符",
+      "errorFillAll": "请填写邮箱和密码",
+      "errorRegisterFailed": "注册失败，请稍后重试"
+    }
+  },
+  "dashboard": {
+    "welcome": "欢迎回来，{name}",
+    "defaultName": "写作者",
+    "dayOne": "今天是你写作训练的第 1 天。开始今天的练习吧。",
+    "todaysPractice": "今日训练",
+    "startPractice": "开始训练",
+    "stats": {
+      "streak": "连续训练",
+      "thisWeek": "本周训练",
+      "wordsThisWeek": "本周字数",
+      "savedIdeas": "保存素材",
+      "days": "天",
+      "sessions": "次",
+      "words": "字",
+      "items": "条"
+    },
+    "recentIdeas": "最近素材",
+    "recentDrafts": "最近草稿",
+    "viewAll": "查看全部",
+    "noIdeas": "还没有保存的素材。完成一次训练后开始收集。",
+    "noDrafts": "还没有草稿。去草稿实验室开始写作。"
+  },
+  "practice": {
+    "todaysPractice": "今日训练",
+    "types": {
+      "free_writing": "自由写作",
+      "sentence_surgery": "句子手术",
+      "specificity_drill": "具体化训练",
+      "anti_ai_voice": "反 AI 腔训练",
+      "title_drill": "标题训练",
+      "opening_drill": "开头训练"
+    },
+    "flow": {
+      "stages": {
+        "prompt": "题目",
+        "writing": "写作",
+        "diagnosis": "诊断",
+        "revision": "修改",
+        "complete": "完成"
+      },
+      "devMode": "🔧 开发测试模式 —— 不需要登录，训练数据不会保存到数据库",
+      "todaysPrompt": "今日题目",
+      "writingInstructions": "开始写吧。不要修改，不要追求完美，先把脑子里的东西倒出来。",
+      "minWordsWarning": "至少需要 {minWords} 字才能提交",
+      "startWriting": "开始写作",
+      "submitDraft": "提交原始稿",
+      "aiAnalyzing": "AI 正在分析你的写作...",
+      "diagnosing": "诊断中...",
+      "viewFeedback": "查看反馈",
+      "startRevision": "开始修改",
+      "revisionInstructions": "根据反馈修改你的文字",
+      "submitRevision": "提交修改稿",
+      "comparing": "对比中...",
+      "finishPractice": "完成训练",
+      "viewComparison": "查看版本对比",
+      "practiceComplete": "今日训练完成！",
+      "completeMessage": "做得好！你已经完成了今天的训练。",
+      "tryAgain": "再来一次",
+      "backToDashboard": "返回仪表盘",
+      "errorMinWords": "至少需要 {minWords} 字才能提交",
+      "errorAiDiagnosis": "AI 诊断失败，请重试",
+      "errorNoRevision": "你还没有修改任何内容",
+      "errorCompareFailed": "版本对比失败，但你可以查看差异"
+    },
+    "editor": {
+      "placeholder": "开始写吧。不要修改，不要追求完美，先把脑子里的东西倒出来。",
+      "wordCount": "{count} 字",
+      "minWords": "（至少 {min} 字）",
+      "reachedMin": "✓ 已达到最低字数",
+      "needMore": "还差 {remaining} 字"
+    },
+    "feedback": {
+      "mockNotice": "⚠ 这是模拟反馈。配置 AI API Key 后将获得真实 AI 诊断。",
+      "scores": {
+        "clarity": "清晰度",
+        "specificity": "具体性",
+        "voice": "个人声音",
+        "aiLike": "AI 腔"
+      },
+      "topIssues": "3 个需要改进的问题",
+      "revisionTask": "修改任务：",
+      "bestSentence": "今天最好的句子",
+      "mostAiLike": "最像 AI 的句子",
+      "nextGoal": "下一轮修改目标"
+    },
+    "diff": {
+      "deleted": "删除 {count} 句",
+      "added": "新增 {count} 句",
+      "kept": "保留 {count} 句",
+      "original": "原稿",
+      "revised": "修改稿"
+    },
+    "saveIdea": {
+      "saveError": "保存失败",
+      "savedSuccess": "已保存到素材库",
+      "saveErrorRetry": "保存失败，请重试",
+      "saved": "已保存",
+      "saving": "保存中...",
+      "save": "保存"
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "comingSoon": "更多设置（个人资料、通知偏好等）即将上线",
+    "ai": {
+      "configured": "AI 已配置",
+      "notConfigured": "尚未配置 AI",
+      "notConfiguredDesc": "配置后才能使用 AI 诊断、反 AI 腔检测等功能。不配置时只能看到模拟反馈。",
+      "title": "AI 服务配置",
+      "provider": "AI 服务商",
+      "providerDesc": "选择你使用的 AI 服务。支持任何兼容 OpenAI 接口格式的服务。",
+      "customProvider": "自定义 (OpenAI 兼容)",
+      "apiUrl": "API 地址",
+      "apiUrlDesc": "AI 服务的 API 地址。选择'自定义'可以填写任意兼容 OpenAI 格式的地址。",
+      "apiKey": "API Key",
+      "getKey": "获取 API Key",
+      "getKeyDesc": "点击这里获取 {provider} 的 API Key",
+      "model": "模型",
+      "modelPlaceholder": "选择或填写模型名称",
+      "temperature": "温度",
+      "temperatureDesc": "0 = 更确定，2 = 更有创意",
+      "maxTokens": "最大 Token 数",
+      "maxTokensDesc": "限制 AI 回复的最大长度",
+      "testConnection": "测试连接",
+      "saveSettings": "保存设置",
+      "clearSettings": "清除设置",
+      "confirmClear": "确定要清除 AI 设置吗？",
+      "confirmClearDesc": "清除后需要重新配置才能使用 AI 功能。",
+      "savedSuccess": "AI 设置已保存",
+      "saveError": "保存失败，请重试",
+      "fillComplete": "请先填写完整配置",
+      "testSuccess": "连接成功！AI 回复：{response}",
+      "testError": "测试连接失败",
+      "cleared": "AI 设置已清除",
+      "errorApiUrl": "请填写 API 地址",
+      "errorApiKey": "请填写 API Key",
+      "errorModel": "请选择或填写模型名称",
+      "show": "显示",
+      "hide": "隐藏",
+      "apiKeyStorageDesc": "你的 API Key 只存在你的浏览器里（开发阶段）或加密存储在数据库里（生产环境）。",
+      "modelInputPlaceholder": "模型名称，如 deepseek-chat",
+      "advancedSettings": "高级设置",
+      "tempPrecise": "精确",
+      "tempBalanced": "平衡",
+      "tempCreative": "有创意",
+      "savingBtn": "保存中...",
+      "testingBtn": "测试中...",
+      "currentUsing": "当前使用 {provider} / {model}"
+    }
+  },
+  "aiSetup": {
+    "backToPractice": "返回训练",
+    "title": "配置你的 AI 写作教练",
+    "desc": "WriteFit 使用你自己的 AI API Key 来提供写作反馈。你的 Key 安全存储，仅用于你自己的请求。"
+  },
+  "dev": {
+    "title": "开发测试",
+    "aiSettings": "AI 设置",
+    "backHome": "返回首页",
+    "devMode": "这是开发测试模式",
+    "desc": "这个模式允许你在不登录的情况下测试训练流程。训练数据不会保存到数据库。"
+  }
+}
