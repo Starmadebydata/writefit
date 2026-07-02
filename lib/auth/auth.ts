@@ -213,6 +213,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: "jwt",
   },
+  // 信任生产环境域名（Cloudflare 自定义域名需要）
+  trustHost: true,
   // 登录后跳转页面
   pages: {
     signIn: "/auth/login",

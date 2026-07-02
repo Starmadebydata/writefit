@@ -11,7 +11,7 @@
     "db:migrate": "wrangler d1 migrations apply writefit-db --local",
     "db:studio": "drizzle-kit studio",
     "preview": "opennextjs-cloudflare && wrangler dev",
-    "deploy": "opennextjs-cloudflare build && wrangler deploy"
+    "deploy": "opennextjs-cloudflare build && wrangler deploy --keep-vars"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
