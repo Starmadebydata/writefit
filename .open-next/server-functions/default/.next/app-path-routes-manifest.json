@@ -1,0 +1,23 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/ai-setup/page": "/ai-setup",
+  "/api/ai-settings/route": "/api/ai-settings",
+  "/api/ai/anti-ai-voice/route": "/api/ai/anti-ai-voice",
+  "/api/ai/compare-revision/route": "/api/ai/compare-revision",
+  "/api/ai/diagnose/route": "/api/ai/diagnose",
+  "/api/auth/[...nextauth]/route": "/api/auth/[...nextauth]",
+  "/api/ideas/route": "/api/ideas",
+  "/auth/login/page": "/auth/login",
+  "/dashboard/page": "/dashboard",
+  "/drafts/page": "/drafts",
+  "/favicon.ico/route": "/favicon.ico",
+  "/ideas/page": "/ideas",
+  "/onboarding/page": "/onboarding",
+  "/page": "/",
+  "/practice/dev/page": "/practice/dev",
+  "/practice/today/page": "/practice/today",
+  "/progress/page": "/progress",
+  "/sentence-gym/page": "/sentence-gym",
+  "/settings/page": "/settings"
+}

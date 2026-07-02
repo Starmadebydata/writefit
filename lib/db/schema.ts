@@ -25,6 +25,7 @@ export const users = sqliteTable("users", {
   email: text("email").notNull().unique(), // 邮箱（登录用）
   emailVerified: integer("email_verified", { mode: "timestamp" }), // 邮箱验证时间
   image: text("image"), // 头像 URL（来自 GitHub/Google）
+  passwordHash: text("password_hash"), // 密码哈希（仅邮箱注册的用户有值，OAuth 用户为 null）
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });

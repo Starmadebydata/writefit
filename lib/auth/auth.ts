@@ -1,13 +1,13 @@
 // ====================================================================
 // Auth.js v5 登录系统配置
 // ====================================================================
-// 这个文件配置用户登录系统，支持 GitHub 和 Google 第三方登录
+// 这个文件配置用户登录系统，支持：
+// 1. Google 登录（重点推荐）
+// 2. 邮箱 + 密码注册/登录
 //
 // 工作原理：
-// 1. 用户点击"用 GitHub 登录" → 跳转到 GitHub 授权页面
-// 2. 用户同意授权 → GitHub 把用户信息发回我们的应用
-// 3. 我们在数据库里创建或更新用户记录
-// 4. 生成一个 JWT 令牌发给浏览器，后续请求用这个令牌识别用户
+// - Google 登录：跳转到 Google 授权页面，授权后自动创建/登录用户
+// - 邮箱密码：用户注册时密码用 bcrypt 哈希后存入数据库，登录时比对哈希
 //
 // 技术说明：
 // - 使用 JWT 策略（不依赖数据库存储会话，适合 Cloudflare 边缘运行时）
@@ -17,11 +17,13 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials";
 import type { Adapter, AdapterUser, AdapterAccount } from "next-auth/adapters";
 import { drizzle } from "drizzle-orm/d1";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { users, accounts } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 // 创建一个按需获取数据库的 Auth.js 适配器
 // 普通的适配器在配置时就创建数据库连接，但 Cloudflare D1 是按请求获取的
@@ -145,15 +147,64 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // 开发环境默认 secret：没配置 AUTH_SECRET 时用这个
   // 生产环境必须在 .env 中设置 AUTH_SECRET
   secret: process.env.AUTH_SECRET ?? "dev-only-secret-do-not-use-in-production",
-  // 登录方式：GitHub 和 Google
+  // 登录方式：
+  // 1. Google 登录（重点推荐，最方便）
+  // 2. GitHub 登录（开发者友好）
+  // 3. 邮箱 + 密码（传统注册登录）
   providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    }),
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
     }),
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    // 邮箱 + 密码登录
+    Credentials({
+      name: "email",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        // 检查输入是否完整
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        const email = credentials.email as string;
+        const password = credentials.password as string;
+
+        // 从数据库查找用户
+        const { env } = getCloudflareContext();
+        const db = drizzle(env.DB);
+        const [user] = await db.select().from(users).where(eq(users.email, email));
+
+        // 用户不存在
+        if (!user) {
+          return null;
+        }
+
+        // 用户没有密码哈希（说明是 OAuth 用户，不能用密码登录）
+        if (!user.passwordHash) {
+          return null;
+        }
+
+        // 验证密码
+        const isValid = await bcrypt.compare(password, user.passwordHash);
+        if (!isValid) {
+          return null;
+        }
+
+        // 返回用户信息（Auth.js 会把这个存入 JWT）
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        };
+      },
     }),
   ],
   // 使用自定义 D1 适配器

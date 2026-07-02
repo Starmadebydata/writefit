@@ -80,7 +80,7 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button size="lg" render={<Link href="/auth/login" />}>
+            <Button size="lg" render={<Link href="/auth/register" />}>
                 开始训练
                 <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -277,7 +277,7 @@ export default function LandingPage() {
           每天 15 分钟，一次只练一个动作。
           长期积累，重新拥有自己的表达能力。
         </p>
-        <Button size="lg" render={<Link href="/auth/login" />}>
+        <Button size="lg" render={<Link href="/auth/register" />}>
           开始你的第一次训练
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>

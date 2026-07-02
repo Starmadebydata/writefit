@@ -1,0 +1,3 @@
+export const production = {"AUTH_SECRET":"dev-only-secret-do-not-use-in-production","AUTH_GITHUB_ID":"","AUTH_GITHUB_SECRET":"","AUTH_GOOGLE_ID":"","AUTH_GOOGLE_SECRET":"","NEXTAUTH_URL":"http://localhost:3000","DEEPSEEK_API_KEY":""};
+export const development = {"AUTH_SECRET":"dev-only-secret-do-not-use-in-production","AUTH_GITHUB_ID":"","AUTH_GITHUB_SECRET":"","AUTH_GOOGLE_ID":"","AUTH_GOOGLE_SECRET":"","NEXTAUTH_URL":"http://localhost:3000","DEEPSEEK_API_KEY":""};
+export const test = {"AUTH_SECRET":"dev-only-secret-do-not-use-in-production","AUTH_GITHUB_ID":"","AUTH_GITHUB_SECRET":"","AUTH_GOOGLE_ID":"","AUTH_GOOGLE_SECRET":"","NEXTAUTH_URL":"http://localhost:3000","DEEPSEEK_API_KEY":""};

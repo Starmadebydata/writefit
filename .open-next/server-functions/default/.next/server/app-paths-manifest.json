@@ -1,0 +1,23 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/ai-setup/page": "app/ai-setup/page.js",
+  "/api/ai-settings/route": "app/api/ai-settings/route.js",
+  "/api/ai/anti-ai-voice/route": "app/api/ai/anti-ai-voice/route.js",
+  "/api/ai/compare-revision/route": "app/api/ai/compare-revision/route.js",
+  "/api/ai/diagnose/route": "app/api/ai/diagnose/route.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/ideas/route": "app/api/ideas/route.js",
+  "/auth/login/page": "app/auth/login/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/drafts/page": "app/drafts/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/ideas/page": "app/ideas/page.js",
+  "/onboarding/page": "app/onboarding/page.js",
+  "/page": "app/page.js",
+  "/practice/dev/page": "app/practice/dev/page.js",
+  "/practice/today/page": "app/practice/today/page.js",
+  "/progress/page": "app/progress/page.js",
+  "/sentence-gym/page": "app/sentence-gym/page.js",
+  "/settings/page": "app/settings/page.js"
+}
