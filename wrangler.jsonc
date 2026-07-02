@@ -1,0 +1,25 @@
+// Cloudflare Workers 配置文件
+// 这个文件告诉 Cloudflare 怎么运行我们的 Next.js 应用
+// 以及需要绑定哪些资源（比如数据库 D1）
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "writefit",
+  "compatibility_date": "2025-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "main": ".open-next/worker.js",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "writefit-db",
+      "database_id": "local",
+      "migrations_dir": "drizzle/migrations"
+    }
+  ],
+  "vars": {
+    "NEXTAUTH_URL": "https://writefit.app"
+  }
+}

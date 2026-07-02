@@ -1,0 +1,127 @@
+// ====================================================================
+// AI 模拟反馈工具
+// ====================================================================
+// 当没有配置 DEEPSEEK_API_KEY 时，用这个工具生成模拟反馈
+// 这样开发阶段也能看到完整的训练流程效果
+// 等上线配置好 API Key 后，自动切换到真实 AI
+// ====================================================================
+
+import type { DiagnoseFeedback, AntiAIVoiceFeedback, SentenceSurgeryFeedback, CompareRevisionFeedback } from "./schemas";
+
+// 生成模拟的诊断反馈
+export function mockDiagnose(text: string): DiagnoseFeedback {
+  // 简单分析文本特征
+  const sentences = text.split(/[。.！!？?\n]+/).filter((s) => s.trim().length > 5);
+  const wordCount = text.length;
+
+  // 找一个看起来最空泛的句子（最长的句子往往是空泛的）
+  const sortedByLength = [...sentences].sort((a, b) => b.length - a.length);
+  const mostAiLike = sortedByLength[0]?.trim() ?? text.slice(0, 50);
+
+  // 找一个看起来最具体的句子（包含数字或具体名词的）
+  const specificSentence = sentences.find((s) => /\d|我|今天|昨天|上周|这次|这个/.test(s));
+  const bestSentence = (specificSentence ?? sentences[0] ?? text.slice(0, 50)).trim();
+
+  return {
+    top_issues: [
+      {
+        issue: "表达过于抽象，缺少具体场景",
+        evidence: mostAiLike.slice(0, 80),
+        why_it_matters: "读者无法在你的文字中看到画面，无法产生代入感。抽象的表达让人读完就忘。",
+        revision_task: "找一个你亲身经历的具体场景，用'我+动作+细节'的方式重写这段话。",
+      },
+      {
+        issue: "缺少个人判断，读起来像通用观点",
+        evidence: sentences[1]?.trim().slice(0, 80) ?? text.slice(20, 80),
+        why_it_matters: "没有个人判断的文字，任何人都能写，也就没有人会想读你写的版本。",
+        revision_task: "在这段话后面加一句'我认为...'，说出你自己的真实看法，哪怕不完美。",
+      },
+      {
+        issue: "句子节奏单一，缺少长短变化",
+        evidence: sentences[2]?.trim().slice(0, 80) ?? text.slice(40, 100),
+        why_it_matters: "所有句子长度接近时，阅读节奏会变得催眠。短句能制造强调，长句能展开论证。",
+        revision_task: "把其中一句长句拆成两个短句，或者把两个短句合成一个有呼吸感的长句。",
+      },
+    ],
+    best_sentence: bestSentence,
+    most_ai_like_sentence: mostAiLike.slice(0, 100),
+    next_revision_goal: "在修改稿中加入一个具体场景和个人判断，让文字只属于你。",
+    scores: {
+      clarity: Math.min(70, 40 + Math.floor(wordCount / 10)),
+      specificity: Math.min(60, 30 + Math.floor(sentences.length * 3)),
+      voice: Math.min(55, 25 + Math.floor(sentences.length * 2)),
+      ai_like: Math.min(80, 40 + Math.floor(wordCount / 8)),
+    },
+  };
+}
+
+// 生成模拟的反 AI 腔检测
+export function mockAntiAIVoice(text: string): AntiAIVoiceFeedback {
+  const bannedPhrases = [
+    "值得注意的是", "从某种意义上说", "在当今时代", "深刻改变",
+    "赋能", "生态", "闭环", "重塑", "这不仅体现了", "提供了新的可能性",
+  ];
+  const found = bannedPhrases.filter((p) => text.includes(p));
+
+  const sentences = text.split(/[。.！!？?\n]+/).filter((s) => s.trim().length > 5);
+  const flagged = sentences
+    .filter((s) => s.length > 40 || /值得注意|不仅|从而|进而|总之|综上|综上|可以看到/.test(s))
+    .slice(0, 3)
+    .map((s) => ({
+      sentence: s.trim(),
+      problem_type: s.length > 50 ? "句子过长" : "模板连接词",
+      reason: s.length > 50
+        ? "这个句子太长，读者需要反复阅读才能理解，可能是 AI 生成的典型特征。"
+        : "使用了常见的 AI 模板连接词，让表达变得空泛。",
+      manual_revision_instruction: "把这句话拆短，用你自己的话说一遍。",
+    }));
+
+  return {
+    ai_like_score: Math.min(85, 35 + found.length * 15 + Math.floor(text.length / 20)),
+    flagged_sentences: flagged,
+    banned_phrases_found: found,
+    one_revision_priority: found.length > 0
+      ? `先删掉这些词：${found.join("、")}`
+      : "把最长的句子拆成两个短句。",
+  };
+}
+
+// 生成模拟的句子手术反馈
+export function mockSentenceSurgery(text: string): SentenceSurgeryFeedback {
+  const emptyWords = ["其实", "基本上", "一般来说", "可以说", "从某种角度来看", "在某种程度上"];
+  const found = emptyWords.filter((w) => text.includes(w));
+
+  return {
+    empty_words: found,
+    delete_candidates: found,
+    abstract_words: ["价值", "意义", "发展", "提升", "优化", "创新"].filter((w) => text.includes(w)),
+    missing_specifics: ["具体时间", "具体地点", "具体人物", "具体动作", "具体结果"],
+    rhythm_problem: text.length > 60 ? "句子太长，缺少停顿，读者会喘不过气。" : "句子节奏还可以，但可以更有力。",
+    revision_task: found.length > 0
+      ? `先删掉这些空泛词：${found.join("、")}，然后加一个具体例子。`
+      : "给这句话加一个具体场景或数字，让它更有说服力。",
+    example_direction: "比如把'很好'改成'好到让我忍不住截图发给朋友'。",
+  };
+}
+
+// 生成模拟的版本对比反馈
+export function mockCompareRevision(original: string, revised: string): CompareRevisionFeedback {
+  const originalWords = original.length;
+  const revisedWords = revised.length;
+  const wordDiff = revisedWords - originalWords;
+
+  return {
+    improved: revisedWords !== originalWords,
+    summary: wordDiff < 0
+      ? "你删减了内容，让表达更精炼了。"
+      : wordDiff > 20
+        ? "你增加了内容，加入了更多细节。"
+        : "你调整了表达方式，但整体长度变化不大。",
+    what_improved: ["句子节奏", "个人声音", "具体性"].slice(0, wordDiff < 0 ? 2 : 3),
+    what_got_worse: wordDiff > 50 ? ["可能加入了新的空泛内容"] : [],
+    specificity_change: wordDiff > 0 ? "提升" : "基本不变",
+    voice_change: "提升",
+    ai_like_change: "降低",
+    next_revision_task: "再读一遍修改稿，找出一个还可以更具体的句子，继续改。",
+  };
+}
