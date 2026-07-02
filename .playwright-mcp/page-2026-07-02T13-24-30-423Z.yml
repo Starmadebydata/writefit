@@ -1,0 +1,109 @@
+- generic [ref=f10e1]:
+  - generic [ref=f10e2]:
+    - complementary [ref=f10e3]:
+      - generic [ref=f10e4]:
+        - generic [ref=f10e5]: W
+        - generic [ref=f10e6]: WriteFit
+      - navigation [ref=f10e7]:
+        - link "Dashboard" [ref=f10e8] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=f10e9]
+          - generic [ref=f10e14]: Dashboard
+        - link "Practice" [ref=f10e15] [cursor=pointer]:
+          - /url: /practice/today
+          - img [ref=f10e16]
+          - generic [ref=f10e18]: Practice
+        - link "Sentence Gym" [ref=f10e19] [cursor=pointer]:
+          - /url: /sentence-gym
+          - img [ref=f10e20]
+          - generic [ref=f10e26]: Sentence Gym
+        - link "Drafts" [ref=f10e27] [cursor=pointer]:
+          - /url: /drafts
+          - img [ref=f10e28]
+          - generic [ref=f10e31]: Drafts
+        - link "Ideas" [ref=f10e32] [cursor=pointer]:
+          - /url: /ideas
+          - img [ref=f10e33]
+          - generic [ref=f10e35]: Ideas
+        - link "Progress" [ref=f10e36] [cursor=pointer]:
+          - /url: /progress
+          - img [ref=f10e37]
+          - generic [ref=f10e40]: Progress
+        - link "Settings" [ref=f10e41] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=f10e42]
+          - generic [ref=f10e45]: Settings
+      - paragraph [ref=f10e47]: 15 minutes a day Train your own writing ability
+    - generic [ref=f10e48]:
+      - banner [ref=f10e49]:
+        - heading "Dashboard" [level=1] [ref=f10e50]
+        - generic [ref=f10e51]:
+          - button "中文" [ref=f10e52]:
+            - img
+            - text: 中文
+          - button "T" [expanded] [ref=f10e53]:
+            - generic [ref=f10e55]: T
+          - menu "T" [active] [ref=f10e122]:
+            - group "test test@writefit.app" [ref=f10e123]:
+              - generic [ref=f10e124]:
+                - generic [ref=f10e125]: test
+                - generic [ref=f10e126]: test@writefit.app
+            - separator [ref=f10e127]
+            - menuitem "Settings" [ref=f10e128]:
+              - img
+              - text: Settings
+            - separator [ref=f10e129]
+            - menuitem "Log out" [ref=f10e130]:
+              - img
+              - text: Log out
+      - main [ref=f10e56]:
+        - generic [ref=f10e57]:
+          - heading "Welcome back, test" [level=2] [ref=f10e58]
+          - paragraph [ref=f10e59]: This is day 1 of your writing training. Start today's practice.
+        - generic [ref=f10e60]:
+          - generic [ref=f10e62]:
+            - generic [ref=f10e63]:
+              - paragraph [ref=f10e64]: Today's Practice
+              - generic [ref=f10e65]: Free Writing
+              - paragraph [ref=f10e66]: Was there a moment today when your thinking was clear but your writing came out vague?
+            - img [ref=f10e68]
+          - link "Start Practice" [ref=f10e71] [cursor=pointer]:
+            - /url: /practice/today
+            - text: Start Practice
+            - img
+        - generic [ref=f10e72]:
+          - generic [ref=f10e74]:
+            - img [ref=f10e75]
+            - generic [ref=f10e77]:
+              - paragraph [ref=f10e78]: 0 days
+              - paragraph [ref=f10e79]: Streak
+          - generic [ref=f10e81]:
+            - img [ref=f10e82]
+            - generic [ref=f10e84]:
+              - paragraph [ref=f10e85]: 0 sessions
+              - paragraph [ref=f10e86]: This Week
+          - generic [ref=f10e88]:
+            - img [ref=f10e89]
+            - generic [ref=f10e92]:
+              - paragraph [ref=f10e93]: 0 words
+              - paragraph [ref=f10e94]: Words This Week
+          - generic [ref=f10e96]:
+            - img [ref=f10e97]
+            - generic [ref=f10e99]:
+              - paragraph [ref=f10e100]: 0 items
+              - paragraph [ref=f10e101]: Saved Ideas
+        - generic [ref=f10e102]:
+          - generic [ref=f10e103]:
+            - generic [ref=f10e105]:
+              - generic [ref=f10e106]: Recent Ideas
+              - link "View all" [ref=f10e107] [cursor=pointer]:
+                - /url: /ideas
+            - paragraph [ref=f10e109]: No saved ideas yet. Complete a practice session to start collecting.
+          - generic [ref=f10e110]:
+            - generic [ref=f10e112]:
+              - generic [ref=f10e113]: Recent Drafts
+              - link "View all" [ref=f10e114] [cursor=pointer]:
+                - /url: /drafts
+            - paragraph [ref=f10e116]: No drafts yet. Start writing in the Draft Lab.
+  - region "Notifications alt+T"
+  - alert [ref=f10e117]

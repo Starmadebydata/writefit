@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -80,14 +81,16 @@ export function TopNav({ user, title }: TopNavProps) {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>
-              <div className="flex flex-col">
-                <span>{user?.name ?? t("user")}</span>
-                <span className="text-xs text-muted-foreground font-normal">
-                  {user?.email}
-                </span>
-              </div>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>
+                <div className="flex flex-col">
+                  <span>{user?.name ?? t("user")}</span>
+                  <span className="text-xs text-muted-foreground font-normal">
+                    {user?.email}
+                  </span>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={goToSettings}>
               <User className="h-4 w-4" />
