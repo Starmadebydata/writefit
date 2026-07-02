@@ -15,7 +15,7 @@
     {
       "binding": "DB",
       "database_name": "writefit-db",
-      "database_id": "local",
+      "database_id": "259ce9e9-181a-483b-bdc7-964b32740cd8",
       "migrations_dir": "drizzle/migrations"
     }
   ],
