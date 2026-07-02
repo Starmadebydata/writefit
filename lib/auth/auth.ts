@@ -22,7 +22,7 @@ import type { Adapter, AdapterUser, AdapterAccount } from "next-auth/adapters";
 import { drizzle } from "drizzle-orm/d1";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { users, accounts } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
 // 创建一个按需获取数据库的 Auth.js 适配器
@@ -36,19 +36,27 @@ function createD1Adapter(): Adapter {
   }
 
   return {
-    // 创建新用户（首次登录时调用）
+    // 创建新用户（首次 OAuth 登录时调用）
     async createUser(data: AdapterUser) {
       const db = getDb();
       const id = crypto.randomUUID();
-      await db.insert(users).values({
-        id,
-        name: data.name,
-        email: data.email,
-        emailVerified: data.emailVerified,
-        image: data.image,
-      });
+      try {
+        await db.insert(users).values({
+          id,
+          name: data.name,
+          email: data.email,
+          emailVerified: data.emailVerified,
+          image: data.image,
+        });
+      } catch (err) {
+        console.error("[Auth] createUser 失败:", err);
+        throw err;
+      }
       const [user] = await db.select().from(users).where(eq(users.id, id));
-      return user as AdapterUser;
+      return {
+        ...user,
+        emailVerified: user.emailVerified ?? null,
+      } as AdapterUser;
     },
 
     // 根据 ID 查找用户
@@ -65,42 +73,64 @@ function createD1Adapter(): Adapter {
       return (user as AdapterUser) ?? null;
     },
 
-    // 创建第三方账号关联
+    // 创建第三方账号关联（OAuth 登录时把 Google/GitHub 账号和我们的用户关联起来）
     async linkAccount(data: AdapterAccount) {
       const db = getDb();
       const id = crypto.randomUUID();
-      // AdapterAccount 的字段类型是 JsonValue，需要转为数据库 schema 期望的类型
-      await db.insert(accounts).values({
-        id,
-        userId: data.userId,
-        type: data.type,
-        provider: data.provider,
-        providerAccountId: data.providerAccountId,
-        refresh_token: data.refresh_token as string | null | undefined,
-        access_token: data.access_token as string | null | undefined,
-        expires_at:
-          typeof data.expires_at === "number"
-            ? data.expires_at
-            : data.expires_at == null
-              ? null
-              : Number(data.expires_at) || null,
-        token_type: data.token_type as string | null | undefined,
-        scope: data.scope as string | null | undefined,
-        id_token: data.id_token as string | null | undefined,
-        session_state: data.session_state as string | null | undefined,
-      });
+      try {
+        await db.insert(accounts).values({
+          id,
+          userId: data.userId,
+          type: data.type,
+          provider: data.provider,
+          providerAccountId: data.providerAccountId,
+          refresh_token: data.refresh_token as string | null | undefined,
+          access_token: data.access_token as string | null | undefined,
+          expires_at:
+            typeof data.expires_at === "number"
+              ? data.expires_at
+              : data.expires_at == null
+                ? null
+                : Number(data.expires_at) || null,
+          token_type: data.token_type as string | null | undefined,
+          scope: data.scope as string | null | undefined,
+          id_token: data.id_token as string | null | undefined,
+          session_state: data.session_state as string | null | undefined,
+        });
+      } catch (err) {
+        console.error("[Auth] linkAccount 失败:", err);
+        throw err;
+      }
       const [account] = await db.select().from(accounts).where(eq(accounts.id, id));
       return account as AdapterAccount;
     },
 
-    // 查找第三方账号关联
-    async getAccount(providerAccountId: string) {
+    // 根据 provider + providerAccountId 查找账号关联的用户
+    // OAuth 回调时调用：Google 返回后，用这个方法检查用户是否已经存在
+    async getUserByAccount({ provider, providerAccountId }: { provider: string; providerAccountId: string }) {
       const db = getDb();
       const [account] = await db
         .select()
         .from(accounts)
-        .where(eq(accounts.providerAccountId, providerAccountId));
-      return (account as AdapterAccount) ?? null;
+        .where(and(eq(accounts.provider, provider), eq(accounts.providerAccountId, providerAccountId)));
+
+      if (!account) {
+        return null;
+      }
+
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, account.userId));
+
+      if (!user) {
+        return null;
+      }
+
+      return {
+        ...user,
+        emailVerified: user.emailVerified ?? null,
+      } as AdapterUser;
     },
 
     // 更新用户信息
