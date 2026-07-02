@@ -15,7 +15,6 @@
 // ====================================================================
 
 import NextAuth from "next-auth";
-import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import type { Adapter, AdapterUser, AdapterAccount } from "next-auth/adapters";
@@ -178,17 +177,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // 生产环境必须在 .env 中设置 AUTH_SECRET
   secret: process.env.AUTH_SECRET ?? "dev-only-secret-do-not-use-in-production",
   // 登录方式：
-  // 1. Google 登录（重点推荐，最方便）
-  // 2. GitHub 登录（开发者友好）
-  // 3. 邮箱 + 密码（传统注册登录）
+  // 1. Google 登录（Gmail，重点推荐，最方便）
+  // 2. 邮箱 + 密码（传统注册登录）
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
-    }),
-    GitHub({
-      clientId: process.env.AUTH_GITHUB_ID,
-      clientSecret: process.env.AUTH_GITHUB_SECRET,
     }),
     // 邮箱 + 密码登录
     Credentials({
