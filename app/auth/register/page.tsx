@@ -6,8 +6,6 @@
 // ====================================================================
 
 import type { Metadata } from "next";
-import { auth, signIn } from "@/lib/auth/auth";
-import { redirect } from "next/navigation";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const metadata: Metadata = {
@@ -22,16 +20,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RegisterPage() {
-  // 如果已经登录了，直接跳转到 Dashboard
-  const session = await auth();
-  if (session) {
-    redirect("/dashboard");
-  }
-
+export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-6 bg-gradient-to-b from-primary/5 to-transparent">
-      <RegisterForm signIn={signIn} />
+      <RegisterForm />
     </div>
   );
 }

@@ -7,22 +7,21 @@
 // 1. Google 登录按钮（放在最上方，重点推荐）
 // 2. 邮箱 + 密码注册表单
 // 3. 登录页面链接
+//
+// 使用 next-auth/react 的 signIn，这是客户端专用的登录方法
 // ====================================================================
 
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
-interface RegisterFormProps {
-  signIn: (provider: string, options?: Record<string, unknown>) => Promise<Record<string, unknown> | undefined>;
-}
-
-export function RegisterForm({ signIn }: RegisterFormProps) {
+export function RegisterForm() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -56,6 +55,7 @@ export function RegisterForm({ signIn }: RegisterFormProps) {
         email,
         password,
         redirect: false,
+        callbackUrl: "/dashboard",
       });
 
       if (result?.error) {
@@ -76,7 +76,7 @@ export function RegisterForm({ signIn }: RegisterFormProps) {
   async function handleGoogleLogin() {
     setGoogleLoading(true);
     try {
-      await signIn("google", { redirectTo: "/dashboard" });
+      await signIn("google", { callbackUrl: "/dashboard" });
     } catch {
       toast.error("Google 登录失败");
       setGoogleLoading(false);
