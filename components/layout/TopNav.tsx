@@ -12,7 +12,7 @@
 
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,10 +39,22 @@ interface TopNavProps {
 
 export function TopNav({ user, title }: TopNavProps) {
   const t = useTranslations("nav");
+  const router = useRouter();
+
   // 获取用户名字首字母作为头像占位符
   const initials = user?.name
     ? user.name.charAt(0).toUpperCase()
     : user?.email?.charAt(0).toUpperCase() ?? "U";
+
+  // 跳转到设置页
+  function goToSettings() {
+    router.push("/settings");
+  }
+
+  // 退出登录，跳转到首页
+  function handleSignOut() {
+    signOut({ callbackUrl: "/", redirect: true });
+  }
 
   return (
     <header className="flex items-center justify-between px-6 py-3 border-b border-border bg-background">
@@ -55,42 +67,42 @@ export function TopNav({ user, title }: TopNavProps) {
 
         {/* 用户菜单 */}
         <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button variant="ghost" size="icon" className="rounded-full" />
-          }
-        >
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? t("user")} />
-            <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>
-            <div className="flex flex-col">
-              <span>{user?.name ?? t("user")}</span>
-              <span className="text-xs text-muted-foreground font-normal">
-                {user?.email}
-              </span>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem render={<Link href="/settings" />}>
-            <User className="h-4 w-4" />
-            {t("settings")}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className="flex items-center gap-2 text-destructive"
+          <DropdownMenuTrigger
+            render={
+              <Button variant="ghost" size="icon" className="rounded-full" />
+            }
           >
-            <LogOut className="h-4 w-4" />
-            {t("logout")}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? t("user")} />
+              <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>
+              <div className="flex flex-col">
+                <span>{user?.name ?? t("user")}</span>
+                <span className="text-xs text-muted-foreground font-normal">
+                  {user?.email}
+                </span>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={goToSettings}>
+              <User className="h-4 w-4" />
+              {t("settings")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={handleSignOut}
+              className="flex items-center gap-2 text-destructive"
+            >
+              <LogOut className="h-4 w-4" />
+              {t("logout")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

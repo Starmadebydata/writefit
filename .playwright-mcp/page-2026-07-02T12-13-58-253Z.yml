@@ -1,0 +1,28 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: W
+      - generic [ref=e6]: Log in to WriteFit
+      - paragraph [ref=e7]: 15 minutes a day, train your own writing ability
+    - generic [ref=e8]:
+      - button "Continue with Google" [ref=e9]:
+        - img
+        - text: Continue with Google
+      - generic [ref=e14]: Or log in with email
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - generic [ref=e17]: Email
+          - textbox "Email" [ref=e18]:
+            - /placeholder: you@example.com
+        - generic [ref=e19]:
+          - generic [ref=e20]: Password
+          - textbox "Password" [ref=e21]:
+            - /placeholder: Your password
+        - button "Log in" [ref=e22]
+      - paragraph [ref=e24]:
+        - text: Don't have an account?
+        - link "Sign up free" [ref=e25] [cursor=pointer]:
+          - /url: /auth/register
+      - paragraph [ref=e27]: By logging in, you agree that WriteFit helps you train your writing ability, not write for you.
+  - region "Notifications alt+T"
+  - alert [ref=e28]
