@@ -4,6 +4,41 @@
 
 ---
 
+## 最新会话总结（2026-07-02）
+
+本次会话完成了 WriteFit MVP 剩余所有 P1 功能，并部署上线。
+
+### 完成的功能
+- **Onboarding**：4 步写作画像引导（目标→主题→问题→时长），注册后自动跳转
+- **Idea Bank**：素材库完整 CRUD（列表/过滤/搜索/收藏/新建/编辑/删除）
+- **Sentence Gym**：句子训练（输入→AI 分析→手动修改→保存到素材库）
+- **Draft Lab**：草稿实验室（列表/编辑/版本保存/AI 诊断/反 AI 腔检测/Markdown 导出）
+- **Progress 增强**：训练日历热力图、字数趋势图、训练类型分布
+- **Settings 完善**：写作画像编辑、禁用词管理、数据导出、删除账号
+- **部署上线**：已推送到 GitHub 并部署到 Cloudflare Workers
+
+### 部署与仓库
+- **生产地址**：https://writefit.app
+- **Worker URL**：https://writefit.aifeefee70.workers.dev
+- **GitHub 仓库**：https://github.com/Starmadebydata/writefit
+- **版本 ID**：d6690224-4290-4057-a517-518355225b46
+- **Git 提交**：7 个功能 commit（见 GitHub 历史）
+
+### 环境变量确认
+- `AUTH_SECRET` ✅ 密钥
+- `AUTH_GOOGLE_SECRET` ✅ 密钥
+- `AUTH_GOOGLE_ID` ✅ 纯文本变量（已在 Cloudflare Dashboard 配置）
+- `NEXTAUTH_URL` ✅ 纯文本变量 `https://writefit.app`
+- D1 数据库 `writefit-db` ✅ 已绑定，15 个表已就绪
+
+### 下一步建议
+1. 邀请用户测试，收集真实使用反馈
+2. 根据反馈决定 P2 功能优先级（周末成文/月度报告/Stripe/邮件提醒）
+3. 性能优化：加载骨架屏、错误边界、API 缓存
+4. 营销推广：Landing Page 内容优化、SEO、社交媒体宣传
+
+---
+
 ## 项目概况
 
 - **项目名称**：WriteFit — AI 写作训练应用
@@ -50,7 +85,7 @@
 | 功能 | 状态 | 说明 |
 |------|------|------|
 | Draft Lab 草稿管理 | ✅ 已完成 | 完整草稿管理：列表/新建/编辑/版本保存/AI诊断/反AI腔检测/Markdown导出，6种状态 |
-| Anti AI Voice Detector | ⚠️ API 已有 | /api/ai/anti-ai-voice 路由已实现，但没有前端页面入口（Sentence Gym 占位） |
+| Anti AI Voice Detector | ✅ 已接入 Draft Lab | /api/ai/anti-ai-voice 路由已在 Draft Lab 编辑器中使用，可检测 AI 腔并给出修改建议 |
 | Idea Bank 素材库 | ✅ 已完成 | 完整 CRUD：列表/类型过滤/搜索/收藏/新建/编辑/删除，API 连接 D1 数据库 |
 | Sentence Gym 句子训练 | ✅ 已完成 | 输入句子→AI 分析（空泛词/抽象词/节奏等）→用户手动修改→可保存到素材库 |
 | Progress 进度页 | ✅ 已完成 | 统计卡片 + 训练日历热力图（12周）+ 字数趋势图（30天）+ 训练类型分布 + 训练历史列表 |
@@ -251,11 +286,10 @@ i18n：
 - **P1 重要功能**：✅ 已完成（Progress、Idea Bank、Sentence Gym、Draft Lab 全部完成，Markdown 导出已完成）
 - **P2 后续功能**：❌ 未开始
 
-**总体进度**：MVP 核心闭环已完成约 98%。所有 P0、P1 功能及增强项（优先级 1-6）均已实现，包括 Onboarding、素材库、句子训练、草稿实验室、Progress 增强（热力图/趋势图/类型分布）、Settings 完善（画像编辑/禁用词/数据导出/删除账号）。剩余 P2 后续功能（周末成文、月度报告、Stripe 订阅、邮件提醒）暂不实现。
+**总体进度**：MVP 核心闭环已完成约 100%。所有 P0、P1 功能及增强项（优先级 1-6）均已实现并部署上线。剩余 P2 后续功能（周末成文、月度报告、Stripe 订阅、邮件提醒）暂不实现。
 
-**下一步建议**：所有 MVP 功能已全部完成，可考虑以下方向：
-1. **部署上线**：运行 `npx opennextjs-cloudflare build && npx wrangler deploy --keep-vars` 部署到生产环境
-2. **用户测试**：邀请目标用户试用，收集反馈
-3. **P2 功能**：根据用户反馈决定优先级（周末成文、月度报告、Stripe 订阅、邮件提醒）
-4. **性能优化**：添加加载骨架屏、错误边界、API 缓存等
-5. **SEO 优化**：Landing Page 内容优化、sitemap.xml、robots.txt
+**下一步建议**：所有 MVP 功能已全部完成并上线，可考虑以下方向：
+1. **用户测试**：邀请目标用户试用，收集反馈
+2. **P2 功能**：根据用户反馈决定优先级（周末成文、月度报告、Stripe 订阅、邮件提醒）
+3. **性能优化**：添加加载骨架屏、错误边界、API 缓存等
+4. **营销增长**：Landing Page 内容优化、SEO、社交媒体宣传、产品发布
