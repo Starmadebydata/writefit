@@ -48,22 +48,55 @@
     "mechanism": {
       "title": "How WriteFit works",
       "steps": [
-        { "title": "You write first", "desc": "Write a short piece in 15 minutes. No AI help. Just you and the blank page." },
-        { "title": "AI diagnoses", "desc": "AI analyzes your writing and identifies 3 specific issues — not generic advice." },
-        { "title": "You revise", "desc": "Revise based on the feedback. The AI doesn't rewrite for you. You do the work." },
-        { "title": "Compare versions", "desc": "See exactly what changed between your original and revised versions." },
-        { "title": "Save what works", "desc": "Save good sentences and ideas to your personal library for future use." }
+        {
+          "title": "You write first",
+          "desc": "Write a short piece in 15 minutes. No AI help. Just you and the blank page."
+        },
+        {
+          "title": "AI diagnoses",
+          "desc": "AI analyzes your writing and identifies 3 specific issues — not generic advice."
+        },
+        {
+          "title": "You revise",
+          "desc": "Revise based on the feedback. The AI doesn't rewrite for you. You do the work."
+        },
+        {
+          "title": "Compare versions",
+          "desc": "See exactly what changed between your original and revised versions."
+        },
+        {
+          "title": "Save what works",
+          "desc": "Save good sentences and ideas to your personal library for future use."
+        }
       ]
     },
     "features": {
       "title": "Core features",
       "items": [
-        { "title": "Daily Practice", "desc": "A new writing prompt every day. 15 minutes. Different training types rotate through the week." },
-        { "title": "AI Diagnosis", "desc": "AI analyzes your writing for clarity, specificity, personal voice, and AI-like tone. Not a grammar checker — a writing coach." },
-        { "title": "Anti-AI Voice Training", "desc": "Detect and fix generic, template-like, over-smoothed writing. Build a voice that's unmistakably yours." },
-        { "title": "Sentence Surgery", "desc": "Take any sentence apart. Find empty words, abstract nouns, and rhythm problems. Fix them one by one." },
-        { "title": "Draft Lab", "desc": "Work on longer pieces. Track versions. Get feedback on revisions, not just first drafts." },
-        { "title": "Idea Library", "desc": "Save good sentences, observations, and insights from your practice. Build a personal writing resource." }
+        {
+          "title": "Daily Practice",
+          "desc": "A new writing prompt every day. 15 minutes. Different training types rotate through the week."
+        },
+        {
+          "title": "AI Diagnosis",
+          "desc": "AI analyzes your writing for clarity, specificity, personal voice, and AI-like tone. Not a grammar checker — a writing coach."
+        },
+        {
+          "title": "Anti-AI Voice Training",
+          "desc": "Detect and fix generic, template-like, over-smoothed writing. Build a voice that's unmistakably yours."
+        },
+        {
+          "title": "Sentence Surgery",
+          "desc": "Take any sentence apart. Find empty words, abstract nouns, and rhythm problems. Fix them one by one."
+        },
+        {
+          "title": "Draft Lab",
+          "desc": "Work on longer pieces. Track versions. Get feedback on revisions, not just first drafts."
+        },
+        {
+          "title": "Idea Library",
+          "desc": "Save good sentences, observations, and insights from your practice. Build a personal writing resource."
+        }
       ]
     },
     "scenarios": {
@@ -224,7 +257,46 @@
       "errorMinWords": "At least {minWords} words required to submit",
       "errorAiDiagnosis": "AI diagnosis failed, please try again",
       "errorNoRevision": "You haven't made any changes",
-      "errorCompareFailed": "Comparison failed, but you can still view the diff"
+      "errorCompareFailed": "Comparison failed, but you can still view the diff",
+      "introDuration": "Writing time: about {minutes} minutes",
+      "introRule1": "Rule: finish your raw draft first, then AI gives you feedback",
+      "introRule2": "AI never writes for you — it is your coach and critic",
+      "writingTitle": "Write your raw draft",
+      "timeUp": "Time's up! Finish your current sentence, then submit.",
+      "back": "Back",
+      "aiAnalyzingSub": "AI will quote your text and find 3 specific issues",
+      "feedbackTitle": "AI Diagnosis",
+      "revisionGoalLabel": "Revision goal:",
+      "originalReadonly": "Original (read-only)",
+      "yourRevision": "Your revision",
+      "revisePlaceholder": "Revise your text here...",
+      "backToFeedback": "Back to feedback",
+      "practiceCompleteNamed": "{name}, practice complete!",
+      "streakDays": "{count}-day streak",
+      "retrySave": "Retry save",
+      "saveSucceeded": "Practice session saved",
+      "errorSaveSession": "Failed to save your session, please retry",
+      "draftRestored": "Restored your unfinished draft",
+      "statRawWords": "Draft words",
+      "statRevisedWords": "Revised words",
+      "statWordsDelta": "Change",
+      "diffTitle": "Version diff",
+      "aiReviewTitle": "AI review of your revision",
+      "improvedLabel": "What improved:",
+      "worseLabel": "Watch out:",
+      "nextStepLabel": "Next step: ",
+      "changeSpecificity": "Specificity",
+      "changeVoice": "Voice",
+      "changeAiLike": "AI tone",
+      "saveIdeasTitle": "Save today's ideas",
+      "bestSentenceLabel": "Best sentence",
+      "revisionGoalIdeaLabel": "Revision goal",
+      "todaysPromptIdeaLabel": "Today's prompt",
+      "tomorrowPreview": "See you tomorrow: {type}",
+      "shareButton": "Share",
+      "shareCopied": "Copied to clipboard — share it!",
+      "errorShareFailed": "Copy failed, please copy manually",
+      "shareText": "I finished today's writing practice on WriteFit: {words} words revised, {streak}-day streak. 15 minutes a day to train your own writing → https://writefit.app"
     },
     "editor": {
       "placeholder": "Start writing. Don't edit, don't chase perfection. Just get what's in your head onto the page.",
@@ -245,12 +317,12 @@
       "revisionTask": "Revision task:",
       "bestSentence": "Best sentence",
       "mostAiLike": "Most AI-like sentence",
-      "nextGoal": "Next revision goal"
+      "nextGoal": "Next revision goal",
+      "mockCta": "Set up AI"
     },
     "diff": {
-      "deleted": "Deleted {count} sentences",
-      "added": "Added {count} sentences",
-      "kept": "Kept {count} sentences",
+      "deleted": "Deleted {count}",
+      "added": "Added {count}",
       "original": "Original",
       "revised": "Revised"
     },

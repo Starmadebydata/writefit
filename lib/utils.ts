@@ -64,8 +64,8 @@ export function calculateStreak(practiceDates: Date[]): number {
       streak++;
       currentDate = new Date(d);
       currentDate.setDate(currentDate.getDate() - 1);
-    } else if (diffDays === 1 && streak > 0) {
-      // 昨天有训练，继续连续
+    } else if (diffDays === 1 && streak === 0) {
+      // 最近一次训练是昨天（今天还没练）——连续记录仍然保留到今天结束
       streak++;
       currentDate = new Date(d);
       currentDate.setDate(currentDate.getDate() - 1);

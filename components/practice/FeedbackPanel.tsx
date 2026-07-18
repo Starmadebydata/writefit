@@ -9,8 +9,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, ThumbsUp, Bot, Target } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, ThumbsUp, Bot, Target, Settings } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import type { DiagnoseFeedback } from "@/lib/ai/schemas";
 import { scoreLabel } from "@/lib/ai/schemas";
 
@@ -22,21 +24,26 @@ interface FeedbackPanelProps {
 
 export function FeedbackPanel({ feedback, isMock }: FeedbackPanelProps) {
   const t = useTranslations("practice.feedback");
+  const locale = useLocale() as "en" | "zh";
   return (
     <div className="space-y-4">
-      {/* 模拟数据提示 */}
+      {/* 模拟数据提示 + 配置引导（首次体验的关键转化点） */}
       {isMock && (
-        <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
-          {t("mockNotice")}
+        <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 flex items-center justify-between gap-3 flex-wrap">
+          <span>{t("mockNotice")}</span>
+          <Button size="sm" variant="outline" className="border-amber-300 bg-white/60" render={<Link href="/settings" />}>
+            <Settings className="h-3.5 w-3.5" />
+            {t("mockCta")}
+          </Button>
         </div>
       )}
 
       {/* 评分卡片 */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <ScoreCard label={t("scores.clarity")} score={feedback.scores.clarity} />
-        <ScoreCard label={t("scores.specificity")} score={feedback.scores.specificity} />
-        <ScoreCard label={t("scores.voice")} score={feedback.scores.voice} />
-        <ScoreCard label={t("scores.aiLike")} score={feedback.scores.ai_like} reverse />
+        <ScoreCard label={t("scores.clarity")} score={feedback.scores.clarity} locale={locale} />
+        <ScoreCard label={t("scores.specificity")} score={feedback.scores.specificity} locale={locale} />
+        <ScoreCard label={t("scores.voice")} score={feedback.scores.voice} locale={locale} />
+        <ScoreCard label={t("scores.aiLike")} score={feedback.scores.ai_like} reverse locale={locale} />
       </div>
 
       {/* 3 个主要问题 */}
@@ -139,12 +146,14 @@ function ScoreCard({
   label,
   score,
   reverse = false,
+  locale,
 }: {
   label: string;
   score: number;
   reverse?: boolean;
+  locale: "en" | "zh";
 }) {
-  const label_text = scoreLabel(score, reverse);
+  const label_text = scoreLabel(score, reverse, locale);
   const color = reverse
     ? score <= 40
       ? "text-primary"

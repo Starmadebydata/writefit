@@ -6,6 +6,10 @@
 // 展示用户原稿和修改稿的差异
 // 左侧：原稿，右侧：修改稿
 // 用颜色标记变化：红色=删除，绿色=新增
+//
+// 词级对比：基于 LCS（最长公共子序列）算法。
+// 分词规则：中文字符逐字为 token，英文按单词为 token，空白保留。
+// 这样改一个词只高亮一个词，而不是整句标红标绿。
 // ====================================================================
 
 import { useMemo } from "react";
@@ -18,57 +22,91 @@ interface DiffViewerProps {
   revised: string;
 }
 
-// 简单的逐行对比算法
-// 把文本按句子分割，找出新增和删除的句子
-function diffSentences(original: string, revised: string) {
-  // 按句子分割（中文句号、英文句号、换行）
-  const splitSentences = (text: string) =>
-    text
-      .split(/([。.！!？?\n]+)/)
-      .filter((s) => s.trim().length > 0)
-      .map((s) => s.trim());
+type DiffOp = "keep" | "del" | "add";
+interface DiffToken {
+  op: DiffOp;
+  token: string;
+}
 
-  const originalSentences = splitSentences(original);
-  const revisedSentences = splitSentences(revised);
+// 把文本切成 token：单个中文字符 / 连续英文单词 / 空白
+function tokenize(text: string): string[] {
+  return text.match(/[一-龥]|[^\s一-龥]+|\s+/g) ?? [];
+}
 
-  // 找出被删除的句子（原稿有，修改稿没有）
-  const deleted = originalSentences.filter(
-    (s) => !revisedSentences.includes(s)
-  );
+// LCS 词级对比，返回带操作标记的 token 序列
+// 序列同时包含 del（原稿独有）和 add（修改稿独有）：
+// 渲染原稿时用 keep+del，渲染修改稿时用 keep+add
+function diffTokens(original: string, revised: string): DiffToken[] {
+  const a = tokenize(original);
+  const b = tokenize(revised);
+  const n = a.length;
+  const m = b.length;
 
-  // 找出新增的句子（修改稿有，原稿没有）
-  const added = revisedSentences.filter(
-    (s) => !originalSentences.includes(s)
-  );
+  // 超长文本退化为整体对比，避免 O(n*m) 内存过大
+  if (n * m > 1_000_000) {
+    if (original === revised) return a.map((token) => ({ op: "keep" as const, token }));
+    return [
+      ...a.map((token) => ({ op: "del" as const, token })),
+      ...b.map((token) => ({ op: "add" as const, token })),
+    ];
+  }
 
-  // 保留的句子
-  const kept = revisedSentences.filter((s) => originalSentences.includes(s));
+  // DP 表：dp[i][j] = a[:i] 与 b[:j] 的 LCS 长度
+  const width = m + 1;
+  const dp = new Int32Array((n + 1) * width);
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      dp[i * width + j] =
+        a[i] === b[j]
+          ? dp[(i + 1) * width + j + 1] + 1
+          : Math.max(dp[(i + 1) * width + j], dp[i * width + j + 1]);
+    }
+  }
 
-  return { deleted, added, kept, originalSentences, revisedSentences };
+  // 回溯生成 diff 序列
+  const ops: DiffToken[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < n && j < m) {
+    if (a[i] === b[j]) {
+      ops.push({ op: "keep", token: a[i] });
+      i++;
+      j++;
+    } else if (dp[(i + 1) * width + j] >= dp[i * width + j + 1]) {
+      ops.push({ op: "del", token: a[i] });
+      i++;
+    } else {
+      ops.push({ op: "add", token: b[j] });
+      j++;
+    }
+  }
+  while (i < n) ops.push({ op: "del", token: a[i++] });
+  while (j < m) ops.push({ op: "add", token: b[j++] });
+  return ops;
 }
 
 export function DiffViewer({ original, revised }: DiffViewerProps) {
   const t = useTranslations("practice.diff");
-  const diff = useMemo(() => diffSentences(original, revised), [original, revised]);
+  const ops = useMemo(() => diffTokens(original, revised), [original, revised]);
+
+  const deletedCount = ops.filter((o) => o.op === "del" && o.token.trim()).length;
+  const addedCount = ops.filter((o) => o.op === "add" && o.token.trim()).length;
 
   return (
     <div className="space-y-4">
       {/* 统计概览 */}
       <div className="flex gap-4 text-sm">
         <span className="text-destructive">
-          {t("deleted", { count: diff.deleted.length })}
+          {t("deleted", { count: deletedCount })}
         </span>
         <span className="text-primary">
-          {t("added", { count: diff.added.length })}
-        </span>
-        <span className="text-muted-foreground">
-          {t("kept", { count: diff.kept.length })}
+          {t("added", { count: addedCount })}
         </span>
       </div>
 
       {/* 左右对比视图 */}
       <div className="grid md:grid-cols-2 gap-4">
-        {/* 原稿 */}
+        {/* 原稿：keep 正常显示，del 红色删除线 */}
         <Card className="border-destructive/20">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm">
@@ -77,27 +115,23 @@ export function DiffViewer({ original, revised }: DiffViewerProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2 text-sm leading-relaxed">
-              {diff.originalSentences.map((sentence, i) => {
-                const isDeleted = diff.deleted.includes(sentence);
-                return (
-                  <p
-                    key={i}
-                    className={
-                      isDeleted
-                        ? "bg-destructive/10 text-destructive line-through rounded px-1"
-                        : "text-muted-foreground"
-                    }
-                  >
-                    {sentence}
-                  </p>
-                );
-              })}
-            </div>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+              {ops
+                .filter((o) => o.op !== "add")
+                .map((o, idx) =>
+                  o.op === "del" ? (
+                    <mark key={idx} className="bg-destructive/10 text-destructive line-through rounded-sm px-0">
+                      {o.token}
+                    </mark>
+                  ) : (
+                    <span key={idx} className="text-muted-foreground">{o.token}</span>
+                  )
+                )}
+            </p>
           </CardContent>
         </Card>
 
-        {/* 修改稿 */}
+        {/* 修改稿：keep 正常显示，add 绿色高亮 */}
         <Card className="border-primary/20">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm">
@@ -106,23 +140,19 @@ export function DiffViewer({ original, revised }: DiffViewerProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2 text-sm leading-relaxed">
-              {diff.revisedSentences.map((sentence, i) => {
-                const isAdded = diff.added.includes(sentence);
-                return (
-                  <p
-                    key={i}
-                    className={
-                      isAdded
-                        ? "bg-primary/10 text-primary rounded px-1"
-                        : ""
-                    }
-                  >
-                    {sentence}
-                  </p>
-                );
-              })}
-            </div>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+              {ops
+                .filter((o) => o.op !== "del")
+                .map((o, idx) =>
+                  o.op === "add" ? (
+                    <mark key={idx} className="bg-primary/10 text-primary rounded-sm px-0">
+                      {o.token}
+                    </mark>
+                  ) : (
+                    <span key={idx}>{o.token}</span>
+                  )
+                )}
+            </p>
           </CardContent>
         </Card>
       </div>

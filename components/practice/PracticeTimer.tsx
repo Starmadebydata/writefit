@@ -7,7 +7,7 @@
 // 就像考试时的计时钟
 // ====================================================================
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +23,21 @@ interface PracticeTimerProps {
 export function PracticeTimer({ minutes, onTimeUp, isRunning }: PracticeTimerProps) {
   const [secondsLeft, setSecondsLeft] = useState(minutes * 60);
 
+  // 总时长变化时在渲染期间重置倒计时（React 推荐的 derived-state 重置模式）
+  const [prevMinutes, setPrevMinutes] = useState(minutes);
+  if (prevMinutes !== minutes) {
+    setPrevMinutes(minutes);
+    setSecondsLeft(minutes * 60);
+  }
+
+  // 用 ref 持有最新的 onTimeUp 回调。
+  // 否则父组件每次渲染（用户每敲一个字）都会传入新函数引用，
+  // 导致下面的 effect 反复重建 interval —— 打字越投入，计时器停得越死。
+  const onTimeUpRef = useRef(onTimeUp);
+  useEffect(() => {
+    onTimeUpRef.current = onTimeUp;
+  }, [onTimeUp]);
+
   // 倒计时逻辑
   useEffect(() => {
     if (!isRunning) return;
@@ -31,7 +46,7 @@ export function PracticeTimer({ minutes, onTimeUp, isRunning }: PracticeTimerPro
       setSecondsLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          onTimeUp?.();
+          onTimeUpRef.current?.();
           return 0;
         }
         return prev - 1;
@@ -39,7 +54,7 @@ export function PracticeTimer({ minutes, onTimeUp, isRunning }: PracticeTimerPro
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isRunning, onTimeUp]);
+  }, [isRunning]);
 
   // 格式化时间为 MM:SS
   const formatTime = useCallback((seconds: number) => {

@@ -146,38 +146,63 @@ export function getPracticeTypeByDate(date: Date): PracticeType {
     "specificity_drill", // 周三
     "anti_ai_voice", // 周四
     "title_drill", // 周五
-    "free_writing", // 周六
+    "opening_drill", // 周六
   ];
   return schedule[dayOfWeek];
 }
 
-// 根据训练类型随机选一个题目
+// 每种训练类型的最低字数要求
+// 专项训练（句子手术、标题）产出天然较短，不能用统一的高门槛
+export const MIN_WORDS_BY_TYPE: Record<PracticeType, number> = {
+  free_writing: 50,
+  sentence_surgery: 10,
+  specificity_drill: 40,
+  anti_ai_voice: 40,
+  title_drill: 15,
+  opening_drill: 30,
+};
+
+// 获取某个训练类型的题库（按语言）
+function getPromptsForType(type: PracticeType, locale: "en" | "zh"): string[] {
+  switch (type) {
+    case "free_writing":
+      return locale === "zh" ? FREE_WRITING_PROMPTS_ZH : FREE_WRITING_PROMPTS_EN;
+    case "sentence_surgery":
+      return locale === "zh" ? SENTENCE_SURGERY_PROMPTS_ZH : SENTENCE_SURGERY_PROMPTS_EN;
+    case "specificity_drill":
+      return locale === "zh" ? SPECIFICITY_DRILL_PROMPTS_ZH : SPECIFICITY_DRILL_PROMPTS_EN;
+    case "anti_ai_voice":
+      return locale === "zh" ? ANTI_AI_VOICE_PROMPTS_ZH : ANTI_AI_VOICE_PROMPTS_EN;
+    case "title_drill":
+      return locale === "zh" ? TITLE_DRILL_PROMPTS_ZH : TITLE_DRILL_PROMPTS_EN;
+    case "opening_drill":
+      return locale === "zh" ? OPENING_DRILL_PROMPTS_ZH : OPENING_DRILL_PROMPTS_EN;
+    default:
+      return locale === "zh" ? FREE_WRITING_PROMPTS_ZH : FREE_WRITING_PROMPTS_EN;
+  }
+}
+
+// 根据训练类型随机选一个题目（开发演示用）
 export function getRandomPrompt(
   type: PracticeType,
   locale: "en" | "zh" = "en"
 ): string {
-  let prompts: string[];
-  switch (type) {
-    case "free_writing":
-      prompts = locale === "zh" ? FREE_WRITING_PROMPTS_ZH : FREE_WRITING_PROMPTS_EN;
-      break;
-    case "sentence_surgery":
-      prompts = locale === "zh" ? SENTENCE_SURGERY_PROMPTS_ZH : SENTENCE_SURGERY_PROMPTS_EN;
-      break;
-    case "specificity_drill":
-      prompts = locale === "zh" ? SPECIFICITY_DRILL_PROMPTS_ZH : SPECIFICITY_DRILL_PROMPTS_EN;
-      break;
-    case "anti_ai_voice":
-      prompts = locale === "zh" ? ANTI_AI_VOICE_PROMPTS_ZH : ANTI_AI_VOICE_PROMPTS_EN;
-      break;
-    case "title_drill":
-      prompts = locale === "zh" ? TITLE_DRILL_PROMPTS_ZH : TITLE_DRILL_PROMPTS_EN;
-      break;
-    case "opening_drill":
-      prompts = locale === "zh" ? OPENING_DRILL_PROMPTS_ZH : OPENING_DRILL_PROMPTS_EN;
-      break;
-    default:
-      prompts = locale === "zh" ? FREE_WRITING_PROMPTS_ZH : FREE_WRITING_PROMPTS_EN;
-  }
+  const prompts = getPromptsForType(type, locale);
   return prompts[Math.floor(Math.random() * prompts.length)];
+}
+
+// 确定性选题：同一个 seed（用户 ID + 日期）永远得到同一道题
+// 这样"今日训练"在刷新、换设备后都保持不变
+export function getDailyPrompt(
+  type: PracticeType,
+  locale: "en" | "zh",
+  seed: string
+): string {
+  const prompts = getPromptsForType(type, locale);
+  const key = `${type}:${locale}:${seed}`;
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) {
+    hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+  }
+  return prompts[hash % prompts.length];
 }

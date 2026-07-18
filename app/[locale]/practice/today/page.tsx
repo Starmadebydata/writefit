@@ -10,8 +10,12 @@ import { auth } from "@/lib/auth/auth";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { PracticeFlow } from "@/components/practice/PracticeFlow";
-import { generateTodayPractice } from "@/lib/practice/scheduler";
+import { generateTodayPractice, getTomorrowPracticeType } from "@/lib/practice/scheduler";
 import { setRequestLocale, getLocale, getTranslations } from "next-intl/server";
+import { drizzle } from "drizzle-orm/d1";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { profiles, writingGoals } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 // 今日训练页面 SEO（根据语言切换）
 export async function generateMetadata(): Promise<Metadata> {
@@ -67,9 +71,49 @@ export default async function PracticeTodayPage({
 
   // 获取翻译
   const t = await getTranslations("practice");
+  const tOnboarding = await getTranslations("onboarding");
 
-  // 生成今日训练任务（根据语言选择对应题库）
-  const todayPractice = generateTodayPractice(10, locale as "en" | "zh");
+  // 读取用户画像（每日时长、目标、主题、写作问题）
+  const { env } = getCloudflareContext();
+  const db = drizzle(env.DB);
+  const [profile] = await db
+    .select()
+    .from(profiles)
+    .where(eq(profiles.userId, session.user.id))
+    .limit(1);
+  const goals = await db
+    .select({ goal: writingGoals.goal })
+    .from(writingGoals)
+    .where(eq(writingGoals.userId, session.user.id));
+
+  // 生成今日训练任务：
+  // - 时长用画像里的 dailyPracticeMinutes（onboarding 第 4 步收集）
+  // - 选题用用户 ID 做确定性 seed，同一天刷新/换设备题目不变
+  const dailyMinutes = profile?.dailyPracticeMinutes ?? 10;
+  const todayPractice = generateTodayPractice(
+    dailyMinutes,
+    locale as "en" | "zh",
+    session.user.id
+  );
+
+  // 组装画像上下文（翻译 onboarding 的 key 为自然语言，随诊断请求发给 AI）
+  const isZh = locale === "zh";
+  const profileParts: string[] = [];
+  if (goals.length > 0) {
+    const labels = goals.map((g) => tOnboarding(`goals.${g.goal}` as never)).filter(Boolean);
+    if (labels.length > 0) profileParts.push(`${isZh ? "写作目标" : "Writing goals"}: ${labels.join(", ")}`);
+  }
+  const topics = (profile?.preferredTopics as string[] | undefined) ?? [];
+  if (topics.length > 0) {
+    const labels = topics.map((k) => tOnboarding(`topics.${k}` as never)).filter(Boolean);
+    if (labels.length > 0) profileParts.push(`${isZh ? "关注主题" : "Topics of interest"}: ${labels.join(", ")}`);
+  }
+  const problems = (profile?.writingProblems as string[] | undefined) ?? [];
+  if (problems.length > 0) {
+    const labels = problems.map((k) => tOnboarding(`problems.${k}` as never)).filter(Boolean);
+    if (labels.length > 0) profileParts.push(`${isZh ? "想改进的问题" : "Problems to improve"}: ${labels.join(", ")}`);
+  }
+  const profileContext = profileParts.length > 0 ? profileParts.join("\n") : undefined;
 
   return (
     <AppShell title={t("todaysPractice")} user={session.user}>
@@ -77,6 +121,9 @@ export default async function PracticeTodayPage({
         practiceType={todayPractice.practiceType}
         prompt={todayPractice.prompt}
         estimatedMinutes={todayPractice.estimatedMinutes}
+        userName={session.user.name ?? undefined}
+        tomorrowType={getTomorrowPracticeType()}
+        profileContext={profileContext}
       />
     </AppShell>
   );

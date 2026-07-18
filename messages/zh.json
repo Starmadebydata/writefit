@@ -48,22 +48,55 @@
     "mechanism": {
       "title": "WriteFit 的工作方式",
       "steps": [
-        { "title": "你先写", "desc": "15 分钟内写一篇短文。不用 AI，只有你和空白页面。" },
-        { "title": "AI 诊断", "desc": "AI 分析你的写作，找出 3 个具体问题——不是泛泛的建议。" },
-        { "title": "你修改", "desc": "根据反馈修改。AI 不替你重写，你自己动手。" },
-        { "title": "对比版本", "desc": "清楚看到原稿和修改稿之间到底改了什么。" },
-        { "title": "保存好句", "desc": "把好句子和灵感保存到个人素材库，以后可以复用。" }
+        {
+          "title": "你先写",
+          "desc": "15 分钟内写一篇短文。不用 AI，只有你和空白页面。"
+        },
+        {
+          "title": "AI 诊断",
+          "desc": "AI 分析你的写作，找出 3 个具体问题——不是泛泛的建议。"
+        },
+        {
+          "title": "你修改",
+          "desc": "根据反馈修改。AI 不替你重写，你自己动手。"
+        },
+        {
+          "title": "对比版本",
+          "desc": "清楚看到原稿和修改稿之间到底改了什么。"
+        },
+        {
+          "title": "保存好句",
+          "desc": "把好句子和灵感保存到个人素材库，以后可以复用。"
+        }
       ]
     },
     "features": {
       "title": "核心功能",
       "items": [
-        { "title": "每日训练", "desc": "每天一个写作题目，15 分钟。不同训练类型在一周内轮换。" },
-        { "title": "AI 诊断", "desc": "AI 分析你的清晰度、具体性、个人声音和 AI 腔程度。不是语法检查器，是写作教练。" },
-        { "title": "反 AI 腔训练", "desc": "检测和修复模板化、过度平滑、空泛的文字。建立属于你自己的声音。" },
-        { "title": "句子手术", "desc": "拆解任何句子。找出空泛词、抽象名词和节奏问题。逐一修复。" },
-        { "title": "草稿实验室", "desc": "写长文。跟踪版本。对修改稿而不只是初稿获得反馈。" },
-        { "title": "素材库", "desc": "从训练中保存好句子、观察和灵感。建立个人写作资源库。" }
+        {
+          "title": "每日训练",
+          "desc": "每天一个写作题目，15 分钟。不同训练类型在一周内轮换。"
+        },
+        {
+          "title": "AI 诊断",
+          "desc": "AI 分析你的清晰度、具体性、个人声音和 AI 腔程度。不是语法检查器，是写作教练。"
+        },
+        {
+          "title": "反 AI 腔训练",
+          "desc": "检测和修复模板化、过度平滑、空泛的文字。建立属于你自己的声音。"
+        },
+        {
+          "title": "句子手术",
+          "desc": "拆解任何句子。找出空泛词、抽象名词和节奏问题。逐一修复。"
+        },
+        {
+          "title": "草稿实验室",
+          "desc": "写长文。跟踪版本。对修改稿而不只是初稿获得反馈。"
+        },
+        {
+          "title": "素材库",
+          "desc": "从训练中保存好句子、观察和灵感。建立个人写作资源库。"
+        }
       ]
     },
     "scenarios": {
@@ -224,7 +257,46 @@
       "errorMinWords": "至少需要 {minWords} 字才能提交",
       "errorAiDiagnosis": "AI 诊断失败，请重试",
       "errorNoRevision": "你还没有修改任何内容",
-      "errorCompareFailed": "版本对比失败，但你可以查看差异"
+      "errorCompareFailed": "版本对比失败，但你可以查看差异",
+      "introDuration": "写作时长：约 {minutes} 分钟",
+      "introRule1": "规则：先写完原始稿，AI 才会给你反馈",
+      "introRule2": "AI 不会替你写，只做你的教练和批评者",
+      "writingTitle": "写下你的原始稿",
+      "timeUp": "时间到了！你可以继续写完当前句子，然后提交。",
+      "back": "返回",
+      "aiAnalyzingSub": "AI 会引用你的原文，找出 3 个具体问题",
+      "feedbackTitle": "AI 诊断反馈",
+      "revisionGoalLabel": "修改目标：",
+      "originalReadonly": "原稿（只读）",
+      "yourRevision": "你的修改稿",
+      "revisePlaceholder": "在这里修改你的文字...",
+      "backToFeedback": "返回查看反馈",
+      "practiceCompleteNamed": "{name}，今日训练完成！",
+      "streakDays": "连续训练 {count} 天",
+      "retrySave": "重试保存",
+      "saveSucceeded": "训练记录已保存",
+      "errorSaveSession": "训练记录保存失败，请重试",
+      "draftRestored": "已恢复你上次未完成的草稿",
+      "statRawWords": "原稿字数",
+      "statRevisedWords": "修改稿字数",
+      "statWordsDelta": "字数变化",
+      "diffTitle": "版本对比",
+      "aiReviewTitle": "AI 对你修改的评价",
+      "improvedLabel": "改善的方面：",
+      "worseLabel": "需要注意：",
+      "nextStepLabel": "下一步建议：",
+      "changeSpecificity": "具体性",
+      "changeVoice": "个人声音",
+      "changeAiLike": "AI 腔",
+      "saveIdeasTitle": "保存今日素材",
+      "bestSentenceLabel": "最好的句子",
+      "revisionGoalIdeaLabel": "修改目标",
+      "todaysPromptIdeaLabel": "今日题目",
+      "tomorrowPreview": "明天见：{type}",
+      "shareButton": "分享成果",
+      "shareCopied": "已复制到剪贴板，去分享吧",
+      "errorShareFailed": "复制失败，请手动复制",
+      "shareText": "我在 WriteFit 完成了今天的写作训练：修改稿 {words} 字，连续训练 {streak} 天。每天 15 分钟，训练自己的写作 → https://writefit.app"
     },
     "editor": {
       "placeholder": "开始写吧。不要修改，不要追求完美，先把脑子里的东西倒出来。",
@@ -245,12 +317,12 @@
       "revisionTask": "修改任务：",
       "bestSentence": "今天最好的句子",
       "mostAiLike": "最像 AI 的句子",
-      "nextGoal": "下一轮修改目标"
+      "nextGoal": "下一轮修改目标",
+      "mockCta": "去配置 AI"
     },
     "diff": {
-      "deleted": "删除 {count} 句",
-      "added": "新增 {count} 句",
-      "kept": "保留 {count} 句",
+      "deleted": "删除 {count} 处",
+      "added": "新增 {count} 处",
       "original": "原稿",
       "revised": "修改稿"
     },
