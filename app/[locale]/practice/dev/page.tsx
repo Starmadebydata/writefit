@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PracticeFlow } from "@/components/practice/PracticeFlow";
 import { generateTodayPractice } from "@/lib/practice/scheduler";
-import { ArrowLeft, Info, Settings } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import { setRequestLocale, getLocale, getTranslations } from "next-intl/server";
 
 // 开发测试页面 SEO（上线后可保留作为产品演示）
@@ -62,7 +62,8 @@ export default async function PracticeDevPage({
   const t = await getTranslations("dev");
 
   // 生成今日训练任务（根据语言选择对应题库）
-  const todayPractice = generateTodayPractice(10, locale as "en" | "zh");
+  // 传固定 seed：同一天内题目稳定，刷新后 localStorage 草稿才能恢复
+  const todayPractice = generateTodayPractice(10, locale as "en" | "zh", "dev");
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,10 +77,6 @@ export default async function PracticeDevPage({
           <span className="text-xs text-muted-foreground ml-2">{t("title")}</span>
         </Link>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" render={<Link href="/ai-setup" />}>
-            <Settings className="mr-1 h-3.5 w-3.5" />
-            {t("aiSettings")}
-          </Button>
           <Button variant="ghost" size="sm" render={<Link href="/" />}>
             <ArrowLeft className="mr-1 h-3.5 w-3.5" />
             {t("backHome")}
@@ -95,8 +92,10 @@ export default async function PracticeDevPage({
             <div className="text-sm text-amber-800">
               <p className="font-semibold mb-1">{t("devMode")}</p>
               <p>
-                {t("desc")}
-                <Link href="/ai-setup" className="underline font-medium">点击这里配置你的 AI 服务</Link>
+                {t("desc")}{" "}
+                <Link href="/auth/register" className="underline font-medium">
+                  {t("registerCta")}
+                </Link>
               </p>
             </div>
           </CardContent>

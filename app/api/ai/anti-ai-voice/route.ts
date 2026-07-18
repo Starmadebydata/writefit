@@ -6,10 +6,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { callAIJson, type AIConfig } from "@/lib/ai/client";
 import { getSystemRules, getAntiAiVoicePrompt, type Locale } from "@/lib/ai/prompts";
 import { mockAntiAIVoice } from "@/lib/ai/mock";
+import { auth } from "@/lib/auth/auth";
+import { getUserBannedPhrases } from "@/lib/db/profile";
 import type { AntiAIVoiceFeedback } from "@/lib/ai/schemas";
 
 export async function POST(req: NextRequest) {
   try {
+    // 检查登录状态
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
     const { text, language = "en", aiConfig } = await req.json();
 
     // 确定语言
@@ -27,9 +35,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ...mockResult, _mock: true });
     }
 
+    // 读取用户在设置里配置的自定义禁用词，注入 prompt
+    const bannedPhrases = await getUserBannedPhrases(session.user.id);
+
     const result = await callAIJson<AntiAIVoiceFeedback>({
       config: aiConfig as AIConfig,
-      systemPrompt: `${getSystemRules(locale)}\n\n${getAntiAiVoicePrompt(locale)}`,
+      systemPrompt: `${getSystemRules(locale)}\n\n${getAntiAiVoicePrompt(locale, bannedPhrases)}`,
       messages: [
         {
           role: "user",

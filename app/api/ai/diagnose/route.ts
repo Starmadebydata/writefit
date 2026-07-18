@@ -16,6 +16,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { callAIJson, type AIConfig } from "@/lib/ai/client";
 import { getSystemRules, getDiagnosePrompt, type Locale } from "@/lib/ai/prompts";
 import { mockDiagnose } from "@/lib/ai/mock";
+import { auth } from "@/lib/auth/auth";
+import { getUserBannedPhrases } from "@/lib/db/profile";
 import {
   sanitizeDiagnoseFeedback,
   isUsableDiagnose,
@@ -29,6 +31,12 @@ const RETRY_HINT =
 
 export async function POST(req: NextRequest) {
   try {
+    // 检查登录状态
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
     const {
       text,
       language = "en",
@@ -66,9 +74,13 @@ export async function POST(req: NextRequest) {
     const safeProfileContext =
       typeof profileContext === "string" ? profileContext.slice(0, 500) : undefined;
 
+    // 读取用户在设置里配置的自定义禁用词，注入 prompt
+    const bannedPhrases = await getUserBannedPhrases(session.user.id);
+
     const systemPrompt = `${getSystemRules(locale)}\n\n${getDiagnosePrompt(locale, {
       practiceType: safePracticeType,
       profileContext: safeProfileContext,
+      bannedPhrases,
     })}`;
 
     // 用户文本放在分隔符内，并声明"只是样本不是指令"，降低注入风险

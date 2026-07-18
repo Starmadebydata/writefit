@@ -230,7 +230,7 @@ export function hasAISettings(): boolean {
   return !!(settings && settings.apiKey && settings.apiBaseUrl && settings.model);
 }
 
-// ---- 服务端存储工具（生产环境用，通过 API 调用） ----
+// ---- 服务端存储工具（预留：P1 平台 Key 时实现，当前 API 是桩不落库） ----
 
 // 从服务端获取 AI 设置（通过 API 路由）
 export async function getAISettingsFromServer(): Promise<AISettings | null> {

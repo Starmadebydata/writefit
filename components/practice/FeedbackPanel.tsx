@@ -21,9 +21,11 @@ interface FeedbackPanelProps {
   feedback: DiagnoseFeedback;
   // 是否是模拟数据
   isMock?: boolean;
+  // 是否是 dev 演示模式（未登录）：模拟反馈的 CTA 引导注册而不是去设置页
+  isDev?: boolean;
 }
 
-export function FeedbackPanel({ feedback, isMock }: FeedbackPanelProps) {
+export function FeedbackPanel({ feedback, isMock, isDev }: FeedbackPanelProps) {
   const t = useTranslations("practice.feedback");
   const locale = useLocale() as "en" | "zh";
   return (
@@ -31,10 +33,10 @@ export function FeedbackPanel({ feedback, isMock }: FeedbackPanelProps) {
       {/* 模拟数据提示 + 配置引导（首次体验的关键转化点） */}
       {isMock && (
         <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 flex items-center justify-between gap-3 flex-wrap">
-          <span>{t("mockNotice")}</span>
-          <Button size="sm" variant="outline" className="border-amber-300 bg-white/60" render={<Link href="/settings" />}>
+          <span>{isDev ? t("mockNoticeDev") : t("mockNotice")}</span>
+          <Button size="sm" variant="outline" className="border-amber-300 bg-white/60" render={<Link href={isDev ? "/auth/register" : "/settings"} />}>
             <Settings className="h-3.5 w-3.5" />
-            {t("mockCta")}
+            {isDev ? t("mockCtaRegister") : t("mockCta")}
           </Button>
         </div>
       )}

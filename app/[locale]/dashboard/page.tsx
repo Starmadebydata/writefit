@@ -16,7 +16,7 @@ import { Link } from "@/i18n/navigation";
 import { setRequestLocale, getLocale, getTranslations } from "next-intl/server";
 import { drizzle } from "drizzle-orm/d1";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { practiceSessions, ideas } from "@/lib/db/schema";
+import { practiceSessions, ideas, profiles } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 
 // Dashboard 页面 SEO（根据语言切换）
@@ -78,6 +78,15 @@ export default async function DashboardPage({
   // 从数据库读取真实统计数据
   const { env } = getCloudflareContext();
   const db = drizzle(env.DB);
+
+  // 未完成 onboarding 画像的新用户（如 Google 登录直达）→ 先补画像
+  const [profile] = await db
+    .select({ id: profiles.id })
+    .from(profiles)
+    .where(eq(profiles.userId, session.user.id));
+  if (!profile) {
+    redirect("/onboarding");
+  }
 
   // 本周训练数和总字数
   const weekStart = new Date();

@@ -14,10 +14,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { callAIJson, type AIConfig } from "@/lib/ai/client";
 import { getSystemRules, getSentenceSurgeryPrompt, type Locale } from "@/lib/ai/prompts";
 import { mockSentenceSurgery } from "@/lib/ai/mock";
+import { auth } from "@/lib/auth/auth";
 import type { SentenceSurgeryFeedback } from "@/lib/ai/schemas";
 
 export async function POST(req: NextRequest) {
   try {
+    // 检查登录状态
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
     const { text, language = "en", aiConfig } = await req.json();
 
     const locale: Locale = language === "zh" ? "zh" : "en";

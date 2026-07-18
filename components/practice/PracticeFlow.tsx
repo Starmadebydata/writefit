@@ -30,6 +30,8 @@ import { FeedbackPanel } from "./FeedbackPanel";
 import { DiffViewer } from "./DiffViewer";
 import { SaveIdeaButton } from "./SaveIdeaButton";
 import { getAISettingsFromLocal, type AISettings } from "@/lib/ai/settings";
+import { mockDiagnose, mockCompareRevision } from "@/lib/ai/mock";
+import { Link } from "@/i18n/navigation";
 import {
   PenLine,
   Brain,
@@ -199,7 +201,17 @@ export function PracticeFlow({
         }),
       });
 
-      if (!res.ok) throw new Error("诊断失败");
+      if (!res.ok) {
+        // AI 路由需要登录：dev 演示模式（未登录）回退到本地模拟反馈
+        if (isDev && res.status === 401) {
+          setFeedback(mockDiagnose(rawText, locale === "zh" ? "zh" : "en"));
+          setIsMockFeedback(true);
+          setStage("feedback");
+          setLoading(false);
+          return;
+        }
+        throw new Error("诊断失败");
+      }
 
       const data = await res.json();
       setFeedback(data);
@@ -335,9 +347,18 @@ export function PracticeFlow({
         }),
       });
 
-      if (!res.ok) throw new Error("对比失败");
-      comparisonData = await res.json();
-      setComparison(comparisonData);
+      if (!res.ok) {
+        // AI 路由需要登录：dev 演示模式（未登录）回退到本地模拟对比
+        if (isDev && res.status === 401) {
+          comparisonData = mockCompareRevision(rawText, revisedText, locale === "zh" ? "zh" : "en");
+          setComparison(comparisonData);
+        } else {
+          throw new Error("对比失败");
+        }
+      } else {
+        comparisonData = await res.json();
+        setComparison(comparisonData);
+      }
     } catch {
       // 即使对比失败，也展示 diff
       toast.error(t("errorCompareFailed"));
@@ -553,7 +574,7 @@ export function PracticeFlow({
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
-          <FeedbackPanel feedback={feedback} isMock={isMockFeedback} />
+          <FeedbackPanel feedback={feedback} isMock={isMockFeedback} isDev={isDev} />
         </div>
       )}
 
@@ -812,36 +833,48 @@ export function PracticeFlow({
                 <CardTitle className="text-lg">{t("saveIdeasTitle")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {/* 保存最好的句子 */}
-                {feedback.best_sentence && (
-                  <div className="flex items-start justify-between gap-3 rounded-md bg-muted/50 p-3">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">{t("bestSentenceLabel")}</p>
-                      <p className="text-sm">{feedback.best_sentence}</p>
-                    </div>
-                    <SaveIdeaButton content={feedback.best_sentence} type="sentence" />
-                  </div>
-                )}
+                {isDev ? (
+                  // dev 演示模式未登录，保存素材需要账号：引导注册
+                  <p className="text-sm text-muted-foreground">
+                    {t("saveIdeaLoginHint")}{" "}
+                    <Link href="/auth/register" className="text-primary underline">
+                      {t("saveIdeaLoginCta")}
+                    </Link>
+                  </p>
+                ) : (
+                  <>
+                    {/* 保存最好的句子 */}
+                    {feedback.best_sentence && (
+                      <div className="flex items-start justify-between gap-3 rounded-md bg-muted/50 p-3">
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">{t("bestSentenceLabel")}</p>
+                          <p className="text-sm">{feedback.best_sentence}</p>
+                        </div>
+                        <SaveIdeaButton content={feedback.best_sentence} type="sentence" />
+                      </div>
+                    )}
 
-                {/* 保存修改目标作为判断 */}
-                {feedback.next_revision_goal && (
-                  <div className="flex items-start justify-between gap-3 rounded-md bg-muted/50 p-3">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">{t("revisionGoalIdeaLabel")}</p>
-                      <p className="text-sm">{feedback.next_revision_goal}</p>
-                    </div>
-                    <SaveIdeaButton content={feedback.next_revision_goal} type="claim" />
-                  </div>
-                )}
+                    {/* 保存修改目标作为判断 */}
+                    {feedback.next_revision_goal && (
+                      <div className="flex items-start justify-between gap-3 rounded-md bg-muted/50 p-3">
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">{t("revisionGoalIdeaLabel")}</p>
+                          <p className="text-sm">{feedback.next_revision_goal}</p>
+                        </div>
+                        <SaveIdeaButton content={feedback.next_revision_goal} type="claim" />
+                      </div>
+                    )}
 
-                {/* 保存题目作为观察 */}
-                <div className="flex items-start justify-between gap-3 rounded-md bg-muted/50 p-3">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">{t("todaysPromptIdeaLabel")}</p>
-                    <p className="text-sm">{prompt}</p>
-                  </div>
-                  <SaveIdeaButton content={prompt} type="observation" />
-                </div>
+                    {/* 保存题目作为观察 */}
+                    <div className="flex items-start justify-between gap-3 rounded-md bg-muted/50 p-3">
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">{t("todaysPromptIdeaLabel")}</p>
+                        <p className="text-sm">{prompt}</p>
+                      </div>
+                      <SaveIdeaButton content={prompt} type="observation" />
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           )}

@@ -34,6 +34,13 @@
     "startTraining": "Start Training",
     "learnMore": "How It Works",
     "tryDemo": "Try the practice flow (no login needed) →",
+    "nav": {
+      "login": "Log in"
+    },
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
     "problems": {
       "title": "Does this sound familiar?",
       "items": [
@@ -289,6 +296,8 @@
       "changeVoice": "Voice",
       "changeAiLike": "AI tone",
       "saveIdeasTitle": "Save today's ideas",
+      "saveIdeaLoginHint": "Log in to save great sentences and ideas to your idea bank.",
+      "saveIdeaLoginCta": "Sign up free →",
       "bestSentenceLabel": "Best sentence",
       "revisionGoalIdeaLabel": "Revision goal",
       "todaysPromptIdeaLabel": "Today's prompt",
@@ -319,6 +328,8 @@
       "mostAiLike": "Most AI-like sentence",
       "nextGoal": "Next revision goal",
       "mockCta": "Set up AI",
+      "mockNoticeDev": "⚠ Demo mode uses simulated feedback. Sign up and configure AI to get a real diagnosis.",
+      "mockCtaRegister": "Sign up",
       "exampleRevision": "AI example revision",
       "exampleRevisionHint": "One possible way to revise, for reference only — write it in your own words."
     },
@@ -375,7 +386,7 @@
       "errorModel": "Please select or enter a model name",
       "show": "Show",
       "hide": "Hide",
-      "apiKeyStorageDesc": "Your API Key is stored only in your browser (dev) or encrypted in the database (production).",
+      "apiKeyStorageDesc": "Your API key is stored only in your own browser (localStorage) and is never uploaded to our servers.",
       "modelInputPlaceholder": "Model name, e.g. deepseek-chat",
       "advancedSettings": "Advanced Settings",
       "tempPrecise": "Precise",
@@ -495,7 +506,7 @@
   "aiSetup": {
     "backToPractice": "Back to Practice",
     "title": "Configure your AI writing coach",
-    "desc": "WriteFit uses your own AI API key to provide writing feedback. Your key is stored securely and only used for your own requests."
+    "desc": "WriteFit uses your own AI API key to provide writing feedback. The key is stored only in your browser and used exclusively for your own requests."
   },
   "ideas": {
     "title": "Idea Bank",
@@ -550,11 +561,11 @@
     }
   },
   "dev": {
-    "title": "Dev Test",
-    "aiSettings": "AI Settings",
+    "title": "Demo",
     "backHome": "Back to Home",
-    "devMode": "This is dev test mode",
-    "desc": "This mode allows you to test the practice flow without logging in. Practice data will not be saved to the database."
+    "devMode": "This is demo mode",
+    "desc": "Try the full practice flow without logging in. The demo uses simulated AI feedback and nothing is saved. Sign up to get real AI diagnosis and keep your training history.",
+    "registerCta": "Sign up free →"
   },
   "sentenceGym": {
     "title": "Sentence Gym",

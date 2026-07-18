@@ -20,6 +20,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import {
   PenLine,
   Brain,
@@ -81,6 +82,29 @@ function LandingContent() {
 
   return (
     <div className="flex flex-col">
+      {/* ================================================================
+          0. 顶部导航 —— 登录入口 + 语言切换
+      ================================================================ */}
+      <header className="border-b border-border">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
+              W
+            </div>
+            <span className="font-semibold">WriteFit</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <Button variant="ghost" size="sm" render={<Link href="/auth/login" />}>
+              {t("nav.login")}
+            </Button>
+            <Button size="sm" render={<Link href="/auth/register" />}>
+              {t("startTraining")}
+            </Button>
+          </div>
+        </div>
+      </header>
+
       {/* ================================================================
           1. Hero 区域 —— 核心标语
       ================================================================ */}
@@ -239,6 +263,26 @@ function LandingContent() {
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </section>
+
+      {/* ================================================================
+          7. 页脚 —— 合规与导航链接
+      ================================================================ */}
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 py-6 text-sm text-muted-foreground sm:flex-row">
+          <p>© {new Date().getFullYear()} WriteFit</p>
+          <nav className="flex items-center gap-4">
+            <Link href="/privacy" className="hover:text-foreground">
+              {t("footer.privacy")}
+            </Link>
+            <Link href="/terms" className="hover:text-foreground">
+              {t("footer.terms")}
+            </Link>
+            <Link href="/auth/login" className="hover:text-foreground">
+              {t("nav.login")}
+            </Link>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { PostHogProvider } from "@/components/analytics/PostHogProvider";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -97,7 +98,7 @@ export default async function LocaleLayout({
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <PostHogProvider>{children}</PostHogProvider>
           <Toaster />
         </NextIntlClientProvider>
       </body>

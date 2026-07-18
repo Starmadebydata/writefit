@@ -1,13 +1,14 @@
 // ====================================================================
-// AI 设置 API 路由
+// AI 设置 API 路由（当前为桩，P1 平台 Key 时实现服务端存储）
 // ====================================================================
 // 管理用户的 AI 服务配置
 //
 // GET  /api/ai-settings  —— 读取当前用户的 AI 设置
 // POST /api/ai-settings  —— 保存 AI 设置
 //
-// 开发阶段：设置存在浏览器 localStorage，这个 API 返回空
-// 生产环境：设置加密存储在 D1 数据库的 ai_settings 表
+// 现状：设置只存在浏览器 localStorage，这个 API 不做持久化
+// （GET 返回 notConfigured，POST/DELETE 直接返回成功）。
+// ai_settings 表已存在但未被读写，等 P1 付费墙改造时再接。
 // ====================================================================
 
 import { NextRequest, NextResponse } from "next/server";
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Please select a model" }, { status: 400 });
     }
 
-    // 开发阶段：直接返回成功（前端会同时保存到 localStorage）
+    // 开发阶段：直接返回成功（前端同时保存到 localStorage，服务端暂不落库）
     return NextResponse.json({
       success: true,
       provider,

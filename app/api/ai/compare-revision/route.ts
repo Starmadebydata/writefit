@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { callAIJson, type AIConfig } from "@/lib/ai/client";
 import { getSystemRules, getCompareRevisionPrompt, type Locale } from "@/lib/ai/prompts";
 import { mockCompareRevision } from "@/lib/ai/mock";
+import { auth } from "@/lib/auth/auth";
 import {
   sanitizeCompareRevisionFeedback,
   isUsableCompareRevision,
@@ -21,6 +22,12 @@ const RETRY_HINT =
 
 export async function POST(req: NextRequest) {
   try {
+    // 检查登录状态
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
     const { original, revised, language = "en", aiConfig } = await req.json();
 
     // 确定语言

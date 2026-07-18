@@ -34,6 +34,13 @@
     "startTraining": "开始训练",
     "learnMore": "了解原理",
     "tryDemo": "体验训练流程（无需登录）→",
+    "nav": {
+      "login": "登录"
+    },
+    "footer": {
+      "privacy": "隐私政策",
+      "terms": "服务条款"
+    },
     "problems": {
       "title": "这些问题你熟悉吗？",
       "items": [
@@ -289,6 +296,8 @@
       "changeVoice": "个人声音",
       "changeAiLike": "AI 腔",
       "saveIdeasTitle": "保存今日素材",
+      "saveIdeaLoginHint": "登录后即可把好句子和灵感保存到你的素材库。",
+      "saveIdeaLoginCta": "免费注册 →",
       "bestSentenceLabel": "最好的句子",
       "revisionGoalIdeaLabel": "修改目标",
       "todaysPromptIdeaLabel": "今日题目",
@@ -319,6 +328,8 @@
       "mostAiLike": "最像 AI 的句子",
       "nextGoal": "下一轮修改目标",
       "mockCta": "去配置 AI",
+      "mockNoticeDev": "⚠ 演示模式使用模拟反馈。注册账号并配置 AI 后获得真实诊断。",
+      "mockCtaRegister": "注册账号",
       "exampleRevision": "AI 示范修改",
       "exampleRevisionHint": "这只是一种可能的改法，仅供参考——请用自己的话写。"
     },
@@ -375,7 +386,7 @@
       "errorModel": "请选择或填写模型名称",
       "show": "显示",
       "hide": "隐藏",
-      "apiKeyStorageDesc": "你的 API Key 只存在你的浏览器里（开发阶段）或加密存储在数据库里（生产环境）。",
+      "apiKeyStorageDesc": "你的 API Key 只保存在你自己的浏览器中（localStorage），不会上传到我们的服务器。",
       "modelInputPlaceholder": "模型名称，如 deepseek-chat",
       "advancedSettings": "高级设置",
       "tempPrecise": "精确",
@@ -495,7 +506,7 @@
   "aiSetup": {
     "backToPractice": "返回训练",
     "title": "配置你的 AI 写作教练",
-    "desc": "WriteFit 使用你自己的 AI API Key 来提供写作反馈。你的 Key 安全存储，仅用于你自己的请求。"
+    "desc": "WriteFit 使用你自己的 AI API Key 来提供写作反馈。Key 只保存在你的浏览器中，仅用于你自己的请求。"
   },
   "ideas": {
     "title": "素材库",
@@ -551,10 +562,10 @@
   },
   "dev": {
     "title": "开发测试",
-    "aiSettings": "AI 设置",
     "backHome": "返回首页",
-    "devMode": "这是开发测试模式",
-    "desc": "这个模式允许你在不登录的情况下测试训练流程。训练数据不会保存到数据库。"
+    "devMode": "这是演示模式",
+    "desc": "无需登录即可体验完整训练流程。演示使用模拟 AI 反馈，数据不会保存。注册账号后可获得真实 AI 诊断并保存训练记录。",
+    "registerCta": "免费注册 →"
   },
   "sentenceGym": {
     "title": "句子训练",
