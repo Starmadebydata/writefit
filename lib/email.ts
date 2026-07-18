@@ -1,29 +1,54 @@
 // ====================================================================
-// 邮件发送工具（Resend）
+// 邮件发送工具（Cloudflare Email Service 优先，Resend 兜底）
 // ====================================================================
-// 通过 Resend 的 REST API 发邮件，fetch 直连，无 SDK 依赖，
-// 兼容 Cloudflare Workers 运行时。
+// 供应商链：
+// 1. Cloudflare Email Service（env.EMAIL binding，Workers Paid + 域名绑定，
+//    生产环境首选，无外部 API 调用）
+// 2. Resend REST API（RESEND_API_KEY 配置时，作为备用/过渡）
+// 3. 都不可用 → 静默跳过，不影响主流程
 //
-// 配置方式（环境变量，生产用 wrangler secret / Dashboard 变量）：
-// - RESEND_API_KEY（必填，未配置时所有发送静默跳过，不影响主流程）
-// - EMAIL_FROM（可选，默认 Resend 测试地址；域名验证后改为 noreply@writefit.app）
+// 配置方式：
+// - wrangler.jsonc 的 send_email binding（已配置，生产自动生效）
+// - RESEND_API_KEY（可选，兜底）
+// - EMAIL_FROM（可选；CF 默认 noreply@writefit.app，Resend 默认测试地址）
 //
 // 用途：欢迎邮件（已接入）、训练提醒（P3）、周报（P2/P3）、
 // 支付收据（P2，也可用支付平台自带邮件）。
 // ====================================================================
 
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getServerEnv } from "./server-env";
 
 interface SendEmailOptions {
   to: string;
   subject: string;
   html: string;
+  text: string;
 }
 
-// 发送邮件。返回是否成功；未配置 Key 或发送失败都返回 false，不抛异常。
-export async function sendEmail({ to, subject, html }: SendEmailOptions): Promise<boolean> {
+// 通过 Cloudflare Email Service 发送；binding 不存在（本地 dev）返回 null
+async function sendViaCloudflare({ to, subject, html, text }: SendEmailOptions): Promise<boolean | null> {
+  try {
+    const { env } = getCloudflareContext();
+    if (!env.EMAIL) return null;
+    await env.EMAIL.send({
+      from: getServerEnv("EMAIL_FROM") ?? "noreply@writefit.app",
+      to,
+      subject,
+      html,
+      text,
+    });
+    return true;
+  } catch (error) {
+    console.error("[email] cloudflare send error:", error);
+    return false;
+  }
+}
+
+// 通过 Resend 发送；未配置 Key 返回 null
+async function sendViaResend({ to, subject, html, text }: SendEmailOptions): Promise<boolean | null> {
   const apiKey = getServerEnv("RESEND_API_KEY");
-  if (!apiKey) return false;
+  if (!apiKey) return null;
 
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -37,17 +62,29 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions): Promis
         to,
         subject,
         html,
+        text,
       }),
     });
     if (!res.ok) {
-      console.error("[email] send failed:", res.status, await res.text());
+      console.error("[email] resend send failed:", res.status, await res.text());
       return false;
     }
     return true;
   } catch (error) {
-    console.error("[email] send error:", error);
+    console.error("[email] resend send error:", error);
     return false;
   }
+}
+
+// 发送邮件。返回是否成功；无可用供应商或发送失败都返回 false，不抛异常。
+export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
+  // 1. Cloudflare Email Service（生产首选）
+  const cf = await sendViaCloudflare(options);
+  if (cf === true) return true;
+
+  // 2. Resend 兜底（binding 不存在或发送失败时）
+  const resend = await sendViaResend(options);
+  return resend === true;
 }
 
 // 欢迎邮件（注册成功后发送）
@@ -58,7 +95,7 @@ export async function sendWelcomeEmail(
 ): Promise<boolean> {
   const displayName = name?.trim() || (locale === "zh" ? "写作者" : "writer");
 
-  const { subject, html } =
+  const { subject, html, text } =
     locale === "zh"
       ? {
           subject: "欢迎来到 WriteFit —— 你的第一次训练在等你",
@@ -80,6 +117,19 @@ export async function sendWelcomeEmail(
               </p>
             </div>
           `,
+          text: `欢迎，${displayName}！
+
+你刚加入了 WriteFit —— 一个不替你写、只教你写的 AI 写作教练。
+
+开始的方式很简单：
+1. 完成写作画像（1 分钟），让教练了解你的目标
+2. 开始今日训练：15 分钟，先自己写
+3. 获得 AI 诊断，然后自己动手修改
+
+开始第一次训练：https://writefit.app/zh/onboarding
+
+每天 15 分钟，训练你自己的写作能力。
+—— WriteFit 团队`,
         }
       : {
           subject: "Welcome to WriteFit — your first practice is waiting",
@@ -101,7 +151,20 @@ export async function sendWelcomeEmail(
               </p>
             </div>
           `,
+          text: `Welcome, ${displayName}!
+
+You just joined WriteFit — an AI writing coach that doesn't write for you, but trains you to write better.
+
+Getting started is simple:
+1. Set up your writing profile (1 minute) so your coach knows your goals
+2. Start today's practice: 15 minutes, you write first
+3. Get an AI diagnosis, then revise with your own hands
+
+Start your first practice: https://writefit.app/onboarding
+
+15 minutes a day. Train your own writing ability.
+— The WriteFit Team`,
         };
 
-  return sendEmail({ to: email, subject, html });
+  return sendEmail({ to: email, subject, html, text });
 }
