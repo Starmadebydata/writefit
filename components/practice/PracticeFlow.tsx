@@ -109,6 +109,7 @@ export function PracticeFlow({
   // ---- 状态管理 ----
   const t = useTranslations("practice.flow");
   const tPractice = useTranslations("practice");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
   const [stage, setStage] = useState<Stage>("intro");
   // 原始稿 / 修改稿：惰性初始化时恢复上次未完成的草稿
@@ -207,6 +208,13 @@ export function PracticeFlow({
           setFeedback(mockDiagnose(rawText, locale === "zh" ? "zh" : "en"));
           setIsMockFeedback(true);
           setStage("feedback");
+          setLoading(false);
+          return;
+        }
+        // 平台 Key 配额耗尽：提示并回到写作页，原稿不丢
+        if (res.status === 402) {
+          toast.error(tCommon("errorQuotaExceeded"));
+          setStage("writing");
           setLoading(false);
           return;
         }
@@ -352,6 +360,9 @@ export function PracticeFlow({
         if (isDev && res.status === 401) {
           comparisonData = mockCompareRevision(rawText, revisedText, locale === "zh" ? "zh" : "en");
           setComparison(comparisonData);
+        } else if (res.status === 402) {
+          // 配额耗尽：跳过对比，仍展示 diff 并保存训练记录
+          toast.error(tCommon("errorQuotaExceeded"));
         } else {
           throw new Error("对比失败");
         }

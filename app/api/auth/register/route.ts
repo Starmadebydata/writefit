@@ -12,6 +12,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { sendWelcomeEmail } from "@/lib/email";
 
 // 中英文错误消息
 const messages = {
@@ -94,6 +95,19 @@ export async function POST(request: NextRequest) {
       email,
       passwordHash,
     });
+
+    // 发送欢迎邮件（后台进行，失败不影响注册；未配置 RESEND_API_KEY 时静默跳过）
+    const welcomeEmail = sendWelcomeEmail(email, name, locale === "zh" ? "zh" : "en");
+    try {
+      const { ctx } = getCloudflareContext();
+      if (ctx?.waitUntil) {
+        ctx.waitUntil(welcomeEmail);
+      } else {
+        await welcomeEmail;
+      }
+    } catch {
+      await welcomeEmail;
+    }
 
     return NextResponse.json({
       success: true,

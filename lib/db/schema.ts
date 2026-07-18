@@ -11,7 +11,7 @@
 // - ID 使用 text 类型，应用层生成 cuid 或 UUID
 // ====================================================================
 
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
 // ------------------------------------------------------------------
@@ -26,6 +26,10 @@ export const users = sqliteTable("users", {
   emailVerified: integer("email_verified", { mode: "timestamp" }), // 邮箱验证时间
   image: text("image"), // 头像 URL（来自 GitHub/Google）
   passwordHash: text("password_hash"), // 密码哈希（仅邮箱注册的用户有值，OAuth 用户为 null）
+  // ---- 付费订阅（P1 付费墙地基） ----
+  plan: text("plan").notNull().default("free"), // 套餐：free / basic / pro
+  planExpiresAt: integer("plan_expires_at", { mode: "timestamp" }), // 套餐到期时间（null = 免费用户或永不到期）
+  paymentCustomerId: text("payment_customer_id"), // 支付平台客户 ID（PayPal/Creem/Stripe 通用）
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
@@ -213,6 +217,25 @@ export const aiSettings = sqliteTable("ai_settings", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
+// AI 用量记录表 —— 记录每个用户每天的 AI 调用次数
+// 用于平台托管 Key 的按套餐配额控制（BYOK 不计量）
+// 唯一索引 (user_id, date, endpoint)，累加用 upsert
+export const usageRecords = sqliteTable(
+  "usage_records",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    date: text("date").notNull(), // 日期（YYYY-MM-DD，UTC）
+    endpoint: text("endpoint").notNull(), // AI 端点名（diagnose / compare-revision / sentence-surgery / anti-ai-voice）
+    count: integer("count").notNull().default(0), // 当日累计调用次数
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [uniqueIndex("usage_user_date_endpoint").on(table.userId, table.date, table.endpoint)]
+);
+
 // ------------------------------------------------------------------
 // 表关系定义（告诉数据库表和表之间怎么关联）
 // ------------------------------------------------------------------
@@ -228,6 +251,7 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   aiFeedbacks: many(aiFeedbacks),
   progressMetrics: many(progressMetrics),
   aiSetting: one(aiSettings),
+  usageRecords: many(usageRecords),
 }));
 
 export const profilesRelations = relations(profiles, ({ one }) => ({
@@ -279,6 +303,10 @@ export const aiSettingsRelations = relations(aiSettings, ({ one }) => ({
   user: one(users, { fields: [aiSettings.userId], references: [users.id] }),
 }));
 
+export const usageRecordsRelations = relations(usageRecords, ({ one }) => ({
+  user: one(users, { fields: [usageRecords.userId], references: [users.id] }),
+}));
+
 // ------------------------------------------------------------------
 // 类型导出（供其他文件使用）
 // ------------------------------------------------------------------
@@ -292,3 +320,4 @@ export type AIFeedback = typeof aiFeedbacks.$inferSelect;
 export type Idea = typeof ideas.$inferSelect;
 export type ProgressMetric = typeof progressMetrics.$inferSelect;
 export type AISetting = typeof aiSettings.$inferSelect;
+export type UsageRecord = typeof usageRecords.$inferSelect;

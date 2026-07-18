@@ -90,6 +90,7 @@ const STATUS_COLORS: Record<DraftStatus, string> = {
 
 export function DraftLab() {
   const t = useTranslations("drafts");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
 
   // ---- 视图状态：list 或 editor ----
@@ -289,7 +290,14 @@ export function DraftLab() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: editorContent, language: locale, aiConfig }),
       });
-      if (!res.ok) throw new Error("diagnose failed");
+      if (!res.ok) {
+        // 平台 Key 配额耗尽：明确提示，不按普通失败处理
+        if (res.status === 402) {
+          toast.error(tCommon("errorQuotaExceeded"));
+          return;
+        }
+        throw new Error("diagnose failed");
+      }
       const data = (await res.json()) as DiagnoseFeedback & { _mock?: boolean };
       setDiagnoseFeedback(data);
       setIsMockFeedback(!!data._mock);
@@ -312,7 +320,14 @@ export function DraftLab() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: editorContent, language: locale, aiConfig }),
       });
-      if (!res.ok) throw new Error("detect failed");
+      if (!res.ok) {
+        // 平台 Key 配额耗尽：明确提示，不按普通失败处理
+        if (res.status === 402) {
+          toast.error(tCommon("errorQuotaExceeded"));
+          return;
+        }
+        throw new Error("detect failed");
+      }
       const data = (await res.json()) as AntiAIVoiceFeedback & { _mock?: boolean };
       setAntiAiFeedback(data);
       setIsMockFeedback(!!data._mock);

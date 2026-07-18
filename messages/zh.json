@@ -13,7 +13,8 @@
     "comingSoonDesc": "这个功能正在开发中，敬请期待。",
     "saveSuccess": "保存成功",
     "saveError": "保存失败，请重试",
-    "networkError": "网络错误，请稍后重试"
+    "networkError": "网络错误，请稍后重试",
+    "errorQuotaExceeded": "今日免费 AI 次数已用完，明天重置。自带 API Key 或升级套餐可获更多次数。"
   },
   "nav": {
     "dashboard": "仪表盘",

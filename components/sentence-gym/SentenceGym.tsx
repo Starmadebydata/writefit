@@ -30,6 +30,7 @@ import type { SentenceSurgeryFeedback } from "@/lib/ai/schemas";
 
 export function SentenceGym() {
   const t = useTranslations("sentenceGym");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
 
   // ---- 输入状态 ----
@@ -59,7 +60,14 @@ export function SentenceGym() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input, language: locale, aiConfig }),
       });
-      if (!res.ok) throw new Error("analyze failed");
+      if (!res.ok) {
+        // 平台 Key 配额耗尽：明确提示，不按普通失败处理
+        if (res.status === 402) {
+          toast.error(tCommon("errorQuotaExceeded"));
+          return;
+        }
+        throw new Error("analyze failed");
+      }
       const data = (await res.json()) as SentenceSurgeryFeedback & { _mock?: boolean };
       setFeedback(data);
       setIsMock(!!data._mock);

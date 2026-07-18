@@ -13,7 +13,8 @@
     "comingSoonDesc": "This feature is under development. Stay tuned.",
     "saveSuccess": "Saved successfully",
     "saveError": "Save failed, please try again",
-    "networkError": "Network error, please try again later"
+    "networkError": "Network error, please try again later",
+    "errorQuotaExceeded": "You've used up today's free AI credits. They reset tomorrow — bring your own API key or upgrade for more."
   },
   "nav": {
     "dashboard": "Dashboard",

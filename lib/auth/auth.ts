@@ -23,6 +23,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { users, accounts } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { sendWelcomeEmail } from "@/lib/email";
 
 // 创建一个按需获取数据库的 Auth.js 适配器
 // 普通的适配器在配置时就创建数据库连接，但 Cloudflare D1 是按请求获取的
@@ -256,6 +257,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id as string;
       }
       return session;
+    },
+  },
+  // 事件：OAuth 新用户创建时发欢迎邮件（邮箱注册走 /api/auth/register 里发）
+  // 失败不影响登录；OAuth 无法获知界面语言，统一发英文版
+  events: {
+    async createUser({ user }) {
+      if (user.email) {
+        await sendWelcomeEmail(user.email, user.name, "en");
+      }
     },
   },
 });
