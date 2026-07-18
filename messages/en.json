@@ -318,7 +318,9 @@
       "bestSentence": "Best sentence",
       "mostAiLike": "Most AI-like sentence",
       "nextGoal": "Next revision goal",
-      "mockCta": "Set up AI"
+      "mockCta": "Set up AI",
+      "exampleRevision": "AI example revision",
+      "exampleRevisionHint": "One possible way to revise, for reference only — write it in your own words."
     },
     "diff": {
       "deleted": "Deleted {count}",

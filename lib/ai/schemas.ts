@@ -19,6 +19,8 @@ export interface DiagnoseFeedback {
   best_sentence: string; // 最好的句子
   most_ai_like_sentence: string; // 最像 AI 的句子
   next_revision_goal: string; // 下一轮修改目标
+  // AI 示范改写：应用修改任务后的一段完整示例（旧数据可能没有，渲染前需判空）
+  example_revision?: string;
   scores: {
     clarity: number; // 清晰度 0-100
     specificity: number; // 具体性 0-100
@@ -144,6 +146,7 @@ export function sanitizeDiagnoseFeedback(raw: unknown): DiagnoseFeedback {
     best_sentence: asString(r.best_sentence),
     most_ai_like_sentence: asString(r.most_ai_like_sentence),
     next_revision_goal: asString(r.next_revision_goal),
+    example_revision: asString(r.example_revision),
     scores: {
       clarity: clampScore(scores.clarity),
       specificity: clampScore(scores.specificity),

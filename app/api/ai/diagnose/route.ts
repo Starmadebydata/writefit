@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
             },
           ],
           temperature: 0.3,
-          maxTokens: attempt === 0 ? 2000 : 3000,
+          maxTokens: attempt === 0 ? 3000 : 4000,
           jsonMode: true,
         });
         if (isUsableDiagnose(raw)) {

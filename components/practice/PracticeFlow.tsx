@@ -43,6 +43,8 @@ import {
   Flame,
   CalendarClock,
   Share2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import type { DiagnoseFeedback, CompareRevisionFeedback } from "@/lib/ai/schemas";
 import { MIN_WORDS_BY_TYPE, type PracticeType } from "@/lib/practice/prompts";
@@ -119,6 +121,7 @@ export function PracticeFlow({
   const [saveFailed, setSaveFailed] = useState(false); // 落库失败（完成页可重试）
   const [streak, setStreak] = useState<number | null>(null); // 保存成功后返回的连续天数
   const [mobilePane, setMobilePane] = useState<"original" | "revised">("revised"); // 移动端修改阶段显示哪一栏
+  const [showExample, setShowExample] = useState(false); // 修改阶段是否展开 AI 示范修改
 
   // 分段计时：写作时长 + 修改时长（不含等 AI、读反馈的时间）
   const writingStartRef = useRef<number | null>(null);
@@ -587,6 +590,34 @@ export function PracticeFlow({
                     </p>
                   ))}
                 </div>
+
+                {/* AI 示范修改（折叠，供修改时参考） */}
+                {feedback.example_revision && (
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowExample((v) => !v)}
+                      className="flex items-center gap-1 text-xs font-semibold text-primary"
+                    >
+                      {showExample ? (
+                        <ChevronUp className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      )}
+                      {tPractice("feedback.exampleRevision")}
+                    </button>
+                    {showExample && (
+                      <div className="mt-2 rounded-md bg-background p-3">
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                          {feedback.example_revision}
+                        </p>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          {tPractice("feedback.exampleRevisionHint")}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}

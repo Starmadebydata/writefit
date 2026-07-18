@@ -318,7 +318,9 @@
       "bestSentence": "今天最好的句子",
       "mostAiLike": "最像 AI 的句子",
       "nextGoal": "下一轮修改目标",
-      "mockCta": "去配置 AI"
+      "mockCta": "去配置 AI",
+      "exampleRevision": "AI 示范修改",
+      "exampleRevisionHint": "这只是一种可能的改法，仅供参考——请用自己的话写。"
     },
     "diff": {
       "deleted": "删除 {count} 处",

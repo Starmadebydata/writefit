@@ -139,7 +139,7 @@ export function getDiagnosePrompt(
   if (locale === "zh") {
     return `You are a strict writing coach.
 
-Analyze the user's text. Do not rewrite the full text.
+Analyze the user's text. 除 example_revision 字段外，不要替用户改写文本。
 
 ${typeFocus}
 ${profileSection}
@@ -174,6 +174,7 @@ ${profileSection}
   "best_sentence": "原文中最好的句子",
   "most_ai_like_sentence": "原文中最像 AI 的句子",
   "next_revision_goal": "下一轮修改目标",
+  "example_revision": "一段完整的示范改写：应用你给出的全部修改任务，保留用户的题材、人称和大致篇幅",
   "scores": {
     "clarity": 0,
     "specificity": 0,
@@ -196,12 +197,12 @@ ${profileSection}
 - 除非文本太短，否则返回恰好 3 个主要问题。
 - evidence 字段必须引用用户原文。
 - 不要奉承用户。
-- 不要重写整段文字。`;
+- 完整改写只能放在 example_revision 字段，反馈的其余部分只做分析和诊断。`;
   }
 
   return `You are a strict writing coach.
 
-Analyze the user's text. Do not rewrite the full text.
+Analyze the user's text. Do not rewrite the user's text anywhere except the example_revision field.
 
 ${typeFocus}
 ${profileSection}
@@ -236,6 +237,7 @@ Return JSON only:
   "best_sentence": "the best sentence in the original text",
   "most_ai_like_sentence": "the most AI-like sentence in the original text",
   "next_revision_goal": "the goal for the next revision round",
+  "example_revision": "one complete demonstration revision applying all your revision tasks, keeping the user's subject, point of view, and rough length",
   "scores": {
     "clarity": 0,
     "specificity": 0,
@@ -258,7 +260,7 @@ Constraints:
 - Return exactly 3 top issues unless the text is too short.
 - The evidence field must quote the user's text.
 - Do not flatter the user.
-- Do not rewrite the full passage.`;
+- A full rewrite is allowed only in the example_revision field; everywhere else, analyze and diagnose only.`;
 }
 
 // --------------------------------------------------------------------

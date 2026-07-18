@@ -57,6 +57,7 @@ export function mockDiagnose(text: string, locale: MockLocale = "en"): DiagnoseF
       best_sentence: bestSentence,
       most_ai_like_sentence: mostAiLike.slice(0, 100),
       next_revision_goal: "在修改稿中加入一个具体场景和个人判断，让文字只属于你。",
+      example_revision: "（模拟示范）把抽象描述换成具体场景，例如：「那天下午三点，我盯着屏幕，第三次把同一段话删掉重写。」配置 AI 服务后，这里会显示针对你原文的完整示范改写。",
       scores: {
         clarity: Math.min(70, 40 + Math.floor(wordCount / 10)),
         specificity: Math.min(60, 30 + Math.floor(sentences.length * 3)),
@@ -91,6 +92,7 @@ export function mockDiagnose(text: string, locale: MockLocale = "en"): DiagnoseF
     best_sentence: bestSentence,
     most_ai_like_sentence: mostAiLike.slice(0, 100),
     next_revision_goal: "Add a concrete scene and a personal judgment to your revision so the words belong only to you.",
+    example_revision: "(Mock example) Turn vague description into a concrete scene, e.g. \"At 3pm I deleted and rewrote the same paragraph for the third time.\" Set up your AI service to get a real demonstration revision of your text.",
     scores: {
       clarity: Math.min(70, 40 + Math.floor(wordCount / 10)),
       specificity: Math.min(60, 30 + Math.floor(sentences.length * 3)),

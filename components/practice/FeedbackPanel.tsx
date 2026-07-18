@@ -7,10 +7,11 @@
 // 包括：3 个主要问题、最好的句子、最像 AI 的句子、下一步目标
 // ====================================================================
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, ThumbsUp, Bot, Target, Settings } from "lucide-react";
+import { AlertCircle, ThumbsUp, Bot, Target, Settings, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { DiagnoseFeedback } from "@/lib/ai/schemas";
@@ -137,7 +138,45 @@ export function FeedbackPanel({ feedback, isMock }: FeedbackPanelProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* AI 示范修改（默认折叠，只读参考——不替用户写） */}
+      {feedback.example_revision && (
+        <ExampleRevisionCard text={feedback.example_revision} />
+      )}
     </div>
+  );
+}
+
+// AI 示范修改卡片：只读参考，默认折叠
+function ExampleRevisionCard({ text }: { text: string }) {
+  const t = useTranslations("practice.feedback");
+  const [open, setOpen] = useState(false);
+  return (
+    <Card className="border-dashed">
+      <CardHeader className="pb-3">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="flex w-full items-center justify-between gap-2 text-left"
+        >
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Sparkles className="h-4 w-4 text-primary" />
+            {t("exampleRevision")}
+          </CardTitle>
+          {open ? (
+            <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+          )}
+        </button>
+      </CardHeader>
+      {open && (
+        <CardContent className="space-y-2">
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{text}</p>
+          <p className="text-xs text-muted-foreground">{t("exampleRevisionHint")}</p>
+        </CardContent>
+      )}
+    </Card>
   );
 }
 
