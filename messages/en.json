@@ -419,6 +419,9 @@
       },
       "expiresAt": "Valid until {date}",
       "upgrade": "Upgrade",
+      "cancelSubscription": "Cancel subscription",
+      "canceling": "Canceling...",
+      "cancelConfirm": "Cancel your subscription? You keep access until the end of the current billing period.",
       "dailyUsage": "Today's AI usage",
       "usageHint": "Resets at midnight UTC. Bringing your own API key is not limited."
     },

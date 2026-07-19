@@ -115,13 +115,13 @@ export function PricingCards({ isLoggedIn, currentPlan, prices }: PricingCardsPr
                 isPro && "border-primary shadow-lg"
               )}
             >
-              {isPro && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Sparkles className="h-3 w-3 mr-1" />
-                  {t("recommended")}
-                </Badge>
-              )}
               <CardHeader>
+                {isPro && (
+                  <Badge className="w-fit mb-2">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    {t("recommended")}
+                  </Badge>
+                )}
                 <CardTitle className="text-xl">{t(`plans.${id}.name`)}</CardTitle>
                 <p className="text-sm text-muted-foreground">{t(`plans.${id}.desc`)}</p>
               </CardHeader>

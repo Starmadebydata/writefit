@@ -31,6 +31,7 @@ export async function GET() {
       .select({
         planExpiresAt: users.planExpiresAt,
         paymentProvider: users.paymentProvider,
+        paymentSubscriptionId: users.paymentSubscriptionId,
       })
       .from(users)
       .where(eq(users.id, session.user.id));
@@ -41,6 +42,7 @@ export async function GET() {
       limit: usage.limit,
       planExpiresAt: user?.planExpiresAt ?? null,
       paymentProvider: user?.paymentProvider ?? null,
+      hasActiveSubscription: !!user?.paymentSubscriptionId,
     });
   } catch (error) {
     console.error("Billing status failed:", error);

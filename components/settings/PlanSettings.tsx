@@ -21,11 +21,13 @@ interface BillingStatus {
   limit: number;
   planExpiresAt: string | null;
   paymentProvider: string | null;
+  hasActiveSubscription: boolean;
 }
 
 export function PlanSettings() {
   const t = useTranslations("settings.plan");
   const [status, setStatus] = useState<BillingStatus | null>(null);
+  const [canceling, setCanceling] = useState(false);
 
   useEffect(() => {
     fetch("/api/billing/status")
@@ -35,6 +37,24 @@ export function PlanSettings() {
         // 加载失败静默处理：卡片显示骨架外的空态即可
       });
   }, []);
+
+  // 取消订阅：确认后调 API，权限保留到周期末
+  async function handleCancel() {
+    if (canceling) return;
+    if (!window.confirm(t("cancelConfirm"))) return;
+    setCanceling(true);
+    try {
+      const res = await fetch("/api/billing/cancel", { method: "POST" });
+      if (!res.ok) throw new Error();
+      // 取消成功后刷新状态展示
+      const fresh = await fetch("/api/billing/status");
+      if (fresh.ok) setStatus(await fresh.json());
+    } catch {
+      // 失败时简单恢复按钮状态
+    } finally {
+      setCanceling(false);
+    }
+  }
 
   const isPaid = status && status.plan !== "free";
   const usagePercent = status ? Math.min(100, Math.round((status.used / status.limit) * 100)) : 0;
@@ -70,6 +90,16 @@ export function PlanSettings() {
                 <Button size="sm" render={<Link href="/pricing" />}>
                   <ArrowUpRight className="h-4 w-4 mr-1" />
                   {t("upgrade")}
+                </Button>
+              )}
+              {isPaid && status.hasActiveSubscription && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={canceling}
+                  onClick={handleCancel}
+                >
+                  {canceling ? t("canceling") : t("cancelSubscription")}
                 </Button>
               )}
             </div>
