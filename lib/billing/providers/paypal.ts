@@ -212,15 +212,19 @@ export const paypalProvider: PaymentProvider = {
 
     switch (event_type) {
       case "BILLING.SUBSCRIPTION.ACTIVATED": {
-        const userId = resource.custom_id;
-        const plan = resource.plan_id ? planFromPlanId(resource.plan_id) : null;
-        if (!userId || !plan || !resource.id) return null;
+        // 以回查的订阅详情为准：事件 resource 里的 custom_id 和
+        // next_billing_time 都可能缺失
+        if (!resource.id) return null;
+        const sub = await getSubscription(resource.id);
+        const userId = sub.custom_id;
+        const plan = planFromPlanId(sub.plan_id);
+        if (!userId || !plan) return null;
         return {
           type: "subscription.activated",
           userId,
-          providerSubscriptionId: resource.id,
+          providerSubscriptionId: sub.id,
           plan,
-          expiresAt: toDate(resource.billing_info?.next_billing_time),
+          expiresAt: toDate(sub.billing_info?.next_billing_time),
         };
       }
 
@@ -243,8 +247,11 @@ export const paypalProvider: PaymentProvider = {
       }
 
       case "BILLING.SUBSCRIPTION.CANCELLED": {
-        const userId = resource.custom_id;
-        if (!userId || !resource.id) return null;
+        // custom_id 可能缺失，缺失时回查订阅
+        if (!resource.id) return null;
+        const userId =
+          resource.custom_id ?? (await getSubscription(resource.id)).custom_id;
+        if (!userId) return null;
         return {
           type: "subscription.canceled",
           userId,
@@ -254,8 +261,10 @@ export const paypalProvider: PaymentProvider = {
       }
 
       case "BILLING.SUBSCRIPTION.EXPIRED": {
-        const userId = resource.custom_id;
-        if (!userId || !resource.id) return null;
+        if (!resource.id) return null;
+        const userId =
+          resource.custom_id ?? (await getSubscription(resource.id)).custom_id;
+        if (!userId) return null;
         return {
           type: "subscription.expired",
           userId,
@@ -264,8 +273,10 @@ export const paypalProvider: PaymentProvider = {
       }
 
       case "BILLING.SUBSCRIPTION.PAYMENT.FAILED": {
-        const userId = resource.custom_id;
-        if (!userId || !resource.id) return null;
+        if (!resource.id) return null;
+        const userId =
+          resource.custom_id ?? (await getSubscription(resource.id)).custom_id;
+        if (!userId) return null;
         return {
           type: "subscription.payment_failed",
           userId,
