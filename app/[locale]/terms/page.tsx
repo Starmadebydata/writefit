@@ -59,7 +59,7 @@ function TermsEn() {
         Terms of Service
       </h1>
       <p className="mb-10 text-sm text-muted-foreground">
-        Last updated: July 18, 2026
+        Last updated: July 19, 2026
       </p>
 
       <p className={pClass}>
@@ -127,7 +127,37 @@ function TermsEn() {
         </li>
       </ul>
 
-      <h2 className={h2Class}>6. Acceptable Use</h2>
+      <h2 className={h2Class}>6. Paid Subscriptions and Refunds</h2>
+      <ul className={ulClass}>
+        <li>
+          Some features of WriteFit are offered as paid subscriptions
+          (e.g. &quot;Basic&quot; and &quot;Pro&quot; plans). Prices and quotas
+          are shown on the Pricing page and may change for future billing
+          periods with prior notice.
+        </li>
+        <li>
+          Subscriptions renew automatically at the end of each billing period
+          (monthly or yearly) until you cancel.
+        </li>
+        <li>
+          You can cancel your subscription at any time from the Settings
+          page. Cancellation stops future charges; you keep access to paid
+          features until the end of the current billing period.
+        </li>
+        <li>
+          Payments are final and non-refundable, except where required by
+          law. If you believe you were charged in error (for example, a
+          duplicate charge or a system malfunction), contact us and we will
+          review it case by case.
+        </li>
+        <li>
+          If a payment fails or a subscription is terminated by the payment
+          provider, your paid features are downgraded to the free plan at the
+          end of the paid period.
+        </li>
+      </ul>
+
+      <h2 className={h2Class}>7. Acceptable Use</h2>
       <p className={pClass}>You agree not to:</p>
       <ul className={ulClass}>
         <li>Abuse the service, interfere with it, or disrupt other users.</li>
@@ -145,7 +175,7 @@ function TermsEn() {
         </li>
       </ul>
 
-      <h2 className={h2Class}>7. Availability</h2>
+      <h2 className={h2Class}>8. Availability</h2>
       <p className={pClass}>
         WriteFit is provided &quot;as is&quot; and &quot;as available&quot;.
         We do not guarantee that the service will be uninterrupted, timely,
@@ -153,14 +183,14 @@ function TermsEn() {
         part of it at any time.
       </p>
 
-      <h2 className={h2Class}>8. Termination</h2>
+      <h2 className={h2Class}>9. Termination</h2>
       <p className={pClass}>
         You can stop using WriteFit and delete your account at any time from
         the Settings page. We may suspend or terminate accounts that violate
         these Terms.
       </p>
 
-      <h2 className={h2Class}>9. Limitation of Liability</h2>
+      <h2 className={h2Class}>10. Limitation of Liability</h2>
       <p className={pClass}>
         To the maximum extent permitted by law, WriteFit and its operators
         will not be liable for any indirect, incidental, special,
@@ -171,14 +201,14 @@ function TermsEn() {
         free for you).
       </p>
 
-      <h2 className={h2Class}>10. Changes to These Terms</h2>
+      <h2 className={h2Class}>11. Changes to These Terms</h2>
       <p className={pClass}>
         We may update these Terms from time to time. When we do, we will
         revise the &quot;Last updated&quot; date above. Continued use of
         WriteFit after a change means you accept the updated Terms.
       </p>
 
-      <h2 className={h2Class}>11. Contact</h2>
+      <h2 className={h2Class}>12. Contact</h2>
       <p className={pClass}>
         If you have any questions about these Terms, contact us at{" "}
         <a
@@ -204,7 +234,7 @@ function TermsZh() {
     <main className="mx-auto max-w-3xl px-6 py-16">
       <h1 className="mb-2 text-4xl font-bold tracking-tight">服务条款</h1>
       <p className="mb-10 text-sm text-muted-foreground">
-        最后更新：2026 年 7 月 18 日
+        最后更新：2026 年 7 月 19 日
       </p>
 
       <p className={pClass}>
@@ -252,7 +282,25 @@ function TermsZh() {
         </li>
       </ul>
 
-      <h2 className={h2Class}>6. 可接受使用</h2>
+      <h2 className={h2Class}>6. 付费订阅与退款</h2>
+      <ul className={ulClass}>
+        <li>
+          WriteFit
+          的部分功能以付费订阅形式提供（如“Basic”“Pro”套餐）。价格和配额以定价页展示为准，未来计费周期的价格如有调整，我们会提前通知。
+        </li>
+        <li>订阅在每个计费周期（月付或年付）结束时自动续费，直到你取消为止。</li>
+        <li>
+          你可以随时在设置页面取消订阅。取消后不再产生后续扣款；已付费功能在当前计费周期结束前仍然可用。
+        </li>
+        <li>
+          除法律另有规定外，已支付的费用不予退还。如果你认为某笔扣款有误（例如重复扣款或系统故障），请联系我们，我们将逐案核实处理。
+        </li>
+        <li>
+          如果扣款失败或订阅被支付服务商终止，你的付费功能将在已付费周期结束后降级为免费版。
+        </li>
+      </ul>
+
+      <h2 className={h2Class}>7. 可接受使用</h2>
       <p className={pClass}>你同意不会：</p>
       <ul className={ulClass}>
         <li>滥用本服务、干扰其运行或影响其他用户。</li>
@@ -263,29 +311,29 @@ function TermsZh() {
         <li>将本服务用于任何违法、有害或侵犯他人权利的用途。</li>
       </ul>
 
-      <h2 className={h2Class}>7. 服务可用性</h2>
+      <h2 className={h2Class}>8. 服务可用性</h2>
       <p className={pClass}>
         WriteFit 按“现状”和“可用”状态提供。我们不保证服务不中断、及时、安全或无错误，并可能随时修改、暂停或终止服务的任何部分。
       </p>
 
-      <h2 className={h2Class}>8. 终止</h2>
+      <h2 className={h2Class}>9. 终止</h2>
       <p className={pClass}>
         你可以随时停止使用 WriteFit，并在设置页面删除你的账户。对于违反本条款的账户，我们可能会暂停或终止。
       </p>
 
-      <h2 className={h2Class}>9. 责任限制</h2>
+      <h2 className={h2Class}>10. 责任限制</h2>
       <p className={pClass}>
         在法律允许的最大范围内，WriteFit
         及其运营方不对因你使用本服务而产生的任何间接、附带、特殊、后果性或惩罚性损害，或任何数据、利润或商誉损失承担责任。我们就与本服务相关的任何索赔所承担的全部责任，以你在索赔发生前十二个月内支付给我们的金额为限（如果你免费使用本服务，则为零）。
       </p>
 
-      <h2 className={h2Class}>10. 条款变更</h2>
+      <h2 className={h2Class}>11. 条款变更</h2>
       <p className={pClass}>
         我们可能会不时更新本条款。更新时，我们会修改上方的“最后更新”日期。变更后继续使用
         WriteFit，即表示你接受更新后的条款。
       </p>
 
-      <h2 className={h2Class}>11. 联系我们</h2>
+      <h2 className={h2Class}>12. 联系我们</h2>
       <p className={pClass}>
         如果你对本条款有任何疑问，请联系我们：
         <a
