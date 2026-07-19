@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { getAISettingsFromLocal } from "@/lib/ai/settings";
+import { useRouter } from "@/i18n/navigation";
 import {
   Scissors,
   Loader2,
@@ -32,6 +33,7 @@ export function SentenceGym() {
   const t = useTranslations("sentenceGym");
   const tCommon = useTranslations("common");
   const locale = useLocale();
+  const router = useRouter();
 
   // ---- 输入状态 ----
   const [input, setInput] = useState("");
@@ -61,9 +63,11 @@ export function SentenceGym() {
         body: JSON.stringify({ text: input, language: locale, aiConfig }),
       });
       if (!res.ok) {
-        // 平台 Key 配额耗尽：明确提示，不按普通失败处理
+        // 平台 Key 配额耗尽：明确提示并给升级入口
         if (res.status === 402) {
-          toast.error(tCommon("errorQuotaExceeded"));
+          toast.error(tCommon("errorQuotaExceeded"), {
+            action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
+          });
           return;
         }
         throw new Error("analyze failed");

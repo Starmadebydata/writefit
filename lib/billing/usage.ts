@@ -49,6 +49,17 @@ export async function checkAiQuota(userId: string, plan: Plan): Promise<QuotaRes
   return { allowed: used < limit, used, limit };
 }
 
+// 查询用户当日用量摘要（设置页展示用；失败时返回零用量，不阻断页面）
+export async function getUsageSummary(userId: string, plan: Plan): Promise<QuotaResult> {
+  try {
+    const limit = PLANS[plan].dailyAiLimit;
+    const used = await getTodayUsage(userId);
+    return { allowed: used < limit, used, limit };
+  } catch {
+    return { allowed: true, used: 0, limit: PLANS[plan].dailyAiLimit };
+  }
+}
+
 // 记录一次平台 Key 调用（upsert 累加；失败静默，不因计量故障阻断用户）
 export async function recordAiUsage(
   userId: string,

@@ -31,7 +31,7 @@ import { DiffViewer } from "./DiffViewer";
 import { SaveIdeaButton } from "./SaveIdeaButton";
 import { getAISettingsFromLocal, type AISettings } from "@/lib/ai/settings";
 import { mockDiagnose, mockCompareRevision } from "@/lib/ai/mock";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import {
   PenLine,
   Brain,
@@ -111,6 +111,7 @@ export function PracticeFlow({
   const tPractice = useTranslations("practice");
   const tCommon = useTranslations("common");
   const locale = useLocale();
+  const router = useRouter();
   const [stage, setStage] = useState<Stage>("intro");
   // 原始稿 / 修改稿：惰性初始化时恢复上次未完成的草稿
   const [rawText, setRawText] = useState(() => readPracticeDraft(draftKey, prompt)?.rawText ?? "");
@@ -213,7 +214,9 @@ export function PracticeFlow({
         }
         // 平台 Key 配额耗尽：提示并回到写作页，原稿不丢
         if (res.status === 402) {
-          toast.error(tCommon("errorQuotaExceeded"));
+          toast.error(tCommon("errorQuotaExceeded"), {
+            action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
+          });
           setStage("writing");
           setLoading(false);
           return;
@@ -362,7 +365,9 @@ export function PracticeFlow({
           setComparison(comparisonData);
         } else if (res.status === 402) {
           // 配额耗尽：跳过对比，仍展示 diff 并保存训练记录
-          toast.error(tCommon("errorQuotaExceeded"));
+          toast.error(tCommon("errorQuotaExceeded"), {
+            action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
+          });
         } else {
           throw new Error("对比失败");
         }

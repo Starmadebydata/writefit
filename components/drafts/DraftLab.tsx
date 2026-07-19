@@ -13,6 +13,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -91,6 +92,7 @@ const STATUS_COLORS: Record<DraftStatus, string> = {
 export function DraftLab() {
   const t = useTranslations("drafts");
   const tCommon = useTranslations("common");
+  const router = useRouter();
   const locale = useLocale();
 
   // ---- 视图状态：list 或 editor ----
@@ -291,9 +293,11 @@ export function DraftLab() {
         body: JSON.stringify({ text: editorContent, language: locale, aiConfig }),
       });
       if (!res.ok) {
-        // 平台 Key 配额耗尽：明确提示，不按普通失败处理
+        // 平台 Key 配额耗尽：明确提示并给升级入口
         if (res.status === 402) {
-          toast.error(tCommon("errorQuotaExceeded"));
+          toast.error(tCommon("errorQuotaExceeded"), {
+            action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
+          });
           return;
         }
         throw new Error("diagnose failed");
@@ -321,9 +325,11 @@ export function DraftLab() {
         body: JSON.stringify({ text: editorContent, language: locale, aiConfig }),
       });
       if (!res.ok) {
-        // 平台 Key 配额耗尽：明确提示，不按普通失败处理
+        // 平台 Key 配额耗尽：明确提示并给升级入口
         if (res.status === 402) {
-          toast.error(tCommon("errorQuotaExceeded"));
+          toast.error(tCommon("errorQuotaExceeded"), {
+            action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
+          });
           return;
         }
         throw new Error("detect failed");

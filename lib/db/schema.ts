@@ -30,6 +30,8 @@ export const users = sqliteTable("users", {
   plan: text("plan").notNull().default("free"), // 套餐：free / basic / pro
   planExpiresAt: integer("plan_expires_at", { mode: "timestamp" }), // 套餐到期时间（null = 免费用户或永不到期）
   paymentCustomerId: text("payment_customer_id"), // 支付平台客户 ID（PayPal/Creem/Stripe 通用）
+  paymentProvider: text("payment_provider"), // 支付平台标识：paypal / creem / stripe
+  paymentSubscriptionId: text("payment_subscription_id"), // 支付平台订阅 ID（取消/校对状态用）
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });

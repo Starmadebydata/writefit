@@ -14,7 +14,8 @@
     "saveSuccess": "Saved successfully",
     "saveError": "Save failed, please try again",
     "networkError": "Network error, please try again later",
-    "errorQuotaExceeded": "You've used up today's free AI credits. They reset tomorrow — bring your own API key or upgrade for more."
+    "errorQuotaExceeded": "You've used up today's free AI credits. They reset tomorrow — bring your own API key or upgrade for more.",
+    "viewPlans": "View plans"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -36,7 +37,8 @@
     "learnMore": "How It Works",
     "tryDemo": "Try the practice flow (no login needed) →",
     "nav": {
-      "login": "Log in"
+      "login": "Log in",
+      "pricing": "Pricing"
     },
     "footer": {
       "privacy": "Privacy Policy",
@@ -120,6 +122,61 @@
       "title": "Start training your writing today",
       "desc": "15 minutes a day. No AI ghostwriting. Just you, getting better.",
       "button": "Start Training"
+    }
+  },
+  "pricing": {
+    "title": "Simple, transparent pricing",
+    "desc": "Start free, upgrade anytime. Your writing coach, 15 minutes a day.",
+    "login": "Log in",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyBadge": "2 months free",
+    "perMonth": "/mo",
+    "perYear": "/yr",
+    "yearlyEquivalent": "Equivalent to ${price}/month",
+    "recommended": "Recommended",
+    "currentPlan": "Current plan",
+    "notConfigured": "Payments are launching soon. Stay tuned!",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "coachAnchor": "Less than one hour with a human writing coach — for a whole month of daily AI coaching.",
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "plans": {
+      "free": {
+        "name": "Free",
+        "desc": "Start building the habit",
+        "cta": "Start for free",
+        "features": [
+          "5 AI feedback sessions per day",
+          "Full training loop (write → diagnose → revise → compare)",
+          "Idea bank and draft lab",
+          "Unlimited with your own API key"
+        ]
+      },
+      "basic": {
+        "name": "Basic",
+        "desc": "For committed writers",
+        "cta": "Upgrade to Basic",
+        "features": [
+          "20 AI feedback sessions per day",
+          "Everything in Free",
+          "Unlimited sentence gym",
+          "Support continued development"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "desc": "For those who write for a living",
+        "cta": "Upgrade to Pro",
+        "features": [
+          "100 AI feedback sessions per day",
+          "Everything in Basic",
+          "Early access to new features (weekly reports, monthly insights)",
+          "Priority support"
+        ]
+      }
     }
   },
   "auth": {
@@ -352,6 +409,19 @@
   "settings": {
     "title": "Settings",
     "comingSoon": "More settings (profile, notification preferences, etc.) coming soon",
+    "plan": {
+      "title": "Subscription",
+      "loading": "Loading...",
+      "tiers": {
+        "free": "Free",
+        "basic": "Basic",
+        "pro": "Pro"
+      },
+      "expiresAt": "Valid until {date}",
+      "upgrade": "Upgrade",
+      "dailyUsage": "Today's AI usage",
+      "usageHint": "Resets at midnight UTC. Bringing your own API key is not limited."
+    },
     "ai": {
       "configured": "AI configured",
       "notConfigured": "AI not configured",

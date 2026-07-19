@@ -13,6 +13,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { AISettingsForm } from "@/components/settings/AISettingsForm";
 import { ProfileSettings } from "@/components/settings/ProfileSettings";
 import { DataManagement } from "@/components/settings/DataManagement";
+import { PlanSettings } from "@/components/settings/PlanSettings";
 import { setRequestLocale, getLocale, getTranslations } from "next-intl/server";
 
 // 设置页面 SEO（根据语言切换）
@@ -67,6 +68,9 @@ export default async function SettingsPage({
   return (
     <AppShell title={t("title")} user={session.user}>
       <div className="max-w-2xl mx-auto space-y-6">
+        {/* 订阅套餐 */}
+        <PlanSettings />
+
         {/* AI 设置 */}
         <AISettingsForm />
 

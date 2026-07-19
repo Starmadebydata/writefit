@@ -95,6 +95,9 @@ function LandingContent() {
           </div>
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
+            <Button variant="ghost" size="sm" render={<Link href="/pricing" />}>
+              {t("nav.pricing")}
+            </Button>
             <Button variant="ghost" size="sm" render={<Link href="/auth/login" />}>
               {t("nav.login")}
             </Button>
@@ -271,6 +274,9 @@ function LandingContent() {
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 py-6 text-sm text-muted-foreground sm:flex-row">
           <p>© {new Date().getFullYear()} WriteFit</p>
           <nav className="flex items-center gap-4">
+            <Link href="/pricing" className="hover:text-foreground">
+              {t("nav.pricing")}
+            </Link>
             <Link href="/privacy" className="hover:text-foreground">
               {t("footer.privacy")}
             </Link>

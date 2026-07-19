@@ -17,18 +17,38 @@ import { users } from "@/lib/db/schema";
 
 export type Plan = "free" | "basic" | "pro";
 
+export interface PlanPricing {
+  // 美元价格；monthly 为月付价，yearly 为年付总价（按 10 个月计）
+  monthly: number;
+  yearly: number;
+}
+
 export interface PlanConfig {
   id: Plan;
   // 每日平台 Key AI 调用配额（全部 AI 端点合计）
   dailyAiLimit: number;
+  // 定价（2026-07-18 拍板）；free 为 null
+  pricing: PlanPricing | null;
 }
 
-// 套餐 → 配额映射（具体数值在 P2 定价时可再调整）
+// 套餐 → 配额与定价映射（plan 相关的判断都以这份配置为准，不要硬编码）
 export const PLANS: Record<Plan, PlanConfig> = {
-  free: { id: "free", dailyAiLimit: 5 },
-  basic: { id: "basic", dailyAiLimit: 20 },
-  pro: { id: "pro", dailyAiLimit: 100 },
+  free: { id: "free", dailyAiLimit: 5, pricing: null },
+  basic: { id: "basic", dailyAiLimit: 20, pricing: { monthly: 19.9, yearly: 199 } },
+  pro: { id: "pro", dailyAiLimit: 100, pricing: { monthly: 29.9, yearly: 299 } },
 };
+
+// 付费套餐列表（pricing 页和升级引导用）
+export const PAID_PLANS: Plan[] = ["basic", "pro"];
+
+export type BillingInterval = "monthly" | "yearly";
+
+// 计算套餐价格（付费套餐限定）
+export function getPlanPrice(plan: Plan, interval: BillingInterval): number | null {
+  const pricing = PLANS[plan].pricing;
+  if (!pricing) return null;
+  return interval === "monthly" ? pricing.monthly : pricing.yearly;
+}
 
 function isValidPlan(value: string): value is Plan {
   return value in PLANS;

@@ -14,7 +14,8 @@
     "saveSuccess": "保存成功",
     "saveError": "保存失败，请重试",
     "networkError": "网络错误，请稍后重试",
-    "errorQuotaExceeded": "今日免费 AI 次数已用完，明天重置。自带 API Key 或升级套餐可获更多次数。"
+    "errorQuotaExceeded": "今日免费 AI 次数已用完，明天重置。自带 API Key 或升级套餐可获更多次数。",
+    "viewPlans": "查看套餐"
   },
   "nav": {
     "dashboard": "仪表盘",
@@ -36,7 +37,8 @@
     "learnMore": "了解原理",
     "tryDemo": "体验训练流程（无需登录）→",
     "nav": {
-      "login": "登录"
+      "login": "登录",
+      "pricing": "定价"
     },
     "footer": {
       "privacy": "隐私政策",
@@ -120,6 +122,61 @@
       "title": "今天开始训练你的写作",
       "desc": "每天 15 分钟。不用 AI 代写。只有你，变得更好。",
       "button": "开始训练"
+    }
+  },
+  "pricing": {
+    "title": "简单透明的定价",
+    "desc": "免费开始，随时升级。你的写作教练，每天 15 分钟陪伴你。",
+    "login": "登录",
+    "monthly": "月付",
+    "yearly": "年付",
+    "yearlyBadge": "省两个月",
+    "perMonth": "/月",
+    "perYear": "/年",
+    "yearlyEquivalent": "折合每月 ${price}",
+    "recommended": "推荐",
+    "currentPlan": "当前套餐",
+    "notConfigured": "支付通道即将开放，敬请期待！",
+    "checkoutError": "发起支付失败，请重试。",
+    "coachAnchor": "不到一次真人写作教练一小时的费用，换来一整月每天 15 分钟的 AI 教练陪伴。",
+    "footer": {
+      "privacy": "隐私政策",
+      "terms": "服务条款"
+    },
+    "plans": {
+      "free": {
+        "name": "免费版",
+        "desc": "开始培养写作习惯",
+        "cta": "免费开始",
+        "features": [
+          "每天 5 次 AI 写作反馈",
+          "完整训练闭环（写作→诊断→修改→对比）",
+          "素材库与草稿实验室",
+          "自带 API Key 不限量"
+        ]
+      },
+      "basic": {
+        "name": "Basic",
+        "desc": "给认真养成的写作者",
+        "cta": "升级到 Basic",
+        "features": [
+          "每天 20 次 AI 写作反馈",
+          "免费版全部功能",
+          "句子训练不限次使用",
+          "支持产品持续开发"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "desc": "给以写作为生的你",
+        "cta": "升级到 Pro",
+        "features": [
+          "每天 100 次 AI 写作反馈",
+          "Basic 全部功能",
+          "优先体验新功能（周报、月度报告等）",
+          "优先客服支持"
+        ]
+      }
     }
   },
   "auth": {
@@ -352,6 +409,19 @@
   "settings": {
     "title": "设置",
     "comingSoon": "更多设置（个人资料、通知偏好等）即将上线",
+    "plan": {
+      "title": "订阅套餐",
+      "loading": "加载中...",
+      "tiers": {
+        "free": "免费版",
+        "basic": "Basic",
+        "pro": "Pro"
+      },
+      "expiresAt": "有效期至 {date}",
+      "upgrade": "升级套餐",
+      "dailyUsage": "今日 AI 用量",
+      "usageHint": "每天 UTC 零点重置。自带 API Key 不受此限。"
+    },
     "ai": {
       "configured": "AI 已配置",
       "notConfigured": "尚未配置 AI",
