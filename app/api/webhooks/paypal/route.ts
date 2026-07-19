@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
   try {
     const event = await paypalProvider.parseWebhook(req);
     if (event) {
+      console.log(`[webhook/paypal] received: ${event.type} user=${event.userId} sub=${event.providerSubscriptionId}`);
       await applyBillingEvent(event, paypalProvider.id);
+    } else {
+      console.log("[webhook/paypal] received: unhandled event type (ignored)");
     }
     // 不认识的事件也返回 200，避免 PayPal 无谓重投
     return NextResponse.json({ received: true });
