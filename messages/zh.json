@@ -421,7 +421,10 @@
       "upgrade": "升级套餐",
       "cancelSubscription": "取消订阅",
       "canceling": "取消中...",
-      "cancelConfirm": "确定要取消订阅吗？取消后权限保留到当前周期末，不会立即降级。",
+      "cancelConfirm": "取消后不会再扣款，当前周期的权限会保留到周期末。你确定要取消吗？",
+      "cancelDialogTitle": "取消订阅",
+      "keepPlan": "继续订阅",
+      "confirmCancel": "确认取消",
       "dailyUsage": "今日 AI 用量",
       "usageHint": "每天 UTC 零点重置。自带 API Key 不受此限。"
     },

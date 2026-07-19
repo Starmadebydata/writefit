@@ -421,7 +421,10 @@
       "upgrade": "Upgrade",
       "cancelSubscription": "Cancel subscription",
       "canceling": "Canceling...",
-      "cancelConfirm": "Cancel your subscription? You keep access until the end of the current billing period.",
+      "cancelConfirm": "You won't be charged again, and you keep access until the end of the current billing period. Are you sure?",
+      "cancelDialogTitle": "Cancel subscription",
+      "keepPlan": "Keep my plan",
+      "confirmCancel": "Yes, cancel it",
       "dailyUsage": "Today's AI usage",
       "usageHint": "Resets at midnight UTC. Bringing your own API key is not limited."
     },
