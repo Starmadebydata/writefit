@@ -396,6 +396,8 @@
       "saveSucceeded": "Practice session saved",
       "errorSaveSession": "Failed to save your session, please retry",
       "draftRestored": "Restored your unfinished draft",
+      "quotaToday": "Today's AI feedback: {used}/{limit}",
+      "quotaUpgrade": "Upgrade",
       "statRawWords": "Draft words",
       "statRevisedWords": "Revised words",
       "statWordsDelta": "Change",
@@ -440,7 +442,7 @@
       "mostAiLike": "Most AI-like sentence",
       "nextGoal": "Next revision goal",
       "mockCta": "Set up AI",
-      "mockNoticeDev": "⚠ Demo mode uses simulated feedback. Sign up and configure AI to get a real diagnosis.",
+      "mockNoticeDev": "⚠ This is sample feedback. Sign up free to get 5 real AI diagnoses every day.",
       "mockCtaRegister": "Sign up",
       "exampleRevision": "AI example revision",
       "exampleRevisionHint": "One possible way to revise, for reference only — write it in your own words."

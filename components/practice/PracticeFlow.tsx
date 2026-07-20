@@ -126,6 +126,8 @@ export function PracticeFlow({
   const [streak, setStreak] = useState<number | null>(null); // 保存成功后返回的连续天数
   const [mobilePane, setMobilePane] = useState<"original" | "revised">("revised"); // 移动端修改阶段显示哪一栏
   const [showExample, setShowExample] = useState(false); // 修改阶段是否展开 AI 示范修改
+  // 平台 Key 当日配额（BYOK 用户不限量不显示;dev 演示模式无登录态不显示）
+  const [quota, setQuota] = useState<{ used: number; limit: number; plan: string } | null>(null);
 
   // 分段计时：写作时长 + 修改时长（不含等 AI、读反馈的时间）
   const writingStartRef = useRef<number | null>(null);
@@ -140,6 +142,17 @@ export function PracticeFlow({
     // 仅在挂载时执行一次
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ---- 拉取当日 AI 配额（让用户对额度有感知，耗尽时的 402 才不突兀） ----
+  useEffect(() => {
+    if (isDev || getAISettingsFromLocal()?.apiKey) return;
+    fetch("/api/billing/status")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && typeof data.used === "number") setQuota(data);
+      })
+      .catch(() => {});
+  }, [isDev]);
 
   // ---- 写作/修改内容自动保存（防抖 500ms） ----
   useEffect(() => {
@@ -228,6 +241,10 @@ export function PracticeFlow({
       const data = await res.json();
       setFeedback(data);
       setIsMockFeedback(!!data._mock);
+      // 平台 Key 路径成功后本地同步配额计数（服务端已预扣）
+      if (!data._mock && !getAIConfig()?.apiKey) {
+        setQuota((q) => (q ? { ...q, used: q.used + 1 } : q));
+      }
       setStage("feedback");
 
       // ---- 诊断成功即落库（in_progress），后台进行不阻塞用户读反馈 ----
@@ -457,6 +474,19 @@ export function PracticeFlow({
       {isDev && (
         <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2 text-sm text-amber-800">
           {t("devMode")}
+        </div>
+      )}
+
+      {/* 平台 AI 当日配额（BYOK 用户不显示） */}
+      {!isDev && quota && (
+        <div className="flex items-center justify-end gap-2 text-xs text-muted-foreground">
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>{t("quotaToday", { used: Math.min(quota.used, quota.limit), limit: quota.limit })}</span>
+          {quota.plan === "free" && (
+            <Link href="/pricing" className="text-primary hover:underline">
+              {t("quotaUpgrade")}
+            </Link>
+          )}
         </div>
       )}
 

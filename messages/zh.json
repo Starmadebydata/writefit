@@ -396,6 +396,8 @@
       "saveSucceeded": "训练记录已保存",
       "errorSaveSession": "训练记录保存失败，请重试",
       "draftRestored": "已恢复你上次未完成的草稿",
+      "quotaToday": "今日 AI 反馈：{used}/{limit}",
+      "quotaUpgrade": "升级套餐",
       "statRawWords": "原稿字数",
       "statRevisedWords": "修改稿字数",
       "statWordsDelta": "字数变化",
@@ -440,7 +442,7 @@
       "mostAiLike": "最像 AI 的句子",
       "nextGoal": "下一轮修改目标",
       "mockCta": "去配置 AI",
-      "mockNoticeDev": "⚠ 演示模式使用模拟反馈。注册账号并配置 AI 后获得真实诊断。",
+      "mockNoticeDev": "⚠ 这是示例反馈。免费注册即可每天获得 5 次真实 AI 诊断。",
       "mockCtaRegister": "注册账号",
       "exampleRevision": "AI 示范修改",
       "exampleRevisionHint": "这只是一种可能的改法，仅供参考——请用自己的话写。"
