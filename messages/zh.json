@@ -28,7 +28,8 @@
     "user": "用户",
     "logout": "退出登录",
     "backToSite": "返回首页",
-    "footerTagline": "每天 15 分钟\n训练你自己的写作能力"
+    "footerTagline": "每天 15 分钟\n训练你自己的写作能力",
+    "characterWorkshop": "人物工坊"
   },
   "landing": {
     "heroBadge": "AI Native 写作训练",
@@ -343,7 +344,12 @@
       "specificity_drill": "具体化训练",
       "anti_ai_voice": "反 AI 腔训练",
       "title_drill": "标题训练",
-      "opening_drill": "开头训练"
+      "opening_drill": "开头训练",
+      "premise_drill": "前提句训练",
+      "pov_shift": "视角改写",
+      "dialogue_only": "纯对话训练",
+      "cut_half": "砍一半训练",
+      "expectation_twist": "期待反转训练"
     },
     "promptPreview": "今天有没有一个时刻，你脑子里很清楚，但写出来很模糊？",
     "flow": {

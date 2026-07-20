@@ -14,8 +14,8 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, ThumbsUp, Bot, Target, Settings, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import type { DiagnoseFeedback } from "@/lib/ai/schemas";
-import { scoreLabel } from "@/lib/ai/schemas";
+import type { DiagnoseFeedback, StoryScores, StoryGrade } from "@/lib/ai/schemas";
+import { scoreLabel, storyDimensionLabel, storyGradeLabel } from "@/lib/ai/schemas";
 
 interface FeedbackPanelProps {
   feedback: DiagnoseFeedback;
@@ -48,6 +48,11 @@ export function FeedbackPanel({ feedback, isMock, isDev }: FeedbackPanelProps) {
         <ScoreCard label={t("scores.voice")} score={feedback.scores.voice} locale={locale} />
         <ScoreCard label={t("scores.aiLike")} score={feedback.scores.ai_like} reverse locale={locale} />
       </div>
+
+      {/* 叙事五项评级（大泽讲评式，仅叙事类练习返回） */}
+      {feedback.story_scores && (
+        <StoryScoreRow scores={feedback.story_scores} locale={locale} />
+      )}
 
       {/* 3 个主要问题 */}
       <Card>
@@ -179,6 +184,36 @@ function ExampleRevisionCard({ text }: { text: string }) {
         </CardContent>
       )}
     </Card>
+  );
+}
+
+// 叙事五项评级行（情节/角色/文笔/对话/立意，三档分级）
+function StoryScoreRow({ scores, locale }: { scores: StoryScores; locale: "en" | "zh" }) {
+  const keys: (keyof StoryScores)[] = ["plot", "character", "prose", "dialogue", "concept"];
+  const gradeColor = (g: StoryGrade) =>
+    g === "excellent"
+      ? "text-primary"
+      : g === "pass"
+        ? "text-amber-600"
+        : g === "weak"
+          ? "text-destructive"
+          : "text-muted-foreground";
+  return (
+    <div className="rounded-lg border border-border bg-card px-4 py-3">
+      <p className="text-xs text-muted-foreground mb-2">
+        {locale === "zh" ? "叙事五项评级" : "Story craft grades"}
+      </p>
+      <div className="grid grid-cols-5 gap-2 text-center">
+        {keys.map((k) => (
+          <div key={k}>
+            <p className="text-xs text-muted-foreground">{storyDimensionLabel(k, locale)}</p>
+            <p className={`text-sm font-semibold ${gradeColor(scores[k])}`}>
+              {storyGradeLabel(scores[k], locale)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 

@@ -13,6 +13,18 @@ export interface TopIssue {
   revision_task: string; // 修改任务
 }
 
+// 叙事五项评级（大泽在昌讲评范式：情节/角色/文笔/对话/立意，三档分级）
+// "na" 表示该维度不适用于本次练习（如前提句训练没有对话）
+export type StoryGrade = "excellent" | "pass" | "weak" | "na";
+
+export interface StoryScores {
+  plot: StoryGrade; // 情节
+  character: StoryGrade; // 角色
+  prose: StoryGrade; // 文笔
+  dialogue: StoryGrade; // 对话
+  concept: StoryGrade; // 立意和噱头
+}
+
 // 诊断反馈的完整结构
 export interface DiagnoseFeedback {
   top_issues: TopIssue[]; // 最重要的 3 个问题
@@ -27,6 +39,8 @@ export interface DiagnoseFeedback {
     voice: number; // 个人声音 0-100
     ai_like: number; // AI 腔程度 0-100
   };
+  // 叙事类练习才有（feedbackJson 整块入库，无需迁移；旧数据没有，渲染前判空）
+  story_scores?: StoryScores;
 }
 
 // 反 AI 腔检测中被标记的句子
@@ -54,6 +68,15 @@ export interface SentenceSurgeryFeedback {
   rhythm_problem: string; // 句子节奏问题
   revision_task: string; // 修改任务
   example_direction: string; // 修改方向示例
+}
+
+// 人物工坊单步教练反馈（神圣缺陷切入法）
+export interface WorkshopFeedback {
+  what_works: string; // 立得住的部分（引用原文）
+  what_is_generic_or_missing: string[]; // 套路化或缺失的部分
+  deepening_questions: string[]; // 追问清单（反馈核心）
+  ready_to_continue: boolean; // 是否足以进入下一步
+  next_step_hint: string; // 进入下一步前最该补的一件事
 }
 
 // 版本对比的完整结果
@@ -114,6 +137,66 @@ function clampScore(v: unknown): number {
   return Math.max(0, Math.min(100, Math.round(n)));
 }
 
+// 叙事五项评级清洗：宽容接受中英文常见写法，无法识别按 "na" 处理
+function asStoryGrade(v: unknown): StoryGrade {
+  const s = asString(v).trim().toLowerCase();
+  if (["excellent", "优秀", "优", "a"].includes(s)) return "excellent";
+  if (["pass", "ok", "合格", "良", "b", "average", "good"].includes(s)) return "pass";
+  if (["weak", "差", "poor", "c", "fail"].includes(s)) return "weak";
+  return "na";
+}
+
+// 清洗叙事五项评级：raw 里没有该对象时返回 undefined（非叙事练习/旧数据）
+function sanitizeStoryScores(raw: unknown): StoryScores | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const r = raw as Record<string, unknown>;
+  return {
+    plot: asStoryGrade(r.plot),
+    character: asStoryGrade(r.character),
+    prose: asStoryGrade(r.prose),
+    dialogue: asStoryGrade(r.dialogue),
+    concept: asStoryGrade(r.concept),
+  };
+}
+
+// 叙事五项的展示文案（与 scoreLabel 同样走双语内联，避免扩散 i18n 依赖）
+export function storyDimensionLabel(
+  key: keyof StoryScores,
+  locale: "en" | "zh" = "en"
+): string {
+  const zh: Record<keyof StoryScores, string> = {
+    plot: "情节",
+    character: "角色",
+    prose: "文笔",
+    dialogue: "对话",
+    concept: "立意",
+  };
+  const en: Record<keyof StoryScores, string> = {
+    plot: "Plot",
+    character: "Character",
+    prose: "Prose",
+    dialogue: "Dialogue",
+    concept: "Concept",
+  };
+  return (locale === "zh" ? zh : en)[key];
+}
+
+export function storyGradeLabel(grade: StoryGrade, locale: "en" | "zh" = "en"): string {
+  const zh: Record<StoryGrade, string> = {
+    excellent: "优秀",
+    pass: "合格",
+    weak: "差",
+    na: "—",
+  };
+  const en: Record<StoryGrade, string> = {
+    excellent: "Excellent",
+    pass: "Pass",
+    weak: "Weak",
+    na: "—",
+  };
+  return (locale === "zh" ? zh : en)[grade];
+}
+
 // 检查诊断结果是否"基本可用"（决定是否需要重试）
 export function isUsableDiagnose(raw: unknown): boolean {
   if (!raw || typeof raw !== "object") return false;
@@ -153,6 +236,27 @@ export function sanitizeDiagnoseFeedback(raw: unknown): DiagnoseFeedback {
       voice: clampScore(scores.voice),
       ai_like: clampScore(scores.ai_like),
     },
+    story_scores: sanitizeStoryScores(r.story_scores),
+  };
+}
+
+// 检查工坊反馈是否可用（追问清单是反馈核心，必须存在）
+export function isUsableWorkshopFeedback(raw: unknown): boolean {
+  if (!raw || typeof raw !== "object") return false;
+  const r = raw as Record<string, unknown>;
+  return Array.isArray(r.deepening_questions) && r.deepening_questions.length > 0;
+}
+
+// 清洗工坊反馈
+export function sanitizeWorkshopFeedback(raw: unknown): WorkshopFeedback {
+  const r = (raw ?? {}) as Record<string, unknown>;
+  return {
+    what_works: asString(r.what_works),
+    what_is_generic_or_missing: asStringArray(r.what_is_generic_or_missing),
+    deepening_questions: asStringArray(r.deepening_questions).slice(0, 5),
+    ready_to_continue:
+      typeof r.ready_to_continue === "boolean" ? r.ready_to_continue : true,
+    next_step_hint: asString(r.next_step_hint),
   };
 }
 

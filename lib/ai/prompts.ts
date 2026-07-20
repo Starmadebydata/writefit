@@ -16,6 +16,8 @@
 // 只有指令描述、字段说明、禁用词列表会随语言变化。
 // ====================================================================
 
+import { NARRATIVE_PRACTICE_TYPES } from "@/lib/practice/prompts";
+
 // 支持的语言类型
 export type Locale = "en" | "zh";
 
@@ -93,6 +95,26 @@ export interface DiagnosePromptOptions {
   bannedPhrases?: string[];
 }
 
+// 叙事类问题清单 —— 注入到叙事类训练类型的评估侧重中
+// 方法论来源：大泽在昌《畅销作家写作全技巧》讲评、斯托尔《写作好故事的科学原理》
+const NARRATIVE_CHECKLIST_ZH = `
+叙事类文本还要检查这些问题（发现即作为 issue 指出，evidence 引用原文）：
+- 说明式对话：人物说出双方都已经知道的信息，只为了交待给读者。
+- 交待过多/自我剧透：在读者自己领会之前反复解释和预告，悬念和情绪被作者亲手拆掉；恐怖写得越满越不吓人。
+- 视角违规：叙述者知道了视角人物不可能知道的事，或视角在没有任何标识的情况下漂移。
+- 世界规则不自洽：作品自己设定的规则被剧情随意打破。
+- 全好人/无冲突：人物没有缺陷、没有欲望、没有代价，故事没有"刺"。
+- 概括代替场景：用"她很生气"式的总结代替可以看见的动作和细节。`;
+
+const NARRATIVE_CHECKLIST_EN = `
+For narrative text, also check for these problems (call each one out as an issue, quoting the text as evidence):
+- Expository dialogue: a character states information both speakers already know, purely to inform the reader.
+- Over-explaining / self-spoiling: the author explains and foreshadows before the reader can discover it, dismantling suspense; the more fully horror is spelled out, the less frightening it becomes.
+- Point-of-view violations: the narrator knows things the viewpoint character could not know, or the viewpoint drifts without any signal.
+- Inconsistent world rules: the story breaks rules it set up itself.
+- All-good characters / no conflict: characters with no flaw, no desire, no cost — a story with no teeth.
+- Summary instead of scene: "she was angry"-style conclusions replacing visible actions and details.`;
+
 // 各训练类型的评估侧重点
 const TYPE_FOCUS_ZH: Record<string, string> = {
   free_writing: "这是一次自由写作训练，按通用维度评估。",
@@ -105,7 +127,12 @@ const TYPE_FOCUS_ZH: Record<string, string> = {
   title_drill:
     "这是一次标题训练：用户会写若干标题。评估每个标题的具体性与点击欲，evidence 直接引用标题。不要因为文本短而批评。",
   opening_drill:
-    "这是一次开头训练：评估开头是否有钩子（场景/问题/大胆判断），能否让读者停下来。",
+    "这是一次开头训练：评估开头是否有钩子（场景/问题/大胆判断），能否让读者停下来。重点检查：前几句里是否出现了意外变化？是否留下让读者必须往下读的信息缺口？如果有人物，人物的反应是否独特到让人想追问？开头无变化、全是背景铺垫，是最需要指出的问题。",
+  premise_drill: `这是一次前提句训练：用户把一个「如果」问句写成一句话故事前提。逐项检查四要素是否齐全且具体：1) 具体人物（有职业/处境/性格，不是"一个人"）；2) 人物想要什么（明确的欲望或目标）；3) 冲突/阻碍（什么挡着他）；4) 代价（失败会失去什么）。缺失或含糊的要素必须作为 issue 指出。specificity 权重最高。不要因为文本只有一两句而批评。${NARRATIVE_CHECKLIST_ZH}`,
+  pov_shift: `这是一次视角改写训练：用户用两个人物的有限第三人称各写一遍同一场景（通常用空行分隔）。重点检查：1) 视角纪律——每个版本是否只写了该人物能知道、能注意到的事，有没有越界；2) 两版差异度——两个人物注意到的细节、情绪和解读是否真的不同，还是只是换了代词；3) 是否用概括代替了可见的动作细节。clarity 与 voice 权重最高。${NARRATIVE_CHECKLIST_ZH}`,
+  dialogue_only: `这是一次纯对话训练：用户只用两个人的台词呈现一个场景，没有叙述和动作描写。重点检查：1) 遮住说话人标记，两个声音能否分清（措辞、节奏、立场是否有差异）；2) 有没有说明式对话——人物说出双方都已知道的信息只为交待给读者，这是最严重的问题；3) 危机和关系是否从对话里自然浮现。voice 权重最高。不要因为缺少叙述而批评，这是题目要求。${NARRATIVE_CHECKLIST_ZH}`,
+  expectation_twist: `这是一次期待反转训练：用户先列出读者对给定情境的三条期待，然后打破其中一条写一小段场景。逐项检查：1) 期待清单是否真实——是不是大多数读者真会有的预期，还是硬凑的稻草人；2) 反转是否公平——种子是否埋在场景里，回头看能否发现线索，还是靠隐瞒关键信息骗读者（大泽：对读者要讲规则）；3) 反转是否出自人物的欲望或缺陷，而不是无因果的无厘头；4) 打破后的走向是否比原期待更让人想往下读。specificity 与 voice 权重最高。${NARRATIVE_CHECKLIST_ZH}`,
+  cut_half: `这是一次砍一半训练的初稿阶段：用户按题目要求放开写了一段有意冗余的初稿，之后会在修改稿里删掉一半。本轮诊断的任务：1) 标出最该删的浮沫——重复、过度解释、空泛铺垫、可有可无的开头（契诃夫：先扔掉前三页）；2) 标出必须保住的真金——具体细节、动作、画面；3) revision_task 明确要求删到一半字数，并警告不许用概括替代细节。不要因为初稿冗长而扣 clarity 重分，冗长是本练习的预期起点。${NARRATIVE_CHECKLIST_ZH}`,
 };
 
 const TYPE_FOCUS_EN: Record<string, string> = {
@@ -119,8 +146,39 @@ const TYPE_FOCUS_EN: Record<string, string> = {
   title_drill:
     "This is a title drill: the user wrote several titles. Evaluate each title's specificity and click appeal; quote titles as evidence. Do not criticize brevity.",
   opening_drill:
-    "This is an opening drill: evaluate whether the opening has a hook (a scene, a question, a bold claim) that stops the reader.",
+    "This is an opening drill: evaluate whether the opening has a hook (a scene, a question, a bold claim) that stops the reader. Check specifically: does an unexpected change happen within the first few sentences? Is there an information gap that forces the reader onward? If a person appears, is their reaction unusual enough to raise questions? An opening with no change — all setup and background — is the most important problem to call out.",
+  premise_drill: `This is a premise drill: the user turned a "what if" question into a one-sentence story premise. Check each of the four elements for presence and specificity: 1) a specific character (with occupation/situation/temperament, not just "someone"); 2) what the character wants (a clear desire or goal); 3) the conflict or obstacle in the way; 4) the stakes (what is lost on failure). Any missing or vague element must be reported as an issue. Weight the specificity score most heavily. Do not criticize the text for being only a sentence or two.${NARRATIVE_CHECKLIST_EN}`,
+  pov_shift: `This is a POV-shift drill: the user wrote the same scene twice in limited third person, once from each of two characters (usually separated by a blank line). Check: 1) point-of-view discipline — does each version contain only what that character could know and notice, with no leaks; 2) real difference between the versions — do the two characters notice different details and interpret events differently, or were only the pronouns swapped; 3) summary replacing visible action. Weight clarity and voice most heavily.${NARRATIVE_CHECKLIST_EN}`,
+  dialogue_only: `This is a dialogue-only drill: the user renders a scene purely through two people's lines, with no narration or stage directions. Check: 1) cover the speaker tags — can the two voices be told apart (diction, rhythm, stance); 2) expository dialogue — a character stating what both already know purely for the reader's benefit is the most serious problem here; 3) do the crisis and the relationship emerge naturally from the talk. Weight the voice score most heavily. Do not criticize the absence of narration; that is the assignment.${NARRATIVE_CHECKLIST_EN}`,
+  expectation_twist: `This is an expectation-twist drill: the user first lists three things a reader would expect from a given situation, then breaks one and writes a short scene. Check: 1) is the expectation list honest — things most readers would genuinely predict, not strawmen; 2) is the twist fair — is its seed planted in the scene so a rereader can spot the clue, or does it cheat by withholding key information (play fair with the reader); 3) does the twist grow from a character's desire or flaw rather than causeless randomness; 4) is the broken path more compelling than the expected one. Weight specificity and voice most heavily.${NARRATIVE_CHECKLIST_EN}`,
+  cut_half: `This is the first-draft stage of a cut-in-half drill: the user deliberately wrote a loose, overlong draft and will cut it to half its length in the revision. Your job this round: 1) mark the froth that most deserves cutting — repetition, over-explanation, vague setup, a disposable opening (Chekhov: throw away the first three pages); 2) mark the gold that must survive — concrete details, actions, images; 3) make the revision_task explicitly demand cutting to half the word count, and warn against replacing details with summaries. Do not heavily penalize clarity for the draft being long; looseness is the expected starting point.${NARRATIVE_CHECKLIST_EN}`,
 };
+
+// 叙事五项评级指令（大泽在昌讲评范式）—— 仅叙事类练习注入
+// 三档分级而非百分制：评级是"编辑的判断"，不是精确测量
+const STORY_SCORES_ZH = `
+因为这是叙事类练习，额外返回 story_scores 字段——按职业编辑讲评的方式给五个维度各评一档：
+- plot（情节）、character（角色）、prose（文笔）、dialogue（对话）、concept（立意和噱头）
+- 每个维度只能是 "excellent"（优秀）、"pass"（合格）、"weak"（差）之一
+- 本次练习没有产出的维度（如一句话前提没有对话）给 "na"
+- 评级要敢下判断：全给 pass 等于没评`;
+
+const STORY_SCORES_EN = `
+Because this is a narrative exercise, additionally return a story_scores field — grade five dimensions the way a professional editor critiques a workshop piece:
+- plot, character, prose, dialogue, concept (premise & hook)
+- Each dimension must be one of "excellent", "pass", "weak"
+- Use "na" for a dimension this exercise does not produce (e.g. a one-sentence premise has no dialogue)
+- Commit to judgments: grading everything "pass" is the same as not grading`;
+
+// story_scores 的 JSON 片段（插入返回结构示例中）
+const STORY_SCORES_JSON = `,
+  "story_scores": {
+    "plot": "pass",
+    "character": "pass",
+    "prose": "pass",
+    "dialogue": "na",
+    "concept": "pass"
+  }`;
 
 export function getDiagnosePrompt(
   locale: Locale,
@@ -130,6 +188,13 @@ export function getDiagnosePrompt(
   const typeFocus =
     (locale === "zh" ? TYPE_FOCUS_ZH : TYPE_FOCUS_EN)[practiceType ?? ""] ??
     (locale === "zh" ? TYPE_FOCUS_ZH : TYPE_FOCUS_EN).free_writing;
+  const isNarrative = NARRATIVE_PRACTICE_TYPES.includes(practiceType ?? "");
+  const storyScoresRule = isNarrative
+    ? locale === "zh"
+      ? STORY_SCORES_ZH
+      : STORY_SCORES_EN
+    : "";
+  const storyScoresJson = isNarrative ? STORY_SCORES_JSON : "";
 
   const profileSection = profileContext
     ? locale === "zh"
@@ -168,7 +233,7 @@ ${bannedSection}
 - 61-80：不错 —— 高于平均水平
 - 81-100：优秀 —— 值得发表
 注意：ai_like 分数方向相反 —— 越高表示越像 AI（100 = 和 generic AI 输出没有区别，0 = 完全是个人声音）。
-
+${storyScoresRule}
 只返回 JSON：
 
 {
@@ -189,7 +254,7 @@ ${bannedSection}
     "specificity": 0,
     "voice": 0,
     "ai_like": 0
-  }
+  }${storyScoresJson}
 }
 
 示例（仅示意反馈的语气和具体度，不要照抄内容）：
@@ -232,7 +297,7 @@ Scoring guide (0-100, all scores required):
 - 61-80: good — above average
 - 81-100: excellent — publishable
 Note: the ai_like score is reversed — higher means MORE AI-like (100 = indistinguishable from generic AI output, 0 = fully personal voice).
-
+${storyScoresRule}
 Return JSON only:
 
 {
@@ -253,7 +318,7 @@ Return JSON only:
     "specificity": 0,
     "voice": 0,
     "ai_like": 0
-  }
+  }${storyScoresJson}
 }
 
 Example (illustrates tone and specificity only — do not copy its content):
@@ -417,6 +482,104 @@ Return JSON only:
   "revision_task": "revision task for the user",
   "example_direction": "an example of the revision direction"
 }`;
+}
+
+// --------------------------------------------------------------------
+// 5. 人物工坊 —— 神圣缺陷切入法的分步教练反馈
+// --------------------------------------------------------------------
+// 方法论来源：威尔·斯托尔《写作好故事的科学原理》附录「神圣缺陷切入法」。
+// 每一步 AI 只做教练：指出可行处、戳破套路、用追问逼用户更具体。
+// 绝不替用户创作人物。
+// --------------------------------------------------------------------
+
+export type WorkshopStepId =
+  | "sacred_flaw" // 神圣缺陷
+  | "origin_trauma" // 创伤起源场景
+  | "confirmation" // 确认偏差场景
+  | "control_theory" // 控制理论
+  | "ignition"; // 爆点
+
+export const WORKSHOP_STEP_IDS: WorkshopStepId[] = [
+  "sacred_flaw",
+  "origin_trauma",
+  "confirmation",
+  "control_theory",
+  "ignition",
+];
+
+// 各步骤的评估要点（教练检查什么）
+const WORKSHOP_STEP_FOCUS_ZH: Record<WorkshopStepId, string> = {
+  sacred_flaw: `本步用户写的是人物的「神圣缺陷」——人物奉为神圣、但实为对自己和世界运作方式的误解的信念（常用句式：只有……的时候我才是安全的 / 人们只会在我……的时候才会爱我 / 我有一个绝不能让任何人知道的秘密…… / 我生活中最重要的事情就是…… / 他人的可憎之处莫过于……）。
+检查：1) 是不是一个「具体的误解」，而不是笼统的性格标签（"自卑""固执"不合格）；2) 定义是否足够严格——定义越严格，人物越独特；3) 这个信念是否既给人物带来好处（地位/亲近感/快乐），又埋着会造成严重后果的祸根；4) 人物自己是否意识不到这是缺陷。`,
+  origin_trauma: `本步用户写的是「创伤起源场景」——缺陷诞生的具体时刻（人生前 20 年），要求写成完整场景：人物、环境、对话俱全。
+检查：1) 是不是一个实实在在的具体事件，而不是"她被父亲家暴""他的母亲不爱他"式的概括；2) 场景是否细致到能看见（时间、地点、在场者、说了什么话）；3) 这个事件能否合理地种下上一步定义的那个信念；4) 排斥感或羞辱感（部落情绪）是否可感。创伤不必惊天动地——《长日将尽》史蒂文斯的创伤只是父亲超常的情绪克制。`,
+  confirmation: `本步用户写的是「确认偏差场景」——人物年轻时的一个关键时刻：带着缺陷信念行动，居然成功了，从此把信念奉为神圣。
+检查：1) 场景中是否有真实的利害（危险、赌注），人物是否起了积极作用；2) 缺陷信念是否在场景里被"验证有效"——人物靠它达到了目的；3) 事件是否足以让人物彻底相信这是自己掌控世界的钥匙；4) 依然要求完整场景，不接受概括。`,
+  control_theory: `本步用户写的是人物的「控制理论」——缺陷+个性+经验的总和：人物用什么整体策略从世界获取想要的东西，以及这套策略塑造出的具体生活。
+检查用户是否回答了这些问题（缺哪个就追问哪个）：1) 缺陷给人物带来了什么地位和优越感？2) 缺陷如何塑造了他的职业、感情和朋友圈？3) 缺陷给了他什么快乐？4) 违背缺陷行事时他害怕失去什么？5) 缺陷给他树了什么敌、埋了什么雷？生活细节要具体到工作、社区、家庭。`,
+  ignition: `本步用户写的是「爆点」——一个意外变化事件：它精准切中人物最深的缺陷，人物做出反常的反应，并因此产生一个目标，被拽进情节。
+检查：1) 变化是否"意外"且具体（可以微不足道，但必须切中缺陷）；2) 人物的反应是否反常独特到让读者察觉"有什么不寻常的事要发生"；3) 是否产生了由缺陷驱动的目标——人物将用错误的方法追求它；4) 部落情绪的平衡：人物是否偏无私、地位偏低、面对更强的歌利亚（不必全中，但全反则难获共鸣）；5) 风险追问：为什么偏偏是今天？为什么必须立刻行动？什么正面临巨大危机？`,
+};
+
+const WORKSHOP_STEP_FOCUS_EN: Record<WorkshopStepId, string> = {
+  sacred_flaw: `In this step the user wrote the character's "sacred flaw" — a belief the character holds sacred that is actually a misunderstanding of how they and the world work (typical templates: I am only safe when… / People will only love me if… / I have a secret no one must ever know… / The most important thing in my life is… / Nothing is more despicable in other people than…).
+Check: 1) is it a specific misbelief, not a generic trait label ("insecure" or "stubborn" fails); 2) is the definition strict enough — the stricter the definition, the more unique the character; 3) does the belief both reward the character (status/closeness/pleasure) and carry the seed of serious damage; 4) is the character unaware it is a flaw.`,
+  origin_trauma: `In this step the user wrote the "origin scene" — the specific moment (first ~20 years of life) where the flaw was born, written as a full scene: people, setting, dialogue.
+Check: 1) is it one concrete event, not a summary like "her father was abusive"; 2) is the scene visible — time, place, who was present, what was said; 3) could this event plausibly plant the exact belief defined in the previous step; 4) is the tribal sting of exclusion or humiliation felt. The trauma need not be dramatic — Stevens's trauma in The Remains of the Day is merely his father's superhuman emotional restraint.`,
+  confirmation: `In this step the user wrote the "confirmation scene" — a key youthful moment where acting on the flawed belief worked, sanctifying it.
+Check: 1) real stakes in the scene, with the character playing an active role; 2) is the flawed belief visibly "validated" — the character achieves a goal through it; 3) is the event strong enough to convince the character this belief is their key to controlling the world; 4) full scene required, no summaries.`,
+  control_theory: `In this step the user wrote the character's "theory of control" — flaw + personality + experience combined: the overall strategy this character uses to get what they want from the world, and the specific life that strategy has built.
+Check whether the user answered these (probe whichever is missing): 1) what status and sense of superiority does the flaw confer? 2) how has it shaped their job, relationships, friendships? 3) what pleasure does it give? 4) what do they fear losing if they act against it? 5) what enemies and hidden risks has it created? Life details must be concrete — job, neighborhood, family.`,
+  ignition: `In this step the user wrote the "ignition point" — an unexpected change that strikes precisely at the character's deepest flaw; the character reacts in an unusual way, a desire ignites into a goal, and the plot begins.
+Check: 1) is the change unexpected and specific (it can be tiny, but must hit the flaw); 2) is the reaction unusual enough that a reader senses something extraordinary coming; 3) does it produce a flaw-driven goal the character will pursue by the wrong means; 4) tribal-emotion balance: is the character somewhat selfless, lowish in status, facing a stronger Goliath (not all required, but all reversed loses sympathy); 5) stakes probes: why today of all days? why must they act now? what is at risk?`,
+};
+
+export function getWorkshopPrompt(locale: Locale, step: WorkshopStepId): string {
+  const focus = (locale === "zh" ? WORKSHOP_STEP_FOCUS_ZH : WORKSHOP_STEP_FOCUS_EN)[step];
+
+  if (locale === "zh") {
+    return `You are a story-craft coach running a "Sacred Flaw" character workshop (based on Will Storr's method).
+
+你只做教练，不替用户创作人物。不要给出改好的版本，用追问逼用户自己想。
+
+${focus}
+
+只返回 JSON：
+
+{
+  "what_works": "这一步里真正立得住的东西（引用用户原文，没有就直说没有）",
+  "what_is_generic_or_missing": ["套路化或缺失的部分，每条都引用或指明位置"],
+  "deepening_questions": ["3-5 个追问，逼用户更具体。好的追问指向具体细节（时间/地点/说了什么/代价是什么），坏的追问是抽象的"],
+  "ready_to_continue": true,
+  "next_step_hint": "进入下一步之前用户最该补的一件事（一句话）"
+}
+
+约束：
+- 引用用户原文时必须准确。
+- ready_to_continue：内容具体、能支撑下一步时为 true；全是概括和标签时为 false。
+- 不要奉承。deepening_questions 是本反馈的核心，必须锋利。`;
+  }
+
+  return `You are a story-craft coach running a "Sacred Flaw" character workshop (based on Will Storr's method).
+
+You are a coach only — never invent or write the character for the user. Do not provide an improved version; use questions to force the user to dig.
+
+${focus}
+
+Return JSON only:
+
+{
+  "what_works": "what genuinely holds up in this step (quote the user's text; if nothing does, say so plainly)",
+  "what_is_generic_or_missing": ["clichéd or missing parts, each quoting or pointing at a location"],
+  "deepening_questions": ["3-5 probing questions that force specificity. Good probes target concrete detail (when/where/what was said/what it cost); bad probes are abstract"],
+  "ready_to_continue": true,
+  "next_step_hint": "the one thing the user should fix before the next step (one sentence)"
+}
+
+Constraints:
+- Quotes from the user's text must be accurate.
+- ready_to_continue: true when the content is specific enough to build on; false when it is all summary and labels.
+- No flattery. The deepening_questions are the heart of this feedback — make them sharp.`;
 }
 
 // --------------------------------------------------------------------

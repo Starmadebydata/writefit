@@ -219,7 +219,7 @@ export function PracticeFlow({
       if (!res.ok) {
         // AI 路由需要登录：dev 演示模式（未登录）回退到本地模拟反馈
         if (isDev && res.status === 401) {
-          setFeedback(mockDiagnose(rawText, locale === "zh" ? "zh" : "en"));
+          setFeedback(mockDiagnose(rawText, locale === "zh" ? "zh" : "en", practiceType));
           setIsMockFeedback(true);
           setStage("feedback");
           setLoading(false);

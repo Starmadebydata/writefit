@@ -27,6 +27,7 @@ import {
   TrendingUp,
   Settings,
   Home,
+  Drama,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +47,11 @@ const navItems = [
     labelKey: "sentenceGym",
     href: "/sentence-gym",
     icon: Scissors,
+  },
+  {
+    labelKey: "characterWorkshop",
+    href: "/character-workshop",
+    icon: Drama,
   },
   {
     labelKey: "drafts",

@@ -28,7 +28,8 @@
     "user": "User",
     "logout": "Log out",
     "backToSite": "Back to homepage",
-    "footerTagline": "15 minutes a day\nTrain your own writing ability"
+    "footerTagline": "15 minutes a day\nTrain your own writing ability",
+    "characterWorkshop": "Character Workshop"
   },
   "landing": {
     "heroBadge": "AI Native Writing Training",
@@ -343,7 +344,12 @@
       "specificity_drill": "Specificity Drill",
       "anti_ai_voice": "Anti-AI Voice",
       "title_drill": "Title Drill",
-      "opening_drill": "Opening Drill"
+      "opening_drill": "Opening Drill",
+      "premise_drill": "Premise Drill",
+      "pov_shift": "POV Shift",
+      "dialogue_only": "Dialogue Only",
+      "cut_half": "Cut It in Half",
+      "expectation_twist": "Expectation Twist"
     },
     "promptPreview": "Was there a moment today when your thinking was clear but your writing came out vague?",
     "flow": {

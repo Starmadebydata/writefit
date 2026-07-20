@@ -9,13 +9,37 @@
 // JSON 结构（key）保持不变，只有 value（内容）随语言变化
 // ====================================================================
 
-import type { DiagnoseFeedback, AntiAIVoiceFeedback, SentenceSurgeryFeedback, CompareRevisionFeedback } from "./schemas";
+import type {
+  DiagnoseFeedback,
+  AntiAIVoiceFeedback,
+  SentenceSurgeryFeedback,
+  CompareRevisionFeedback,
+  WorkshopFeedback,
+  StoryScores,
+} from "./schemas";
+import { NARRATIVE_PRACTICE_TYPES } from "@/lib/practice/prompts";
 
 // 语言类型
 export type MockLocale = "en" | "zh";
 
+// 叙事类练习的模拟五项评级（演示用中性评级）
+function mockStoryScores(practiceType?: string): StoryScores | undefined {
+  if (!practiceType || !NARRATIVE_PRACTICE_TYPES.includes(practiceType)) return undefined;
+  return {
+    plot: "pass",
+    character: "weak",
+    prose: "pass",
+    dialogue: practiceType === "dialogue_only" ? "pass" : "na",
+    concept: "pass",
+  };
+}
+
 // 生成模拟的诊断反馈
-export function mockDiagnose(text: string, locale: MockLocale = "en"): DiagnoseFeedback {
+export function mockDiagnose(
+  text: string,
+  locale: MockLocale = "en",
+  practiceType?: string
+): DiagnoseFeedback {
   // 简单分析文本特征
   const sentences = text.split(/[。.！!？?\n]+/).filter((s) => s.trim().length > 5);
   const wordCount = text.length;
@@ -64,6 +88,7 @@ export function mockDiagnose(text: string, locale: MockLocale = "en"): DiagnoseF
         voice: Math.min(55, 25 + Math.floor(sentences.length * 2)),
         ai_like: Math.min(80, 40 + Math.floor(wordCount / 8)),
       },
+      story_scores: mockStoryScores(practiceType),
     };
   }
 
@@ -99,6 +124,40 @@ export function mockDiagnose(text: string, locale: MockLocale = "en"): DiagnoseF
       voice: Math.min(55, 25 + Math.floor(sentences.length * 2)),
       ai_like: Math.min(80, 40 + Math.floor(wordCount / 8)),
     },
+    story_scores: mockStoryScores(practiceType),
+  };
+}
+
+// 生成模拟的人物工坊反馈（平台未配置 Key 时的兜底）
+export function mockWorkshopFeedback(text: string, locale: MockLocale = "en"): WorkshopFeedback {
+  const firstSentence = text.split(/[。.！!？?\n]/).find((s) => s.trim().length > 3)?.trim() ?? "";
+  if (locale === "zh") {
+    return {
+      what_works: firstSentence ? `「${firstSentence.slice(0, 40)}」——这个起点是具体的。` : "内容太短，还看不出立得住的东西。",
+      what_is_generic_or_missing: [
+        "（模拟反馈）还缺少可以看见的细节：时间、地点、在场的人、说了什么话。",
+      ],
+      deepening_questions: [
+        "这件事发生在哪一天的什么时刻？当时谁在场？",
+        "人物为此付出的具体代价是什么——失去了哪段关系、哪个机会？",
+        "如果让人物自己辩护，他会怎么说服你他没有错？",
+      ],
+      ready_to_continue: text.length > 100,
+      next_step_hint: "把概括换成一个能看见的场景，再进入下一步。",
+    };
+  }
+  return {
+    what_works: firstSentence ? `"${firstSentence.slice(0, 60)}" — this starting point is concrete.` : "Too short to judge yet.",
+    what_is_generic_or_missing: [
+      "(Mock feedback) Missing visible detail: when, where, who was present, what was said.",
+    ],
+    deepening_questions: [
+      "On what day, at what moment, did this happen? Who was in the room?",
+      "What did it concretely cost the character — which relationship, which opportunity?",
+      "If the character defended themselves, how would they convince you they were right?",
+    ],
+    ready_to_continue: text.length > 100,
+    next_step_hint: "Replace the summary with one visible scene before moving on.",
   };
 }
 
