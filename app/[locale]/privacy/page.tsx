@@ -8,6 +8,7 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { PublicHeader } from "@/components/layout/PublicHeader";
 
 // 动态 SEO 元数据（根据语言切换）
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,10 +28,11 @@ export async function generateMetadata(): Promise<Metadata> {
     title: titles[locale as "en" | "zh"],
     description: descriptions[locale as "en" | "zh"],
     alternates: {
-      canonical: "https://writefit.app/privacy",
+      canonical: locale === "zh" ? "/zh/privacy" : "/privacy",
       languages: {
-        en: "https://writefit.app/privacy",
-        zh: "https://writefit.app/zh/privacy",
+        en: "/privacy",
+        zh: "/zh/privacy",
+        "x-default": "/privacy",
       },
     },
   };
@@ -44,7 +46,12 @@ export default async function PrivacyPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return locale === "zh" ? <PrivacyZh /> : <PrivacyEn />;
+  return (
+    <>
+      <PublicHeader />
+      {locale === "zh" ? <PrivacyZh /> : <PrivacyEn />}
+    </>
+  );
 }
 
 // 共享的排版类名（项目没有 @tailwindcss/typography，手写 prose 风格）
@@ -166,10 +173,10 @@ function PrivacyEn() {
         If you have any questions about this Privacy Policy or your data,
         contact us at{" "}
         <a
-          href="mailto:aifeefee70@gmail.com"
+          href="mailto:support@writefit.app"
           className="text-primary hover:underline"
         >
-          aifeefee70@gmail.com
+          support@writefit.app
         </a>
         .
       </p>
@@ -279,10 +286,10 @@ function PrivacyZh() {
       <p className={pClass}>
         如果你对本隐私政策或你的数据有任何疑问，请联系我们：
         <a
-          href="mailto:aifeefee70@gmail.com"
+          href="mailto:support@writefit.app"
           className="text-primary hover:underline"
         >
-          aifeefee70@gmail.com
+          support@writefit.app
         </a>
         。
       </p>

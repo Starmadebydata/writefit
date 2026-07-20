@@ -13,8 +13,9 @@
 // 5. 测试连接是否成功
 // ====================================================================
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,7 @@ import {
   Loader2,
   ExternalLink,
   Trash2,
+  Lock,
 } from "lucide-react";
 import {
   AI_PROVIDERS,
@@ -79,6 +81,7 @@ function initSettings() {
 export function AISettingsForm() {
   // ---- 状态管理（用 lazy initializer 从 localStorage 初始化） ----
   const t = useTranslations("settings.ai");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
   const initial = initSettings();
   const [provider, setProvider] = useState(initial.provider);
@@ -91,6 +94,22 @@ export function AISettingsForm() {
   const [isTesting, setIsTesting] = useState(false);
   const [isConfigured, setIsConfigured] = useState(initial.isConfigured);
   const [showApiKey, setShowApiKey] = useState(false);
+
+  // ---- 套餐信息（BYOK 是付费功能，免费用户只显示升级引导） ----
+  const [plan, setPlan] = useState<string | null>(null);
+  const [planLimit, setPlanLimit] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/billing/status")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.plan) {
+          setPlan(data.plan);
+          setPlanLimit(typeof data.limit === "number" ? data.limit : null);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // ---- 选择服务商时自动填充所有默认值（除 API Key 外） ----
   function handleProviderChange(providerId: string) {
@@ -202,30 +221,54 @@ export function AISettingsForm() {
 
   const currentProvider = AI_PROVIDERS.find((p) => p.id === provider);
 
+  // 免费用户：BYOK 是付费功能，只显示升级引导卡（不显示配置表单）
+  if (plan === "free") {
+    return (
+      <Card>
+        <CardContent className="flex items-start gap-3 pt-6">
+          <Lock className="h-5 w-5 shrink-0 text-muted-foreground mt-0.5" />
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm font-semibold">{t("byokLockedTitle")}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {t("byokLockedDesc")}
+              </p>
+            </div>
+            <Button size="sm" render={<Link href="/pricing" />}>
+              {tCommon("viewPlans")}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* 状态提示 */}
-      {isConfigured ? (
-        <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-4 py-3">
-          <CheckCircle2 className="h-5 w-5 text-primary" />
-          <div>
-            <p className="text-sm font-semibold text-primary">{t("configured")}</p>
-            <p className="text-xs text-muted-foreground">
-              {t("currentUsing", { provider: currentProvider?.name ?? provider, model })}
-            </p>
+      {/* 状态提示（套餐加载完成后再渲染，避免闪现错误状态） */}
+      {plan !== null &&
+        (isConfigured ? (
+          <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-4 py-3">
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+            <div>
+              <p className="text-sm font-semibold text-primary">{t("configured")}</p>
+              <p className="text-xs text-muted-foreground">
+                {t("currentUsing", { provider: currentProvider?.name ?? provider, model })}
+              </p>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
-          <Bot className="h-5 w-5 text-amber-600" />
-          <div>
-            <p className="text-sm font-semibold text-amber-800">{t("notConfigured")}</p>
-            <p className="text-xs text-amber-700">
-              {t("notConfiguredDesc")}
-            </p>
+        ) : (
+          // 付费用户未配 BYOK：平台托管 AI 已可用，BYOK 只是不限量的可选项
+          <div className="flex items-center gap-2 rounded-lg bg-muted/50 border border-border px-4 py-3">
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+            <div>
+              <p className="text-sm font-semibold">{t("platformActive")}</p>
+              <p className="text-xs text-muted-foreground">
+                {t("platformActiveDesc", { limit: planLimit ?? 0 })}
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        ))}
 
       {/* 配置表单 */}
       <Card>

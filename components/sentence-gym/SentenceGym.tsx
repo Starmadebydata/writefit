@@ -63,9 +63,10 @@ export function SentenceGym() {
         body: JSON.stringify({ text: input, language: locale, aiConfig }),
       });
       if (!res.ok) {
-        // 平台 Key 配额耗尽：明确提示并给升级入口
+        // 配额耗尽或免费用户使用 BYOK：展示路由返回的具体文案并给升级入口
         if (res.status === 402) {
-          toast.error(tCommon("errorQuotaExceeded"), {
+          const body = await res.json().catch(() => null);
+          toast.error(body?.error ?? tCommon("errorQuotaExceeded"), {
             action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
           });
           return;

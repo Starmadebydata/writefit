@@ -4,9 +4,11 @@
 // 三层结构：
 // - free：平台托管 Key，每日限量 AI 调用（注册即用，无需配置）
 // - basic / pro：分级付费订阅，AI 配额随等级提高
-// - BYOK（用户自带 Key）：不限量、不计量，平台零成本
+// - BYOK（用户自带 Key）：付费功能（basic/pro 专属），不限量、不计量，
+//   平台零 token 成本
 //
-// 配额只约束"用平台 Key"的调用；用户自带 Key 不受此限。
+// 配额只约束"用平台 Key"的调用；用户自带 Key 不受此限（但需付费套餐，
+// 见 isByokAllowed）。
 // 新增套餐只改 PLANS 配置，不要在代码里硬编码等级判断。
 // ====================================================================
 
@@ -40,6 +42,11 @@ export const PLANS: Record<Plan, PlanConfig> = {
 
 // 付费套餐列表（pricing 页和升级引导用）
 export const PAID_PLANS: Plan[] = ["basic", "pro"];
+
+// BYOK（自带 Key）是付费功能：仅 basic/pro 可用，free 走平台 Key 限量
+export function isByokAllowed(plan: Plan): boolean {
+  return plan !== "free";
+}
 
 export type BillingInterval = "monthly" | "yearly";
 

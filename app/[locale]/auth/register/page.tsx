@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: titles[locale as "en" | "zh"],
     description: descriptions[locale as "en" | "zh"],
     alternates: {
-      canonical: "https://writefit.app/auth/register",
+      canonical: locale === "zh" ? "/zh/auth/register" : "/auth/register",
     },
     robots: {
       index: false,

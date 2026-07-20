@@ -18,6 +18,7 @@ import { useTranslations } from "next-intl";
 import { setRequestLocale, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { softwareApplicationJsonLd } from "@/lib/jsonld";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
@@ -56,10 +57,11 @@ export async function generateMetadata(): Promise<Metadata> {
     description: descriptions[locale as "en" | "zh"],
     keywords: keywords[locale as "en" | "zh"],
     alternates: {
-      canonical: "https://writefit.app",
+      canonical: locale === "zh" ? "/zh" : "/",
       languages: {
-        en: "https://writefit.app",
-        zh: "https://writefit.app/zh",
+        en: "/",
+        zh: "/zh",
+        "x-default": "/",
       },
     },
   };
@@ -73,7 +75,18 @@ export default async function LandingPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return <LandingContent />;
+  return (
+    <>
+      {/* JSON-LD：SoftwareApplication（含三档定价，AI 取数来源） */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(softwareApplicationJsonLd),
+        }}
+      />
+      <LandingContent />
+    </>
+  );
 }
 
 function LandingContent() {
@@ -97,6 +110,22 @@ function LandingContent() {
             <LanguageSwitcher />
             <Button variant="ghost" size="sm" render={<Link href="/pricing" />}>
               {t("nav.pricing")}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex"
+              render={<Link href="/methodology" />}
+            >
+              {t("nav.methodology")}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex"
+              render={<Link href="/blog" />}
+            >
+              {t("nav.blog")}
             </Button>
             <Button variant="ghost" size="sm" render={<Link href="/auth/login" />}>
               {t("nav.login")}
@@ -254,6 +283,11 @@ function LandingContent() {
       </section>
 
       {/* ================================================================
+          5.5 FAQ —— 常见问题（同时输出 FAQPage JSON-LD，供 AI/搜索抽取）
+      ================================================================ */}
+      <FaqSection t={t} />
+
+      {/* ================================================================
           6. CTA —— 最终行动号召
       ================================================================ */}
       <section className="mx-auto max-w-4xl px-6 py-20 text-center">
@@ -277,6 +311,15 @@ function LandingContent() {
             <Link href="/pricing" className="hover:text-foreground">
               {t("nav.pricing")}
             </Link>
+            <Link href="/about" className="hover:text-foreground">
+              {t("footer.about")}
+            </Link>
+            <Link href="/methodology" className="hover:text-foreground">
+              {t("footer.methodology")}
+            </Link>
+            <Link href="/blog" className="hover:text-foreground">
+              {t("footer.blog")}
+            </Link>
             <Link href="/privacy" className="hover:text-foreground">
               {t("footer.privacy")}
             </Link>
@@ -290,5 +333,48 @@ function LandingContent() {
         </div>
       </footer>
     </div>
+  );
+}
+
+
+// ====================================================================
+// FAQ 区块（Landing 专用）
+// 可见问答与 FAQPage JSON-LD 同源（同一份翻译文案），
+// 保证 schema 内容与页面文字一致，供搜索引擎/AI 抽取。
+// ====================================================================
+function FaqSection({ t }: { t: ReturnType<typeof useTranslations> }) {
+  const items = t.raw("faq.items") as Array<{ q: string; a: string }>;
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
+  return (
+    <section className="mx-auto max-w-3xl px-6 py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <h2 className="text-3xl font-bold text-center mb-10">
+        {t("faq.title")}
+      </h2>
+      <div className="space-y-6">
+        {items.map((item, i) => (
+          <div
+            key={i}
+            className="rounded-lg border border-border bg-card p-5"
+          >
+            <h3 className="font-semibold mb-2">{item.q}</h3>
+            <p className="text-sm text-muted-foreground leading-7">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

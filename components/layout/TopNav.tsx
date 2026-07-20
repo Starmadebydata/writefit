@@ -12,7 +12,7 @@
 
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Home } from "lucide-react";
 
 interface TopNavProps {
   // 当前用户信息
@@ -59,8 +59,19 @@ export function TopNav({ user, title }: TopNavProps) {
 
   return (
     <header className="flex items-center justify-between px-6 py-3 border-b border-border bg-background">
-      {/* 页面标题 */}
-      <h1 className="text-lg font-semibold">{title}</h1>
+      {/* 页面标题（移动端在左侧加返回首页入口，此时侧边栏不可见） */}
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          render={<Link href="/" />}
+          aria-label={t("backToSite")}
+        >
+          <Home className="h-5 w-5" />
+        </Button>
+        <h1 className="text-lg font-semibold">{title}</h1>
+      </div>
 
       <div className="flex items-center gap-2">
         {/* 语言切换器 */}

@@ -4,7 +4,7 @@
 // 免费/付费用户没有自带 Key 时，用平台统一配置的 Key 调用 AI：
 // - free：每日限量（见 lib/billing/plans.ts）
 // - basic / pro：配额随套餐等级提高
-// - 用户自带 Key（BYOK）时不走这里，不限量
+// - 用户自带 Key（BYOK，付费功能）时不走这里，不限量
 //
 // 配置方式（环境变量，生产用 wrangler secret / Dashboard 变量）：
 // - PLATFORM_AI_API_KEY（必填，未配置则回退 mock 反馈，保持开发体验）

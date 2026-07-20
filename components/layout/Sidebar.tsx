@@ -26,6 +26,7 @@ import {
   Lightbulb,
   TrendingUp,
   Settings,
+  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -74,15 +75,18 @@ export function Sidebar() {
 
   return (
     <aside className="hidden md:flex w-60 flex-col border-r border-border bg-sidebar min-h-screen">
-      {/* Logo 区域 */}
-      <div className="flex items-center gap-2 px-6 py-5 border-b border-border">
+      {/* Logo 区域（点击返回网站首页） */}
+      <Link
+        href="/"
+        className="flex items-center gap-2 px-6 py-5 border-b border-border hover:bg-sidebar-accent/50 transition-colors"
+      >
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
           W
         </div>
         <span className="font-semibold text-lg text-sidebar-foreground">
           WriteFit
         </span>
-      </div>
+      </Link>
 
       {/* 导航菜单 */}
       <nav className="flex-1 px-3 py-4 space-y-1">
@@ -109,8 +113,15 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* 底部：训练提示 */}
-      <div className="px-4 py-4 border-t border-border">
+      {/* 底部：返回首页 + 训练提示 */}
+      <div className="px-4 py-4 border-t border-border space-y-3">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-sidebar-foreground transition-colors"
+        >
+          <Home className="h-3.5 w-3.5" />
+          {t("backToSite")}
+        </Link>
         <p className="text-xs text-muted-foreground whitespace-pre-line">
           {t("footerTagline")}
         </p>

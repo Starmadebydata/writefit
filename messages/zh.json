@@ -27,6 +27,7 @@
     "settings": "设置",
     "user": "用户",
     "logout": "退出登录",
+    "backToSite": "返回首页",
     "footerTagline": "每天 15 分钟\n训练你自己的写作能力"
   },
   "landing": {
@@ -38,11 +39,41 @@
     "tryDemo": "体验训练流程（无需登录）→",
     "nav": {
       "login": "登录",
-      "pricing": "定价"
+      "pricing": "定价",
+      "methodology": "方法论",
+      "blog": "博客"
     },
     "footer": {
       "privacy": "隐私政策",
-      "terms": "服务条款"
+      "terms": "服务条款",
+      "about": "关于",
+      "methodology": "方法论",
+      "blog": "博客"
+    },
+    "faq": {
+      "title": "常见问题",
+      "items": [
+        {
+          "q": "WriteFit 会替我写文章吗？",
+          "a": "不会——永远不会。WriteFit 没有「生成」按钮。每一篇稿子都由你亲手写，AI 只诊断你文字里的具体问题并解释原因。写作肌肉只有亲自练才会长。"
+        },
+        {
+          "q": "WriteFit 和直接让 ChatGPT 润色有什么区别？",
+          "a": "润色是用通用腔替换你的声音：稿子变好了，你没有。WriteFit 正好相反——稿子始终是你的，变好的是你。每次训练针对你初稿里的 3 个具体问题，让你知道改什么、为什么改。"
+        },
+        {
+          "q": "免费版够用吗？",
+          "a": "对大多数人够用。免费版每天 5 次 AI 反馈，足够完成一次扎实的每日训练。如果需要更多，付费套餐提升每日上限，并解锁自带 API Key（BYOK）不限量使用。"
+        },
+        {
+          "q": "什么是 BYOK（自带 Key）？",
+          "a": "付费套餐可以接入自己的 AI API Key（OpenAI、Anthropic 等）。Key 只存在你浏览器的本地存储里，永远不会传到我们的服务器。使用 BYOK 时，AI 反馈不限量。"
+        },
+        {
+          "q": "订阅可以随时取消吗？",
+          "a": "可以。在设置里随时取消，当前计费周期内的使用权不受影响。没有锁定，没有取消费。"
+        }
+      ]
     },
     "problems": {
       "title": "这些问题你熟悉吗？",
@@ -141,7 +172,21 @@
     "coachAnchor": "不到一次真人写作教练一小时的费用，换来一整月每天 15 分钟的 AI 教练陪伴。",
     "footer": {
       "privacy": "隐私政策",
-      "terms": "服务条款"
+      "terms": "服务条款",
+      "about": "关于",
+      "methodology": "方法论",
+      "blog": "博客"
+    },
+    "comparison": {
+      "title": "套餐对比",
+      "summary": "WriteFit 提供三档套餐：免费版（每天 {freeLimit} 次 AI 反馈）、Basic 版（${basicMonthly}/月或 ${basicYearly}/年，每天 {basicLimit} 次反馈，自带 Key 不限量）、Pro 版（${proMonthly}/月或 ${proYearly}/年，每天 {proLimit} 次反馈，自带 Key 不限量，享优先支持）。年付按 10 个月计价。",
+      "planCol": "套餐",
+      "monthlyCol": "月付",
+      "yearlyCol": "年付",
+      "limitCol": "每日 AI 反馈",
+      "freePrice": "免费",
+      "sessionsPerDay": "次/天",
+      "byokNote": "付费套餐：自带 API Key（BYOK）时 AI 反馈不限量——Key 只存在你的浏览器里。"
     },
     "plans": {
       "free": {
@@ -151,8 +196,7 @@
         "features": [
           "每天 5 次 AI 写作反馈",
           "完整训练闭环（写作→诊断→修改→对比）",
-          "素材库与草稿实验室",
-          "自带 API Key 不限量"
+          "素材库与草稿实验室"
         ]
       },
       "basic": {
@@ -162,6 +206,7 @@
         "features": [
           "每天 20 次 AI 写作反馈",
           "免费版全部功能",
+          "自带 API Key（BYOK）AI 不限量",
           "句子训练不限次使用",
           "支持产品持续开发"
         ]
@@ -178,6 +223,15 @@
         ]
       }
     }
+  },
+  "blog": {
+    "title": "博客 | WriteFit",
+    "heading": "WriteFit 博客",
+    "desc": "关于写作技艺的深度文章——以及如何在 AI 时代保住自己的声音。",
+    "metaDesc": "关于写作技艺、个人声音、用 AI 训练写作的深度文章——来自 WriteFit 团队。",
+    "readMore": "阅读全文",
+    "byAuthor": "Jason Guo",
+    "backToBlog": "返回博客"
   },
   "auth": {
     "login": {
@@ -430,9 +484,11 @@
     },
     "ai": {
       "configured": "AI 已配置",
-      "notConfigured": "尚未配置 AI",
-      "notConfiguredDesc": "配置后才能使用 AI 诊断、反 AI 腔检测等功能。不配置时只能看到模拟反馈。",
-      "title": "AI 服务配置",
+      "platformActive": "平台托管 AI 已就绪",
+      "platformActiveDesc": "无需配置——你的套餐每天含 {limit} 次 AI 反馈。在下方配置自己的 Key（可选）即可不限量使用。",
+      "byokLockedTitle": "自带 Key（BYOK）—— Basic/Pro 功能",
+      "byokLockedDesc": "升级 Basic 或 Pro，即可使用自己的 API Key 不限量调用 AI。Key 只存在你的浏览器里，永远不会传到我们的服务器。",
+      "title": "自带 API Key（BYOK）",
       "provider": "AI 服务商",
       "providerDesc": "选择你使用的 AI 服务。支持任何兼容 OpenAI 接口格式的服务。",
       "customProvider": "自定义 (OpenAI 兼容)",

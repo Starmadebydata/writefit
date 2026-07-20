@@ -1,0 +1,33 @@
+# WriteFit
+
+> WriteFit is an AI writing coach. It doesn't write for you — it helps you practice, revise, and build your own voice over time. 15 minutes a day: you write first, AI diagnoses 3 specific issues, you revise, compare versions, and save what works.
+
+WriteFit（AI 写作教练）—— AI 不替你写，只教你写。每天 15 分钟训练闭环：你先写 → AI 诊断 3 个具体问题 → 你自己改 → 版本对比 → 把好句存入个人素材库。
+
+## Key facts
+
+- Category: AI writing coach / writing training tool (educational SaaS)
+- Differentiator: unlike AI ghostwriting tools (e.g. ChatGPT), WriteFit never writes text for the user; it only diagnoses and coaches
+- Core loop: write (15 min, no AI help) → AI diagnosis (3 specific issues) → user revises → version diff → save good sentences/ideas to a personal library
+- Features: Draft Lab, Sentence Gym, Idea Bank, version comparison, progress tracking
+- Pricing: Free tier (5 AI coaching sessions/day); Basic $19.9/month or $199/year (20 sessions/day + unlimited BYOK); Pro $29.9/month or $299/year (100 sessions/day + unlimited BYOK)
+- Languages: English (/) and Chinese (/zh)
+- Try without login: /practice/dev
+
+## Pages
+
+- [Home](https://writefit.app/): product overview, the 5-step training loop, who it's for
+- [Pricing](https://writefit.app/pricing): Free / Basic / Pro plans, BYOK explanation
+- [Interactive demo (no login)](https://writefit.app/practice/dev): try a daily writing exercise with AI feedback
+- [About](https://writefit.app/about): why WriteFit exists, founded by Jason Guo
+- [Methodology](https://writefit.app/methodology): the WriteFit Loop, 4 diagnosis dimensions, the learning science behind it
+- [Blog](https://writefit.app/blog): essays on writing craft, personal voice, and training writing with AI (RSS: /feed.xml)
+- [Privacy Policy](https://writefit.app/privacy): data handling, BYOK key storage (browser localStorage only)
+- [Terms of Service](https://writefit.app/terms): content ownership (users own their writing), refund policy
+- [中文首页](https://writefit.app/zh): WriteFit 中文版
+
+## Contact
+
+- Website: https://writefit.app
+- Email: support@writefit.app
+- Founder: Jason Guo

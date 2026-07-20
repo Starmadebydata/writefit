@@ -8,6 +8,7 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { PublicHeader } from "@/components/layout/PublicHeader";
 
 // 动态 SEO 元数据（根据语言切换）
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,10 +28,11 @@ export async function generateMetadata(): Promise<Metadata> {
     title: titles[locale as "en" | "zh"],
     description: descriptions[locale as "en" | "zh"],
     alternates: {
-      canonical: "https://writefit.app/terms",
+      canonical: locale === "zh" ? "/zh/terms" : "/terms",
       languages: {
-        en: "https://writefit.app/terms",
-        zh: "https://writefit.app/zh/terms",
+        en: "/terms",
+        zh: "/zh/terms",
+        "x-default": "/terms",
       },
     },
   };
@@ -44,7 +46,12 @@ export default async function TermsPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return locale === "zh" ? <TermsZh /> : <TermsEn />;
+  return (
+    <>
+      <PublicHeader />
+      {locale === "zh" ? <TermsZh /> : <TermsEn />}
+    </>
+  );
 }
 
 // 共享的排版类名（项目没有 @tailwindcss/typography，手写 prose 风格）
@@ -212,10 +219,10 @@ function TermsEn() {
       <p className={pClass}>
         If you have any questions about these Terms, contact us at{" "}
         <a
-          href="mailto:aifeefee70@gmail.com"
+          href="mailto:support@writefit.app"
           className="text-primary hover:underline"
         >
-          aifeefee70@gmail.com
+          support@writefit.app
         </a>
         .
       </p>
@@ -337,10 +344,10 @@ function TermsZh() {
       <p className={pClass}>
         如果你对本条款有任何疑问，请联系我们：
         <a
-          href="mailto:aifeefee70@gmail.com"
+          href="mailto:support@writefit.app"
           className="text-primary hover:underline"
         >
-          aifeefee70@gmail.com
+          support@writefit.app
         </a>
         。
       </p>

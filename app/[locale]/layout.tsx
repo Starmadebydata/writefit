@@ -10,10 +10,12 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { PostHogProvider } from "@/components/analytics/PostHogProvider";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { organizationJsonLd, websiteJsonLd } from "@/lib/jsonld";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -49,10 +51,12 @@ export async function generateMetadata(): Promise<Metadata> {
     description: descriptions[locale as "en" | "zh"],
     metadataBase: new URL("https://writefit.app"),
     alternates: {
-      canonical: "/",
+      // 各语言页 canonical 自引用（否则 zh 页会被当作 en 页的复制品不予索引）
+      canonical: locale === "zh" ? "/zh" : "/",
       languages: {
         en: "/",
         zh: "/zh",
+        "x-default": "/",
       },
     },
     openGraph: {
@@ -62,6 +66,20 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: "WriteFit",
       title: titles[locale as "en" | "zh"],
       description: descriptions[locale as "en" | "zh"],
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "WriteFit — AI Writing Coach",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: titles[locale as "en" | "zh"],
+      description: descriptions[locale as "en" | "zh"],
+      images: ["/og-image.png"],
     },
     robots: {
       index: true,
@@ -97,10 +115,22 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        {/* JSON-LD 结构化数据：Organization + WebSite（全站实体锚点） */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <NextIntlClientProvider messages={messages}>
           <PostHogProvider>{children}</PostHogProvider>
           <Toaster />
         </NextIntlClientProvider>
+        <GoogleAnalytics />
       </body>
     </html>
   );

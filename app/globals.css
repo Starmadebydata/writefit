@@ -131,3 +131,61 @@
     @apply font-sans;
   }
 }
+/* ====================================================================
+   Blog 文章排版（.prose-wf）
+   文章 TSX 写裸标签（h2/p/ul/…），由此类统一排版，
+   与 privacy/terms/about 的手写 prose 风格保持一致。
+   ==================================================================== */
+@layer components {
+  .prose-wf h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .prose-wf h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .prose-wf p {
+    margin-bottom: 1rem;
+    color: var(--muted-foreground);
+    line-height: 1.75;
+  }
+  .prose-wf ul,
+  .prose-wf ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    color: var(--muted-foreground);
+    line-height: 1.75;
+  }
+  .prose-wf ul {
+    list-style-type: disc;
+  }
+  .prose-wf ol {
+    list-style-type: decimal;
+  }
+  .prose-wf li {
+    margin-top: 0.5rem;
+  }
+  .prose-wf strong {
+    color: var(--foreground);
+  }
+  .prose-wf blockquote {
+    margin: 1.5rem 0;
+    border-left: 2px solid var(--primary);
+    padding-left: 1rem;
+    font-style: italic;
+    color: var(--muted-foreground);
+  }
+  .prose-wf a {
+    text-decoration: underline;
+  }
+  .prose-wf a:hover {
+    color: var(--foreground);
+  }
+}

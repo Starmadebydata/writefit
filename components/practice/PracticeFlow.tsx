@@ -212,9 +212,10 @@ export function PracticeFlow({
           setLoading(false);
           return;
         }
-        // 平台 Key 配额耗尽：提示并回到写作页，原稿不丢
+        // 平台 Key 配额耗尽或免费用户使用 BYOK：展示路由返回的具体文案并给升级入口
         if (res.status === 402) {
-          toast.error(tCommon("errorQuotaExceeded"), {
+          const body = await res.json().catch(() => null);
+          toast.error(body?.error ?? tCommon("errorQuotaExceeded"), {
             action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
           });
           setStage("writing");
@@ -364,8 +365,9 @@ export function PracticeFlow({
           comparisonData = mockCompareRevision(rawText, revisedText, locale === "zh" ? "zh" : "en");
           setComparison(comparisonData);
         } else if (res.status === 402) {
-          // 配额耗尽：跳过对比，仍展示 diff 并保存训练记录
-          toast.error(tCommon("errorQuotaExceeded"), {
+          // 配额耗尽或免费用户使用 BYOK：跳过对比，仍展示 diff 并保存训练记录
+          const body = await res.json().catch(() => null);
+          toast.error(body?.error ?? tCommon("errorQuotaExceeded"), {
             action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
           });
         } else {

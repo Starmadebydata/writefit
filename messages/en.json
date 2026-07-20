@@ -27,6 +27,7 @@
     "settings": "Settings",
     "user": "User",
     "logout": "Log out",
+    "backToSite": "Back to homepage",
     "footerTagline": "15 minutes a day\nTrain your own writing ability"
   },
   "landing": {
@@ -38,11 +39,41 @@
     "tryDemo": "Try the practice flow (no login needed) →",
     "nav": {
       "login": "Log in",
-      "pricing": "Pricing"
+      "pricing": "Pricing",
+      "methodology": "Method",
+      "blog": "Blog"
     },
     "footer": {
       "privacy": "Privacy Policy",
-      "terms": "Terms of Service"
+      "terms": "Terms of Service",
+      "about": "About",
+      "methodology": "Method",
+      "blog": "Blog"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "q": "Will WriteFit write anything for me?",
+          "a": "No — never. WriteFit has no \"generate\" button. You write every draft yourself; the AI only diagnoses specific problems in your text and explains them. Your writing muscle only grows if you do the reps."
+        },
+        {
+          "q": "How is WriteFit different from asking ChatGPT to polish my text?",
+          "a": "Polishing replaces your voice with a generic one: the text gets better, you don't. WriteFit is the opposite — the text stays yours, and you get better. Each session targets 3 specific issues in your own draft, so you learn what to fix and why."
+        },
+        {
+          "q": "Is the free tier enough?",
+          "a": "For most people, yes. The free plan includes 5 AI feedback sessions per day — enough for one solid daily practice. If you need more, paid plans raise the daily limit and unlock unlimited usage with your own API key (BYOK)."
+        },
+        {
+          "q": "What is BYOK (bring your own key)?",
+          "a": "On paid plans, you can connect your own AI API key (OpenAI, Anthropic, and others). The key is stored only in your browser's local storage and never reaches our servers. With BYOK, AI feedback is unlimited."
+        },
+        {
+          "q": "Can I cancel my subscription anytime?",
+          "a": "Yes. Cancel anytime from your settings — you keep access until the end of the current billing period. No lock-in, no cancellation fees."
+        }
+      ]
     },
     "problems": {
       "title": "Does this sound familiar?",
@@ -141,7 +172,21 @@
     "coachAnchor": "Less than one hour with a human writing coach — for a whole month of daily AI coaching.",
     "footer": {
       "privacy": "Privacy Policy",
-      "terms": "Terms of Service"
+      "terms": "Terms of Service",
+      "about": "About",
+      "methodology": "Method",
+      "blog": "Blog"
+    },
+    "comparison": {
+      "title": "Compare plans",
+      "summary": "WriteFit offers three plans: Free ({freeLimit} AI feedback sessions per day), Basic (${basicMonthly}/month or ${basicYearly}/year with {basicLimit} sessions per day plus unlimited BYOK), and Pro (${proMonthly}/month or ${proYearly}/year with {proLimit} sessions per day plus unlimited BYOK and priority support). Yearly billing is priced at 10 months.",
+      "planCol": "Plan",
+      "monthlyCol": "Monthly",
+      "yearlyCol": "Yearly",
+      "limitCol": "Daily AI feedback",
+      "freePrice": "Free",
+      "sessionsPerDay": "sessions/day",
+      "byokNote": "Paid plans include unlimited AI feedback with your own API key (BYOK) — the key stays in your browser."
     },
     "plans": {
       "free": {
@@ -151,8 +196,7 @@
         "features": [
           "5 AI feedback sessions per day",
           "Full training loop (write → diagnose → revise → compare)",
-          "Idea bank and draft lab",
-          "Unlimited with your own API key"
+          "Idea bank and draft lab"
         ]
       },
       "basic": {
@@ -162,6 +206,7 @@
         "features": [
           "20 AI feedback sessions per day",
           "Everything in Free",
+          "Unlimited AI with your own API key (BYOK)",
           "Unlimited sentence gym",
           "Support continued development"
         ]
@@ -178,6 +223,15 @@
         ]
       }
     }
+  },
+  "blog": {
+    "title": "Blog | WriteFit",
+    "heading": "The WriteFit Blog",
+    "desc": "Deep, opinionated essays on the craft of writing — and how to keep your own voice in the age of AI.",
+    "metaDesc": "Essays on writing craft, personal voice, and training your writing with AI — from the WriteFit team.",
+    "readMore": "Read more",
+    "byAuthor": "Jason Guo",
+    "backToBlog": "Back to blog"
   },
   "auth": {
     "login": {
@@ -430,9 +484,11 @@
     },
     "ai": {
       "configured": "AI configured",
-      "notConfigured": "AI not configured",
-      "notConfiguredDesc": "Configure to use AI diagnosis, anti-AI voice detection, and other features. Without configuration, only mock feedback is available.",
-      "title": "AI Service Configuration",
+      "platformActive": "WriteFit's hosted AI is active",
+      "platformActiveDesc": "No setup needed — your plan includes {limit} AI feedback sessions per day. Configure your own key below (optional) for unlimited usage.",
+      "byokLockedTitle": "Bring your own key (BYOK) — a Basic/Pro feature",
+      "byokLockedDesc": "Upgrade to Basic or Pro to use your own API key with unlimited AI feedback. Your key is stored only in your browser and never touches our servers.",
+      "title": "Bring Your Own Key (BYOK)",
       "provider": "AI Provider",
       "providerDesc": "Select your AI service. Any OpenAI-compatible API format is supported.",
       "customProvider": "Custom (OpenAI compatible)",
