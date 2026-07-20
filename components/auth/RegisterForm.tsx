@@ -12,7 +12,7 @@
 // ====================================================================
 
 import { useState } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link, getPathname } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTranslations, useLocale } from "next-intl";
@@ -26,6 +26,9 @@ export function RegisterForm() {
   const t = useTranslations("auth.register");
   const locale = useLocale();
   const router = useRouter();
+  // 注册/登录成功后的落地页：必须带上当前语言前缀，理由同 LoginForm
+  const onboardingUrl = getPathname({ href: "/onboarding", locale });
+  const loginUrl = getPathname({ href: "/auth/login", locale });
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,14 +62,14 @@ export function RegisterForm() {
         email,
         password,
         redirect: false,
-        callbackUrl: "/onboarding",
+        callbackUrl: onboardingUrl,
       });
 
       if (result?.error) {
         toast.error(t("errorAutoLogin"));
-        router.push("/auth/login");
+        router.push(loginUrl);
       } else {
-        router.push("/onboarding");
+        router.push(onboardingUrl);
         router.refresh();
       }
     } catch {
@@ -81,7 +84,7 @@ export function RegisterForm() {
     setGoogleLoading(true);
     try {
       // 新用户跳转到 onboarding；onboarding 页会自动把已有画像的老用户转到 dashboard
-      await signIn("google", { callbackUrl: "/onboarding" });
+      await signIn("google", { callbackUrl: onboardingUrl });
     } catch {
       toast.error(t("errorGoogle"));
       setGoogleLoading(false);

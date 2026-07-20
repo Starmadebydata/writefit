@@ -21,6 +21,7 @@ const protectedPaths = [
   "/dashboard",
   "/practice",
   "/sentence-gym",
+  "/character-workshop",
   "/drafts",
   "/ideas",
   "/progress",

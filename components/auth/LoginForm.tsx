@@ -12,10 +12,10 @@
 // ====================================================================
 
 import { useState } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link, getPathname } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,7 +24,12 @@ import { toast } from "sonner";
 
 export function LoginForm() {
   const t = useTranslations("auth.login");
+  const locale = useLocale();
   const router = useRouter();
+  // 登录成功后的落地页：必须带上当前语言前缀，否则中文用户登录后会跳到英文页
+  // （NextAuth 的 callbackUrl 是纯字符串，脱离 next-intl 的 Link/useRouter 上下文，
+  // 不会自动补前缀，必须用 getPathname 手动算出来）
+  const dashboardUrl = getPathname({ href: "/dashboard", locale });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,7 +39,7 @@ export function LoginForm() {
   async function handleGoogleLogin() {
     setGoogleLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/dashboard" });
+      await signIn("google", { callbackUrl: dashboardUrl });
     } catch {
       toast.error(t("errorGoogle"));
       setGoogleLoading(false);
@@ -51,14 +56,14 @@ export function LoginForm() {
         email,
         password,
         redirect: false,
-        callbackUrl: "/dashboard",
+        callbackUrl: dashboardUrl,
       });
 
       if (result?.error) {
         toast.error(t("errorCredentials"));
       } else {
         toast.success(t("success"));
-        router.push("/dashboard");
+        router.push(dashboardUrl);
         router.refresh();
       }
     } catch {
