@@ -24,6 +24,7 @@ import { users, accounts } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { sendWelcomeEmail } from "@/lib/email";
+import { getServerEnv } from "@/lib/server-env";
 
 // 创建一个按需获取数据库的 Auth.js 适配器
 // 普通的适配器在配置时就创建数据库连接，但 Cloudflare D1 是按请求获取的
@@ -173,17 +174,26 @@ function createD1Adapter(): Adapter {
 }
 
 // Auth.js 主配置
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  // 开发环境默认 secret：没配置 AUTH_SECRET 时用这个
-  // 生产环境必须在 .env 中设置 AUTH_SECRET
-  secret: process.env.AUTH_SECRET ?? "dev-only-secret-do-not-use-in-production",
+// 用 lazy config 函数：配置在请求期求值（模块加载/构建期 getCloudflareContext 不可用）
+export const { handlers, auth, signIn, signOut } = NextAuth(() => {
+  const secret = getServerEnv("AUTH_SECRET");
+  // 生产环境缺 AUTH_SECRET 时拒绝启动：回退到源码里的公开字符串
+  // 意味着任何人都能伪造会话 JWT
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new Error(
+      "AUTH_SECRET is not set — refusing to run with a forgeable session secret"
+    );
+  }
+
+  return {
+  secret: secret ?? "dev-only-secret-do-not-use-in-production",
   // 登录方式：
   // 1. Google 登录（Gmail，重点推荐，最方便）
   // 2. 邮箱 + 密码（传统注册登录）
   providers: [
     Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      clientId: getServerEnv("AUTH_GOOGLE_ID"),
+      clientSecret: getServerEnv("AUTH_GOOGLE_SECRET"),
     }),
     // 邮箱 + 密码登录
     Credentials({
@@ -268,4 +278,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
     },
   },
+  };
 });

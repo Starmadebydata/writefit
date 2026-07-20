@@ -14,6 +14,22 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  // 安全响应头（CSP 暂不上强制版：next-intl/PostHog/内联脚本易被打破，
+  // 如需 CSP 先用 Content-Security-Policy-Report-Only 观察）
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        ],
+      },
+    ];
+  },
 };
 
 // 用 next-intl 插件包装 Next.js 配置

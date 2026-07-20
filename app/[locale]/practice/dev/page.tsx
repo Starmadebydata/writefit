@@ -1,9 +1,9 @@
 // ====================================================================
-// 开发测试页面（不需要登录）
+// 公开演示页（有意免登录，SEO 转化入口）
 // ====================================================================
-// 这个页面让用户在配置登录环境变量之前就能体验完整的训练流程
-// 等上线配置好 AUTH_SECRET 和 OAuth 后，这个页面可以删除
-// 或者保留作为产品演示入口
+// 首页/博客/methodology 都把这里作为"免注册体验"入口链接。
+// 匿名用户点诊断时 AI 路由返回 401，前端回退到客户端 mock 反馈
+// （见 PracticeFlow isDev 分支）——不消耗平台配额、不落库。
 // ====================================================================
 
 import type { Metadata } from "next";
@@ -45,7 +45,12 @@ export async function generateMetadata(): Promise<Metadata> {
     description: descriptions[locale as "en" | "zh"],
     keywords: keywords[locale as "en" | "zh"],
     alternates: {
-      canonical: "https://writefit.app/practice/dev",
+      canonical: locale === "zh" ? "/zh/practice/dev" : "/practice/dev",
+      languages: {
+        en: "/practice/dev",
+        zh: "/zh/practice/dev",
+        "x-default": "/practice/dev",
+      },
     },
   };
 }

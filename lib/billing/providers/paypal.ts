@@ -16,6 +16,7 @@
 // ====================================================================
 
 import { getServerEnv } from "@/lib/server-env";
+import type { BillingInterval } from "../plans";
 import type { PaidPlan } from "./types";
 import {
   ProviderNotConfiguredError,
@@ -64,17 +65,26 @@ function planIdFor(plan: PaidPlan, interval: "monthly" | "yearly"): string {
   return planId;
 }
 
-function planFromPlanId(planId: string): PaidPlan | null {
-  const map: [string, PaidPlan][] = [
-    ["PAYPAL_PLAN_BASIC_MONTHLY", "basic"],
-    ["PAYPAL_PLAN_BASIC_YEARLY", "basic"],
-    ["PAYPAL_PLAN_PRO_MONTHLY", "pro"],
-    ["PAYPAL_PLAN_PRO_YEARLY", "pro"],
+function planFromPlanId(
+  planId: string
+): { plan: PaidPlan; interval: BillingInterval } | null {
+  const map: [string, PaidPlan, BillingInterval][] = [
+    ["PAYPAL_PLAN_BASIC_MONTHLY", "basic", "monthly"],
+    ["PAYPAL_PLAN_BASIC_YEARLY", "basic", "yearly"],
+    ["PAYPAL_PLAN_PRO_MONTHLY", "pro", "monthly"],
+    ["PAYPAL_PLAN_PRO_YEARLY", "pro", "yearly"],
   ];
-  for (const [envKey, plan] of map) {
-    if (getServerEnv(envKey) === planId) return plan;
+  for (const [envKey, plan, interval] of map) {
+    if (getServerEnv(envKey) === planId) return { plan, interval };
   }
   return null;
+}
+
+// 付费套餐到期时间兜底：PayPal 偶尔不返回 next_billing_time，
+// 此时给 35 天而不是 null——付费套餐绝不能无限期有效，
+// 丢失 EXPIRED webhook 时 getUserPlan() 到期自动降级，系统自愈
+function expiresAtOrFallback(iso: string | undefined): Date {
+  return toDate(iso) ?? new Date(Date.now() + 35 * 24 * 3600 * 1000);
 }
 
 // ---- PayPal API 类型（只取用到的字段） ----
@@ -216,15 +226,23 @@ export const paypalProvider: PaymentProvider = {
         // next_billing_time 都可能缺失
         if (!resource.id) return null;
         const sub = await getSubscription(resource.id);
+        // 乱序防护：迟到/重投的 ACTIVATED 到达时订阅可能已被取消/过期，
+        // 以 PayPal 权威的当前状态为准，非 ACTIVE 不赋予权限
+        if (sub.status !== "ACTIVE") {
+          console.log(`[paypal] ACTIVATED ignored: sub ${sub.id} status=${sub.status}`);
+          return null;
+        }
         const userId = sub.custom_id;
-        const plan = planFromPlanId(sub.plan_id);
-        if (!userId || !plan) return null;
+        const mapped = planFromPlanId(sub.plan_id);
+        if (!userId || !mapped) return null;
         return {
           type: "subscription.activated",
+          providerEventId: event.id,
           userId,
           providerSubscriptionId: sub.id,
-          plan,
-          expiresAt: toDate(sub.billing_info?.next_billing_time),
+          plan: mapped.plan,
+          interval: mapped.interval,
+          expiresAt: expiresAtOrFallback(sub.billing_info?.next_billing_time),
         };
       }
 
@@ -234,15 +252,22 @@ export const paypalProvider: PaymentProvider = {
         const subscriptionId = resource.billing_agreement_id;
         if (!subscriptionId) return null;
         const sub = await getSubscription(subscriptionId);
+        // 乱序防护：同 ACTIVATED，取消后迟到的扣款事件不延长权限
+        if (sub.status !== "ACTIVE") {
+          console.log(`[paypal] SALE.COMPLETED ignored: sub ${sub.id} status=${sub.status}`);
+          return null;
+        }
         const userId = sub.custom_id;
-        const plan = planFromPlanId(sub.plan_id);
-        if (!userId || !plan) return null;
+        const mapped = planFromPlanId(sub.plan_id);
+        if (!userId || !mapped) return null;
         return {
           type: "subscription.renewed",
+          providerEventId: event.id,
           userId,
           providerSubscriptionId: subscriptionId,
-          plan,
-          expiresAt: toDate(sub.billing_info?.next_billing_time),
+          plan: mapped.plan,
+          interval: mapped.interval,
+          expiresAt: expiresAtOrFallback(sub.billing_info?.next_billing_time),
         };
       }
 
@@ -254,6 +279,7 @@ export const paypalProvider: PaymentProvider = {
         if (!userId) return null;
         return {
           type: "subscription.canceled",
+          providerEventId: event.id,
           userId,
           providerSubscriptionId: resource.id,
           endsAt: null, // PayPal 取消后权限保留到周期末，由 EXPIRED 事件做最终降级
@@ -267,6 +293,7 @@ export const paypalProvider: PaymentProvider = {
         if (!userId) return null;
         return {
           type: "subscription.expired",
+          providerEventId: event.id,
           userId,
           providerSubscriptionId: resource.id,
         };
@@ -279,6 +306,7 @@ export const paypalProvider: PaymentProvider = {
         if (!userId) return null;
         return {
           type: "subscription.payment_failed",
+          providerEventId: event.id,
           userId,
           providerSubscriptionId: resource.id,
         };
@@ -301,8 +329,15 @@ export const paypalProvider: PaymentProvider = {
       });
       return true;
     } catch (error) {
+      // 已取消/已过期的订阅再取消：PayPal 返回 422 SUBSCRIPTION_STATUS_INVALID。
+      // 对用户来说取消是幂等的，视为成功；其他错误抛给路由层区分处理
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes("422") && message.includes("SUBSCRIPTION_STATUS_INVALID")) {
+        console.log("[paypal] subscription already canceled/expired, treating as success");
+        return true;
+      }
       console.error("[paypal] cancel subscription failed:", error);
-      return false;
+      throw error;
     }
   },
 };

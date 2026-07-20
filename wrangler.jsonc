@@ -22,6 +22,10 @@
   "vars": {
     "NEXTAUTH_URL": "https://writefit.app"
   },
+  // Workers Logs：持久化 console 日志（[billing]/[webhook] 等），Dashboard 可查询
+  "observability": {
+    "enabled": true
+  },
   // Cloudflare Email Service 发信 binding（Workers Paid，域名已在 Dashboard 绑定）
   // 代码里通过 env.EMAIL.send() 发邮件，见 lib/email.ts
   "send_email": [

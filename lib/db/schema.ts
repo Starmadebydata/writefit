@@ -32,6 +32,7 @@ export const users = sqliteTable("users", {
   paymentCustomerId: text("payment_customer_id"), // 支付平台客户 ID（PayPal/Creem/Stripe 通用）
   paymentProvider: text("payment_provider"), // 支付平台标识：paypal / creem / stripe
   paymentSubscriptionId: text("payment_subscription_id"), // 支付平台订阅 ID（取消/校对状态用）
+  planInterval: text("plan_interval"), // 账单周期：monthly / yearly（null = 免费用户或历史数据）
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
@@ -237,6 +238,16 @@ export const usageRecords = sqliteTable(
   },
   (table) => [uniqueIndex("usage_user_date_endpoint").on(table.userId, table.date, table.endpoint)]
 );
+
+// 账单 webhook 事件表 —— 记录已处理的支付平台事件 ID，用于幂等去重
+// （PayPal 会重投 webhook；主键冲突 = 重复事件，跳过处理）
+export const billingEvents = sqliteTable("billing_events", {
+  id: text("id").primaryKey(), // 支付平台事件 ID（PayPal webhook event.id，"WH-..."）
+  provider: text("provider").notNull(), // 支付平台标识：paypal / creem / stripe
+  eventType: text("event_type").notNull(), // 统一事件类型（subscription.activated 等）
+  userId: text("user_id"), // 关联用户（可空：事件可能解析不出用户）
+  processedAt: integer("processed_at", { mode: "timestamp" }).notNull(), // 处理时间
+});
 
 // ------------------------------------------------------------------
 // 表关系定义（告诉数据库表和表之间怎么关联）

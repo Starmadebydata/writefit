@@ -38,7 +38,18 @@ export async function POST() {
     }
 
     const provider = getPaymentProvider(user.paymentProvider);
-    const ok = await provider.cancelSubscription(user.paymentSubscriptionId);
+    let ok: boolean;
+    try {
+      ok = await provider.cancelSubscription(user.paymentSubscriptionId);
+    } catch (error) {
+      if (error instanceof ProviderNotConfiguredError) throw error;
+      // 支付平台侧错误（网络/5xx 等）：区分于我们自身的 500
+      console.error("Cancel subscription provider error:", error);
+      return NextResponse.json(
+        { error: "Payment provider error, please try again later", code: "PROVIDER_ERROR" },
+        { status: 502 }
+      );
+    }
     if (!ok) {
       return NextResponse.json({ error: "Cancellation failed, please try again" }, { status: 500 });
     }

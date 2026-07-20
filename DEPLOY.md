@@ -124,3 +124,35 @@ npm run dev
 2. 打开 https://writefit.app/practice/dev 能体验训练流程
 3. 打开 https://writefit.app/ai-setup 能配置 AI
 4. 点击登录能跳转到 GitHub/Google 授权页面
+
+## 六、安全加固（2026-07 审计后新增）
+
+### 部署顺序（本次加固涉及数据库迁移）
+
+1. 先应用生产数据库迁移（新增 billing_events 表和 users.plan_interval 列）：
+   ```bash
+   wrangler d1 migrations apply writefit-db --remote
+   ```
+2. 再部署代码：`npm run deploy`
+3. 部署前确认 `wrangler secret list` 里有 `AUTH_SECRET`——
+   现在生产环境缺失时会直接拒绝启动（防伪造会话）。
+4. 部署后 `wrangler tail` 观察 5-10 分钟。
+
+### Cloudflare WAF 限流规则（Dashboard → Security → WAF → Rate limiting rules）
+
+代码层不做 IP 限流（Workers 无 Redis，D1 限流自身有竞态），用 WAF 兜底：
+
+| 优先级 | 路径 | 规则 | 动作 |
+|---|---|---|---|
+| 1 | `/api/auth/register` | 5 次 / 10 秒 / IP | Block 1 分钟（防 bcrypt CPU 滥用、邮箱枚举、批量注册） |
+| 2 | `/api/webhooks/paypal` | 30 次 / 10 秒 / IP | Block（防出站 PayPal 验签调用被放大） |
+| 3 | `/api/ai*` | 30 次 / 分钟 / IP | Block（用户配额之上的 IP 级兜底） |
+
+Free plan 只能建 1 条规则时，保留优先级 1（register 暴露面最大）。
+
+### 其他一次性配置
+
+- Dashboard → SSL/TLS → Edge Certificates → 开启 HSTS（覆盖静态资源；
+  Worker 响应已带 Strict-Transport-Security 头）
+- Dashboard → Workers → writefit → 设置错误率告警通知
+  （wrangler.jsonc 已开启 observability，console 日志可在 Dashboard 查询）

@@ -28,35 +28,43 @@ export interface CheckoutResult {
 
 // 支付平台 webhook 验签后解析出的统一事件
 // 各 provider 把自己的事件模型映射成这几种，业务层只认这个
+// providerEventId：平台事件 ID（PayPal 的 "WH-..."），用于 billing_events 幂等去重
 export type BillingEvent =
   | {
       type: "subscription.activated"; // 首次订阅成功（开通套餐）
+      providerEventId: string;
       userId: string;
       providerSubscriptionId: string;
       customerId?: string;
       plan: PaidPlan;
-      expiresAt: Date | null; // 下一计费日（null = 平台不提供）
+      interval: BillingInterval | null; // 账单周期（null = 平台无法判断）
+      expiresAt: Date; // 下一计费日（平台不提供时 provider 层给兜底值，付费套餐不允许 null）
     }
   | {
       type: "subscription.renewed"; // 续费成功（延长到期时间）
+      providerEventId: string;
       userId: string;
       providerSubscriptionId: string;
       plan: PaidPlan;
-      expiresAt: Date | null;
+      interval: BillingInterval | null;
+      expiresAt: Date;
     }
   | {
       type: "subscription.canceled"; // 用户取消（到期降级，不是立即）
+      providerEventId: string;
       userId: string;
       providerSubscriptionId: string;
       endsAt: Date | null; // 取消生效日（null = 平台不提供，按当前到期时间）
     }
   | {
       type: "subscription.expired"; // 订阅到期结束（降级为 free）
+      providerEventId: string;
       userId: string;
       providerSubscriptionId: string;
     }
   | {
       type: "subscription.payment_failed"; // 扣款失败（先标记，不立即降级）
+      providerEventId: string;
       userId: string;
       providerSubscriptionId: string;
     };

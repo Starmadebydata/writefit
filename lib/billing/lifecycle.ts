@@ -10,8 +10,8 @@
 
 import { drizzle } from "drizzle-orm/d1";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { eq } from "drizzle-orm";
-import { users } from "@/lib/db/schema";
+import { and, eq, isNull, or } from "drizzle-orm";
+import { billingEvents, users } from "@/lib/db/schema";
 import type { BillingEvent, PaymentProviderId } from "./providers/types";
 
 export async function applyBillingEvent(
@@ -22,12 +22,32 @@ export async function applyBillingEvent(
   const db = drizzle(env.DB);
   const now = new Date();
 
+  // ---- 幂等去重：同一平台事件 ID 只处理一次 ----
+  // 先占位再处理：极端情况下（占位成功后处理中崩溃）该事件不会被重放，
+  // 可接受——各分支的更新本身幂等，且续费事件/状态回查会自愈
+  const inserted = await db
+    .insert(billingEvents)
+    .values({
+      id: event.providerEventId,
+      provider: providerId,
+      eventType: event.type,
+      userId: event.userId,
+      processedAt: now,
+    })
+    .onConflictDoNothing()
+    .returning({ id: billingEvents.id });
+  if (inserted.length === 0) {
+    console.log(`[billing] duplicate event ${event.providerEventId}, skipping`);
+    return;
+  }
+
   switch (event.type) {
     case "subscription.activated": {
       await db
         .update(users)
         .set({
           plan: event.plan,
+          planInterval: event.interval,
           planExpiresAt: event.expiresAt,
           paymentProvider: providerId,
           paymentSubscriptionId: event.providerSubscriptionId,
@@ -40,17 +60,28 @@ export async function applyBillingEvent(
     }
 
     case "subscription.renewed": {
-      // 续费：更新套餐和到期时间（升降级后 plan 可能变化）
+      // 续费：更新套餐和到期时间（升降级后 plan 可能变化）。
+      // 防护：仅当事件的订阅 ID 与用户当前订阅一致（或用户还没有订阅）时更新，
+      // 防止旧订阅的迟到扣款事件覆盖用户新开的订阅
       await db
         .update(users)
         .set({
           plan: event.plan,
+          planInterval: event.interval,
           planExpiresAt: event.expiresAt,
           paymentProvider: providerId,
           paymentSubscriptionId: event.providerSubscriptionId,
           updatedAt: now,
         })
-        .where(eq(users.id, event.userId));
+        .where(
+          and(
+            eq(users.id, event.userId),
+            or(
+              isNull(users.paymentSubscriptionId),
+              eq(users.paymentSubscriptionId, event.providerSubscriptionId)
+            )
+          )
+        );
       console.log(`[billing] renewed: user=${event.userId} plan=${event.plan} until=${event.expiresAt}`);
       break;
     }
@@ -62,14 +93,25 @@ export async function applyBillingEvent(
     }
 
     case "subscription.expired": {
+      // 防护：仅当过期的正是用户当前记录的订阅时才降级，
+      // 防止旧订阅的 EXPIRED 事件误杀用户新开的订阅
       await db
         .update(users)
         .set({
           plan: "free",
+          planInterval: null,
           planExpiresAt: null,
           updatedAt: now,
         })
-        .where(eq(users.id, event.userId));
+        .where(
+          and(
+            eq(users.id, event.userId),
+            or(
+              isNull(users.paymentSubscriptionId),
+              eq(users.paymentSubscriptionId, event.providerSubscriptionId)
+            )
+          )
+        );
       console.log(`[billing] expired: user=${event.userId} → free`);
       break;
     }

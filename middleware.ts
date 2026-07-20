@@ -25,6 +25,7 @@ const protectedPaths = [
   "/ideas",
   "/progress",
   "/settings",
+  "/ai-setup",
 ];
 
 export async function middleware(req: NextRequest) {
@@ -53,11 +54,11 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // /practice/dev 和 /ai-setup 是开发测试页面，不需要登录
+  // /practice/dev 是有意公开的免注册演示页（SEO 转化入口）：
+  // 匿名用户拿到的是客户端 mock 反馈，真正的 AI/数据接口仍需登录
   const isProtectedPath =
     protectedPaths.some((path) => pathname.startsWith(path)) &&
-    !pathname.startsWith("/practice/dev") &&
-    !pathname.startsWith("/ai-setup");
+    !pathname.startsWith("/practice/dev");
 
   // 如果是需要保护的页面，但用户没登录 → 跳转到登录页
   if (isProtectedPath && !isLoggedIn) {

@@ -12,15 +12,24 @@
 // ====================================================================
 
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth/auth";
 
 // GET：读取用户的 AI 设置
 // 开发阶段返回空（前端会回退到 localStorage）
 export async function GET() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   return NextResponse.json({ notConfigured: true });
 }
 
 // POST：保存用户的 AI 设置
 export async function POST(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const body = await req.json();
     const { provider, apiBaseUrl, apiKey, model, temperature, maxTokens } = body;
@@ -53,5 +62,9 @@ export async function POST(req: NextRequest) {
 
 // DELETE：删除用户的 AI 设置
 export async function DELETE() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   return NextResponse.json({ success: true });
 }

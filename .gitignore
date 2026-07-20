@@ -50,3 +50,6 @@ next-env.d.ts
 
 # 开发过程文件，本地参考用，不提交
 HANDOVER.md
+
+# wrangler 本地状态（dev 数据库等）
+.wrangler/

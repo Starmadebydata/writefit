@@ -9,8 +9,8 @@ import { mockAntiAIVoice } from "@/lib/ai/mock";
 import { auth } from "@/lib/auth/auth";
 import { getUserBannedPhrases } from "@/lib/db/profile";
 import { getPlatformAIConfig } from "@/lib/ai/platform";
-import { getUserPlan } from "@/lib/billing/plans";
-import { checkAiQuota, recordAiUsage } from "@/lib/billing/usage";
+import { getUserPlan, isByokAllowed } from "@/lib/billing/plans";
+import { checkAndRecordAiUsage } from "@/lib/billing/usage";
 import type { AntiAIVoiceFeedback } from "@/lib/ai/schemas";
 
 export async function POST(req: NextRequest) {
@@ -33,10 +33,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 决定用谁的 Key：用户自带（BYOK，不限量）> 平台托管（按套餐限量）
+    // 决定用谁的 Key：用户自带（BYOK）> 平台托管（按套餐限量）
     let effectiveConfig: AIConfig | null =
       aiConfig?.apiKey ? (aiConfig as AIConfig) : null;
-    let usingPlatformKey = false;
+
+    // BYOK 是付费功能（Basic/Pro）：免费用户带 Key 也拒绝，引导升级
+    if (effectiveConfig) {
+      const plan = await getUserPlan(session.user.id);
+      if (!isByokAllowed(plan)) {
+        return NextResponse.json(
+          {
+            error: locale === "zh" ? "自带 Key（BYOK）是付费功能，升级 Basic 或 Pro 即可不限量使用自己的 API Key" : "Bring-your-own-key is a paid feature. Upgrade to Basic or Pro to use your own API key with unlimited AI feedback.",
+            code: "BYOK_REQUIRES_PAID",
+          },
+          { status: 402 }
+        );
+      }
+    }
 
     if (!effectiveConfig) {
       const platformConfig = getPlatformAIConfig();
@@ -45,9 +58,9 @@ export async function POST(req: NextRequest) {
         const mockResult = mockAntiAIVoice(text, locale);
         return NextResponse.json({ ...mockResult, _mock: true });
       }
-      // 平台 Key 路径：检查套餐配额（只读，成功调用后才计量）
+      // 平台 Key 路径：原子预扣 1 次并判定配额（防并发超额）
       const plan = await getUserPlan(session.user.id);
-      const quota = await checkAiQuota(session.user.id, plan);
+      const quota = await checkAndRecordAiUsage(session.user.id, "anti-ai-voice", plan);
       if (!quota.allowed) {
         return NextResponse.json(
           {
@@ -60,7 +73,6 @@ export async function POST(req: NextRequest) {
         );
       }
       effectiveConfig = platformConfig;
-      usingPlatformKey = true;
     }
 
     // 读取用户在设置里配置的自定义禁用词，注入 prompt
@@ -82,10 +94,7 @@ export async function POST(req: NextRequest) {
       jsonMode: true,
     });
 
-    // 平台 Key 调用成功才计量
-    if (usingPlatformKey) {
-      await recordAiUsage(session.user.id, "anti-ai-voice", 1);
-    }
+    // 计量已在配额判定时预扣，此处无需再记
 
     return NextResponse.json(result);
   } catch (error) {
