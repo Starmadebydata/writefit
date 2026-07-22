@@ -19,9 +19,12 @@ import { setRequestLocale, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { softwareApplicationJsonLd } from "@/lib/jsonld";
+import { HOME_META } from "@/lib/seo/home-meta";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { TryItSection } from "@/components/practice/TryItSection";
+import { FaqSection } from "@/components/marketing/FaqSection";
 import {
   PenLine,
   Brain,
@@ -34,28 +37,16 @@ import {
 } from "lucide-react";
 
 // 动态 SEO 元数据
+// title/description 与 layout.tsx 共用 HOME_META 同一份文案。
+// og:*/twitter:* 由 layout 提供（同源，天然一致）；page 不覆盖 openGraph，
+// 因为 Next 对 openGraph 是整对象替换，覆盖会丢 layout 的 images/siteName。
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocale();
-
-  const titles = {
-    en: "WriteFit | Start Your Daily Write Practice with an AI Coach",
-    zh: "WriteFit | AI 写作教练 - 每日写作训练",
-  };
-
-  const descriptions = {
-    en: "Looking for a write practice that actually works? WriteFit is an AI writing coach that gives you daily writing exercises, instant feedback, and a clear path to improve your writing.",
-    zh: "寻找真正有效的写作训练？WriteFit 是 AI 写作教练，提供每日写作练习、即时反馈和清晰的提升路径。",
-  };
-
-  const keywords = {
-    en: ["write practice", "writing practice", "daily writing practice", "writing exercises", "AI writing coach"],
-    zh: ["写作训练", "写作练习", "每日写作", "AI 写作教练", "提升写作"],
-  };
+  const locale = (await getLocale()) as "en" | "zh";
 
   return {
-    title: titles[locale as "en" | "zh"],
-    description: descriptions[locale as "en" | "zh"],
-    keywords: keywords[locale as "en" | "zh"],
+    title: HOME_META.titles[locale],
+    description: HOME_META.descriptions[locale],
+    keywords: [...HOME_META.keywords[locale]],
     alternates: {
       canonical: locale === "zh" ? "/zh" : "/",
       languages: {
@@ -210,6 +201,13 @@ function LandingContent() {
       </section>
 
       {/* ================================================================
+          2.5 立即试用 —— 首页嵌入真实可用的练习流程（首页 SEO 结构问题的核心修复）
+      ================================================================ */}
+      <div className="border-b border-border">
+        <TryItSection variant="home" />
+      </div>
+
+      {/* ================================================================
           3. 产品机制 —— WriteFit 怎么帮你
       ================================================================ */}
       <section id="how-it-works" className="bg-muted/30 border-y border-border">
@@ -285,7 +283,7 @@ function LandingContent() {
       {/* ================================================================
           5.5 FAQ —— 常见问题（同时输出 FAQPage JSON-LD，供 AI/搜索抽取）
       ================================================================ */}
-      <FaqSection t={t} />
+      <FaqSection title={t("faq.title")} items={t.raw("faq.items")} />
 
       {/* ================================================================
           6. CTA —— 最终行动号召
@@ -317,6 +315,9 @@ function LandingContent() {
             <Link href="/methodology" className="hover:text-foreground">
               {t("footer.methodology")}
             </Link>
+            <Link href="/ai-writing-training" className="hover:text-foreground">
+              {t("footer.aiWritingTraining")}
+            </Link>
             <Link href="/blog" className="hover:text-foreground">
               {t("footer.blog")}
             </Link>
@@ -333,48 +334,5 @@ function LandingContent() {
         </div>
       </footer>
     </div>
-  );
-}
-
-
-// ====================================================================
-// FAQ 区块（Landing 专用）
-// 可见问答与 FAQPage JSON-LD 同源（同一份翻译文案），
-// 保证 schema 内容与页面文字一致，供搜索引擎/AI 抽取。
-// ====================================================================
-function FaqSection({ t }: { t: ReturnType<typeof useTranslations> }) {
-  const items = t.raw("faq.items") as Array<{ q: string; a: string }>;
-
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: items.map((item) => ({
-      "@type": "Question",
-      name: item.q,
-      acceptedAnswer: { "@type": "Answer", text: item.a },
-    })),
-  };
-
-  return (
-    <section className="mx-auto max-w-3xl px-6 py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-      <h2 className="text-3xl font-bold text-center mb-10">
-        {t("faq.title")}
-      </h2>
-      <div className="space-y-6">
-        {items.map((item, i) => (
-          <div
-            key={i}
-            className="rounded-lg border border-border bg-card p-5"
-          >
-            <h3 className="font-semibold mb-2">{item.q}</h3>
-            <p className="text-sm text-muted-foreground leading-7">{item.a}</p>
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }

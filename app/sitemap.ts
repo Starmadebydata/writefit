@@ -16,6 +16,7 @@ const PUBLIC_PAGES: Array<{ path: string; priority: number }> = [
   { path: "", priority: 1 },
   { path: "/pricing", priority: 0.8 },
   { path: "/practice/dev", priority: 0.8 },
+  { path: "/ai-writing-training", priority: 0.8 },
   { path: "/blog", priority: 0.7 },
   { path: "/about", priority: 0.6 },
   { path: "/methodology", priority: 0.6 },

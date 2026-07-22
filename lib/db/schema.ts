@@ -239,6 +239,24 @@ export const usageRecords = sqliteTable(
   (table) => [uniqueIndex("usage_user_date_endpoint").on(table.userId, table.date, table.endpoint)]
 );
 
+// 匿名 AI 用量记录表 —— 按 IP hash 计量未登录用户的平台 Key 调用
+// ip_hash = SHA-256(IP + 盐 + UTC 日期)：含日期即天然每日轮换，
+// 无法跨天关联同一访客，且不落原始 IP。不关联 users 表（无 FK）。
+// 唯一索引 (ip_hash, date, endpoint)，累加用 upsert，与 usage_records 同构
+export const anonUsageRecords = sqliteTable(
+  "anon_usage_records",
+  {
+    id: text("id").primaryKey(),
+    ipHash: text("ip_hash").notNull(),
+    date: text("date").notNull(), // 日期（YYYY-MM-DD，UTC）
+    endpoint: text("endpoint").notNull(), // diagnose / compare-revision
+    count: integer("count").notNull().default(0), // 当日累计调用次数
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [uniqueIndex("anon_usage_hash_date_endpoint").on(table.ipHash, table.date, table.endpoint)]
+);
+
 // 账单 webhook 事件表 —— 记录已处理的支付平台事件 ID，用于幂等去重
 // （PayPal 会重投 webhook；主键冲突 = 重复事件，跳过处理）
 export const billingEvents = sqliteTable("billing_events", {

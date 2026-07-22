@@ -16,6 +16,7 @@ import { getLocale, getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/jsonld";
+import { HOME_META } from "@/lib/seo/home-meta";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -36,15 +37,9 @@ export function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
 
-  const titles = {
-    en: "WriteFit | AI Writing Coach for Daily Writing Practice",
-    zh: "WriteFit | AI 写作教练 - 每日写作训练",
-  };
-
-  const descriptions = {
-    en: "WriteFit is an AI writing coach that helps you practice, revise, and build your own writing voice. Start a daily write practice and improve with AI feedback.",
-    zh: "WriteFit 是一个 AI 写作教练，帮助你练习、修改、建立自己的写作声音。每天 15 分钟，通过 AI 反馈提升写作能力。",
-  };
+  // 首页 title/description 的唯一权威文案在 lib/seo/home-meta.ts，
+  // layout 与 page 共用同一份，避免 page 覆盖 title 而 OG 仍是 layout 旧文案
+  const { titles, descriptions } = HOME_META;
 
   return {
     title: titles[locale as "en" | "zh"],

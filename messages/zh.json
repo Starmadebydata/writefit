@@ -32,9 +32,9 @@
     "characterWorkshop": "人物工坊"
   },
   "landing": {
-    "heroBadge": "AI Native 写作训练",
-    "heroTitle": "每天 15 分钟，\n重新训练你的写作肌肉",
-    "heroDesc": "WriteFit 是一个 AI 写作教练。它不会直接替你写文章，\n而是帮助你练习、修改、积累，慢慢找回自己的表达能力。",
+    "heroBadge": "AI 写作教练 · 每日写作训练",
+    "heroTitle": "跟 AI 教练练写作——\n每天 15 分钟",
+    "heroDesc": "WriteFit 把每日写作练习变成真正的 AI 写作训练。它不会直接替你写文章，\n而是帮助你练习、修改、积累，慢慢找回自己的表达能力。",
     "startTraining": "开始训练",
     "learnMore": "了解原理",
     "tryDemo": "体验训练流程（无需登录）→",
@@ -49,7 +49,8 @@
       "terms": "服务条款",
       "about": "关于",
       "methodology": "方法论",
-      "blog": "博客"
+      "blog": "博客",
+      "aiWritingTraining": "AI 写作训练"
     },
     "faq": {
       "title": "常见问题",
@@ -151,9 +152,29 @@
       ]
     },
     "cta": {
-      "title": "今天开始训练你的写作",
-      "desc": "每天 15 分钟。不用 AI 代写。只有你，变得更好。",
+      "title": "今天开始你的 AI 写作训练",
+      "desc": "每天 15 分钟的写作练习。不用 AI 代写。只有你，变得更好。",
       "button": "开始训练"
+    },
+    "tryIt": {
+      "badge": "立即试用",
+      "title": "现在就体验 AI 写作教练",
+      "subtitle": "在下面写几句话，立刻获得真实的 AI 写作训练反馈——无需注册。",
+      "promptLabel": "今日题目",
+      "placeholder": "在这里开始写作……",
+      "wordCount": "{count} / {min} 词",
+      "submit": "获取 AI 反馈",
+      "loading": "加载中……",
+      "diagnosing": "AI 正在分析你的写作……",
+      "errorMinWords": "至少写 {minWords} 词才能获得反馈。",
+      "errorFailed": "出了点问题，请重试。",
+      "remainingToday": "今日还剩 {count} 次免费体验",
+      "continueCta": "想继续修改并对比版本？注册解锁完整的每日写作训练流程，完全免费。",
+      "tryAnother": "换一道题",
+      "registerCta": "免费注册",
+      "quotaExceededTitle": "今日 2 次免费体验已用完",
+      "quotaExceededDesc": "注册后每天可用 5 次真实 AI 诊断，并保存训练历史。",
+      "noLoginNeeded": "本次试用无需登录，每天 2 次免费 AI 诊断。"
     }
   },
   "pricing": {
@@ -360,7 +381,7 @@
         "revision": "修改",
         "complete": "完成"
       },
-      "devMode": "🔧 开发测试模式 —— 不需要登录，训练数据不会保存到数据库",
+      "devMode": "🔧 免登录演示 —— 今日可用 2 次真实 AI 诊断，训练数据不会保存。注册后每天 5 次。",
       "todaysPrompt": "今日题目",
       "writingInstructions": "开始写吧。不要修改，不要追求完美，先把脑子里的东西倒出来。",
       "minWordsWarning": "至少需要 {minWords} 字才能提交",
@@ -425,7 +446,10 @@
       "shareButton": "分享成果",
       "shareCopied": "已复制到剪贴板，去分享吧",
       "errorShareFailed": "复制失败，请手动复制",
-      "shareText": "我在 WriteFit 完成了今天的写作训练：修改稿 {words} 字，连续训练 {streak} 天。每天 15 分钟，训练自己的写作 → https://writefit.app"
+      "shareText": "我在 WriteFit 完成了今天的写作训练：修改稿 {words} 字，连续训练 {streak} 天。每天 15 分钟，训练自己的写作 → https://writefit.app",
+      "anonRemaining": "免登录演示 —— 今日还剩 {count} 次真实 AI 诊断",
+      "anonQuotaExceeded": "今日免费体验次数已用完。注册后每天可用 5 次真实 AI 诊断，完全免费。",
+      "registerCta": "免费注册 →"
     },
     "editor": {
       "placeholder": "开始写吧。不要修改，不要追求完美，先把脑子里的东西倒出来。",
@@ -705,7 +729,7 @@
     "title": "开发测试",
     "backHome": "返回首页",
     "devMode": "这是演示模式",
-    "desc": "无需登录即可体验完整训练流程。演示使用模拟 AI 反馈，数据不会保存。注册账号后可获得真实 AI 诊断并保存训练记录。",
+    "desc": "无需登录即可体验完整训练流程——今日可获得 2 次真实 AI 诊断（非模拟数据），但不会保存训练记录。注册账号后每天可用 5 次真实 AI 诊断，并保存训练历史。",
     "registerCta": "免费注册 →"
   },
   "sentenceGym": {

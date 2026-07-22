@@ -32,9 +32,9 @@
     "characterWorkshop": "Character Workshop"
   },
   "landing": {
-    "heroBadge": "AI Native Writing Training",
-    "heroTitle": "15 minutes a day,\nretrain your writing muscles",
-    "heroDesc": "WriteFit is an AI writing coach. It doesn't write for you —\nit helps you practice, revise, and build your own voice over time.",
+    "heroBadge": "AI Writing Coach · Daily Writing Training",
+    "heroTitle": "Train your writing with an AI coach —\n15 minutes a day",
+    "heroDesc": "WriteFit turns daily writing practice into real AI writing training. It doesn't write for you —\nit helps you practice, revise, and build your own voice over time.",
     "startTraining": "Start Training",
     "learnMore": "How It Works",
     "tryDemo": "Try the practice flow (no login needed) →",
@@ -49,7 +49,8 @@
       "terms": "Terms of Service",
       "about": "About",
       "methodology": "Method",
-      "blog": "Blog"
+      "blog": "Blog",
+      "aiWritingTraining": "AI Writing Training"
     },
     "faq": {
       "title": "Frequently asked questions",
@@ -151,9 +152,29 @@
       ]
     },
     "cta": {
-      "title": "Start training your writing today",
-      "desc": "15 minutes a day. No AI ghostwriting. Just you, getting better.",
+      "title": "Start your AI writing training today",
+      "desc": "A daily writing practice, 15 minutes a day. No AI ghostwriting. Just you, getting better.",
       "button": "Start Training"
+    },
+    "tryIt": {
+      "badge": "Try it now",
+      "title": "Try the AI writing coach right now",
+      "subtitle": "Write a few sentences below and get real AI writing training feedback — no signup required.",
+      "promptLabel": "Today's prompt",
+      "placeholder": "Start writing here...",
+      "wordCount": "{count} / {min} words",
+      "submit": "Get AI feedback",
+      "loading": "Loading...",
+      "diagnosing": "AI is analyzing your writing...",
+      "errorMinWords": "Write at least {minWords} words to get feedback.",
+      "errorFailed": "Something went wrong. Please try again.",
+      "remainingToday": "{count} free tries left today",
+      "continueCta": "Want to revise and compare versions? Sign up free for the full daily writing training flow.",
+      "tryAnother": "Try another prompt",
+      "registerCta": "Sign up free",
+      "quotaExceededTitle": "You've used today's 2 free tries",
+      "quotaExceededDesc": "Sign up free to get 5 real AI diagnoses every day and keep your training history.",
+      "noLoginNeeded": "No login needed for this trial. 2 free AI diagnoses per day."
     }
   },
   "pricing": {
@@ -360,7 +381,7 @@
         "revision": "Revision",
         "complete": "Complete"
       },
-      "devMode": "Dev test mode — no login required, practice data won't be saved",
+      "devMode": "Free demo — try 2 real AI diagnoses today, no login required. Sign up for 5/day.",
       "todaysPrompt": "Today's Prompt",
       "writingInstructions": "Write freely. Don't edit, don't chase perfection. Just get what's in your head onto the page.",
       "minWordsWarning": "Minimum {minWords} words required",
@@ -425,7 +446,10 @@
       "shareButton": "Share",
       "shareCopied": "Copied to clipboard — share it!",
       "errorShareFailed": "Copy failed, please copy manually",
-      "shareText": "I finished today's writing practice on WriteFit: {words} words revised, {streak}-day streak. 15 minutes a day to train your own writing → https://writefit.app"
+      "shareText": "I finished today's writing practice on WriteFit: {words} words revised, {streak}-day streak. 15 minutes a day to train your own writing → https://writefit.app",
+      "anonRemaining": "Free demo — {count} real AI diagnoses left today (no login required)",
+      "anonQuotaExceeded": "You've used today's free tries. Sign up free to get 5 real AI diagnoses every day.",
+      "registerCta": "Sign up free →"
     },
     "editor": {
       "placeholder": "Start writing. Don't edit, don't chase perfection. Just get what's in your head onto the page.",
@@ -705,7 +729,7 @@
     "title": "Demo",
     "backHome": "Back to Home",
     "devMode": "This is demo mode",
-    "desc": "Try the full practice flow without logging in. The demo uses simulated AI feedback and nothing is saved. Sign up to get real AI diagnosis and keep your training history.",
+    "desc": "Try the full practice flow without logging in — get 2 real AI diagnoses today, no simulated data. Nothing is saved. Sign up free to get 5 real AI diagnoses every day and keep your training history.",
     "registerCta": "Sign up free →"
   },
   "sentenceGym": {

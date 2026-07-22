@@ -22,6 +22,12 @@ import { getPlatformAIConfig } from "@/lib/ai/platform";
 import { getUserPlan, isByokAllowed } from "@/lib/billing/plans";
 import { checkAndRecordAiUsage, recordAiUsage } from "@/lib/billing/usage";
 import {
+  checkAndRecordAnonUsage,
+  getAnonQuotaSalt,
+  getClientIp,
+  hashAnonId,
+} from "@/lib/billing/anonUsage";
+import {
   sanitizeDiagnoseFeedback,
   isUsableDiagnose,
   type DiagnoseFeedback,
@@ -34,11 +40,9 @@ const RETRY_HINT =
 
 export async function POST(req: NextRequest) {
   try {
-    // 检查登录状态
+    // 登录用户走套餐配额；未登录走匿名小额配额（每 IP 每天 2 次，见 anonUsage.ts）
     const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
+    const userId = session?.user?.id ?? null;
 
     const {
       text,
@@ -60,13 +64,15 @@ export async function POST(req: NextRequest) {
     }
 
     // 决定用谁的 Key：用户自带（BYOK）> 平台托管（按套餐限量）
+    // 匿名请求忽略 aiConfig：防止匿名 BYOK 绕过付费墙 / 平台被当 prompt 代理
     let effectiveConfig: AIConfig | null =
-      aiConfig?.apiKey ? (aiConfig as AIConfig) : null;
+      userId && aiConfig?.apiKey ? (aiConfig as AIConfig) : null;
     let usingPlatformKey = false;
+    let anonRemaining: number | null = null;
 
     // BYOK 是付费功能（Basic/Pro）：免费用户带 Key 也拒绝，引导升级
-    if (effectiveConfig) {
-      const plan = await getUserPlan(session.user.id);
+    if (effectiveConfig && userId) {
+      const plan = await getUserPlan(userId);
       if (!isByokAllowed(plan)) {
         return NextResponse.json(
           {
@@ -80,27 +86,49 @@ export async function POST(req: NextRequest) {
 
     if (!effectiveConfig) {
       const platformConfig = getPlatformAIConfig();
-      if (!platformConfig) {
-        // 平台未配置 Key（本地开发）：返回模拟反馈
+      // 匿名路径还需要配额盐；平台 Key 或盐缺失（本地开发）都回退模拟反馈
+      const anonSalt = userId ? null : getAnonQuotaSalt();
+      if (!platformConfig || (!userId && !anonSalt)) {
         const mockResult = mockDiagnose(text, locale);
         return NextResponse.json({
           ...mockResult,
           _mock: true,
         });
       }
-      // 平台 Key 路径：原子预扣 1 次并判定配额（防并发超额）
-      const plan = await getUserPlan(session.user.id);
-      const quota = await checkAndRecordAiUsage(session.user.id, "diagnose", plan);
-      if (!quota.allowed) {
-        return NextResponse.json(
-          {
-            error: locale === "zh" ? "今日免费 AI 次数已用完，明天重置" : "You've used up today's free AI credits. They reset tomorrow.",
-            code: "QUOTA_EXCEEDED",
-            used: quota.used,
-            limit: quota.limit,
-          },
-          { status: 402 }
-        );
+      if (userId) {
+        // 平台 Key 路径：原子预扣 1 次并判定配额（防并发超额）
+        const plan = await getUserPlan(userId);
+        const quota = await checkAndRecordAiUsage(userId, "diagnose", plan);
+        if (!quota.allowed) {
+          return NextResponse.json(
+            {
+              error: locale === "zh" ? "今日免费 AI 次数已用完，明天重置" : "You've used up today's free AI credits. They reset tomorrow.",
+              code: "QUOTA_EXCEEDED",
+              used: quota.used,
+              limit: quota.limit,
+            },
+            { status: 402 }
+          );
+        }
+      } else {
+        // 匿名路径：按 IP hash 预扣，超额引导注册（免费 5 次/天）
+        const ipHash = await hashAnonId(getClientIp(req.headers), anonSalt!);
+        const quota = await checkAndRecordAnonUsage(ipHash, "diagnose");
+        if (!quota.allowed) {
+          return NextResponse.json(
+            {
+              error:
+                locale === "zh"
+                  ? "今日 2 次免费体验已用完。注册后每天可用 5 次真实 AI 诊断，完全免费。"
+                  : "You've used today's 2 free tries. Sign up free to get 5 real AI diagnoses every day.",
+              code: "ANON_QUOTA_EXCEEDED",
+              used: quota.used,
+              limit: quota.limit,
+            },
+            { status: 402 }
+          );
+        }
+        anonRemaining = Math.max(0, quota.limit - quota.used);
       }
       effectiveConfig = platformConfig;
       usingPlatformKey = true;
@@ -114,8 +142,8 @@ export async function POST(req: NextRequest) {
     const safeProfileContext =
       typeof profileContext === "string" ? profileContext.slice(0, 500) : undefined;
 
-    // 读取用户在设置里配置的自定义禁用词，注入 prompt
-    const bannedPhrases = await getUserBannedPhrases(session.user.id);
+    // 读取用户在设置里配置的自定义禁用词，注入 prompt（匿名无画像，跳过）
+    const bannedPhrases = userId ? await getUserBannedPhrases(userId) : [];
 
     const systemPrompt = `${getSystemRules(locale)}\n\n${getDiagnosePrompt(locale, {
       practiceType: safePracticeType,
@@ -159,8 +187,9 @@ export async function POST(req: NextRequest) {
     }
 
     // 首次调用已在配额判定时预扣；重试消耗双份 token，补记差额
-    if (usingPlatformKey && attempts > 1) {
-      await recordAiUsage(session.user.id, "diagnose", attempts - 1);
+    // （匿名限额只有 2 次，重试不补记，避免一次体验直接吃满额度）
+    if (usingPlatformKey && userId && attempts > 1) {
+      await recordAiUsage(userId, "diagnose", attempts - 1);
     }
 
     if (!result) {
@@ -170,7 +199,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json(
+      anonRemaining !== null ? { ...result, _anonRemaining: anonRemaining } : result
+    );
   } catch (error) {
     console.error("AI diagnosis failed:", error);
     const message = error instanceof Error ? error.message : "AI diagnosis failed";

@@ -128,6 +128,8 @@ export function PracticeFlow({
   const [showExample, setShowExample] = useState(false); // 修改阶段是否展开 AI 示范修改
   // 平台 Key 当日配额（BYOK 用户不限量不显示;dev 演示模式无登录态不显示）
   const [quota, setQuota] = useState<{ used: number; limit: number; plan: string } | null>(null);
+  // dev 演示模式（未登录）的匿名配额剩余次数，来自诊断响应的 _anonRemaining
+  const [anonRemaining, setAnonRemaining] = useState<number | null>(null);
 
   // 分段计时：写作时长 + 修改时长（不含等 AI、读反馈的时间）
   const writingStartRef = useRef<number | null>(null);
@@ -184,7 +186,10 @@ export function PracticeFlow({
   };
 
   // ---- 获取用户的 AI 配置 ----
+  // dev 演示模式（未登录）不发 aiConfig：服务端匿名路径本就会忽略它，
+  // 这里显式传 null 让语义清楚（匿名不允许 BYOK）
   function getAIConfig(): AISettings | null {
+    if (isDev) return null;
     return getAISettingsFromLocal();
   }
 
@@ -225,9 +230,18 @@ export function PracticeFlow({
           setLoading(false);
           return;
         }
-        // 平台 Key 配额耗尽或免费用户使用 BYOK：展示路由返回的具体文案并给升级入口
+        // 匿名今日体验次数用完：引导注册（不是套餐升级），草稿保留在 writing 阶段
         if (res.status === 402) {
           const body = await res.json().catch(() => null);
+          if (body?.code === "ANON_QUOTA_EXCEEDED") {
+            toast.error(body.error ?? t("anonQuotaExceeded"), {
+              action: { label: t("registerCta"), onClick: () => router.push("/auth/register") },
+            });
+            setStage("writing");
+            setLoading(false);
+            return;
+          }
+          // 平台 Key 配额耗尽或免费用户使用 BYOK：展示路由返回的具体文案并给升级入口
           toast.error(body?.error ?? tCommon("errorQuotaExceeded"), {
             action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
           });
@@ -241,6 +255,7 @@ export function PracticeFlow({
       const data = await res.json();
       setFeedback(data);
       setIsMockFeedback(!!data._mock);
+      setAnonRemaining(typeof data._anonRemaining === "number" ? data._anonRemaining : null);
       // 平台 Key 路径成功后本地同步配额计数（服务端已预扣）
       if (!data._mock && !getAIConfig()?.apiKey) {
         setQuota((q) => (q ? { ...q, used: q.used + 1 } : q));
@@ -382,11 +397,17 @@ export function PracticeFlow({
           comparisonData = mockCompareRevision(rawText, revisedText, locale === "zh" ? "zh" : "en");
           setComparison(comparisonData);
         } else if (res.status === 402) {
-          // 配额耗尽或免费用户使用 BYOK：跳过对比，仍展示 diff 并保存训练记录
+          // 配额耗尽（匿名/套餐）或免费用户使用 BYOK：跳过对比，仍展示 diff 并保存训练记录
           const body = await res.json().catch(() => null);
-          toast.error(body?.error ?? tCommon("errorQuotaExceeded"), {
-            action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
-          });
+          if (body?.code === "ANON_QUOTA_EXCEEDED") {
+            toast.error(body.error ?? t("anonQuotaExceeded"), {
+              action: { label: t("registerCta"), onClick: () => router.push("/auth/register") },
+            });
+          } else {
+            toast.error(body?.error ?? tCommon("errorQuotaExceeded"), {
+              action: { label: tCommon("viewPlans"), onClick: () => router.push("/pricing") },
+            });
+          }
         } else {
           throw new Error("对比失败");
         }
@@ -470,10 +491,10 @@ export function PracticeFlow({
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      {/* 开发模式提示 */}
+      {/* 开发模式提示（含匿名剩余次数，拿到后才知道，故诊断前显示通用文案） */}
       {isDev && (
         <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2 text-sm text-amber-800">
-          {t("devMode")}
+          {anonRemaining !== null ? t("anonRemaining", { count: anonRemaining }) : t("devMode")}
         </div>
       )}
 

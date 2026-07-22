@@ -103,6 +103,23 @@ export const softwareApplicationJsonLd = {
 };
 
 // ====================================================================
+// WebPage schema（SEO 落地页用，如 /ai-writing-training）
+// ====================================================================
+// 挂进全站实体图：isPartOf → WebSite，about → SoftwareApplication
+export function webPageJsonLd(path: string, name: string, description: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${SITE_URL}${path}#webpage`,
+    url: `${SITE_URL}${path}`,
+    name,
+    description,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: { "@id": `${SITE_URL}/#app` },
+  };
+}
+
+// ====================================================================
 // Blog 文章 Article schema
 // ====================================================================
 
